@@ -185,6 +185,9 @@ namespace CNTK
     class MinibatchSource;
     typedef std::shared_ptr<MinibatchSource> MinibatchSourcePtr;
 
+    class DistributedCommunicator;
+    typedef std::shared_ptr<DistributedCommunicator> DistributedCommunicatorPtr;
+
     namespace Internal
     {
         CNTK_API FunctionPtr IsWithin(const Variable& operand, int offset, const std::wstring& name = L"");
