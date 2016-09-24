@@ -189,8 +189,7 @@ void GPUDataTransferer::CopyGPUToCPUAsync(void* gpuBuffer, size_t totalSize, voi
 template <class ElemType>
 void GPUDataTransferer::CopyCPUToGPUAsync(ElemType* cpuBuffer, size_t numElements, ElemType* gpuBuffer)
 {
-    m_inner->CopyCPUToGPUAsync(cpuBuffer, numElements, sizeof(ElemType), gpuBuffer);
-    m_inner->RecordCPUToGPUCopy();
+    CopyCPUToGPUAsync((void*)cpuBuffer, numElements * sizeof(ElemType), (void*)gpuBuffer);
 }
 
 void GPUDataTransferer::CopyCPUToGPUAsync(void* cpuBuffer, size_t totalSize, void* gpuBuffer)
