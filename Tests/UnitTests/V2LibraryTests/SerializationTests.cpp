@@ -78,12 +78,14 @@ NDArrayViewPtr CreateNDArrayView()
 {
     auto numAxes = (rng() % maxNumAxes) + 1;
     auto device = DeviceDescriptor::CPUDevice();
-#ifndef CPUONLY
+
+    if (IsGPUAvailable())
+    {
     if (rng() % 2 == 0)
     {
         device = DeviceDescriptor::GPUDevice(0);
     }
-#endif
+    }
 
     return (rng() % 2 == 0) ? 
         CreateNDArrayView<float>(numAxes, device) : CreateNDArrayView<double>(numAxes, device);
@@ -512,7 +514,7 @@ void TestModelSerialization(const DeviceDescriptor& device)
     auto prediction1 = CNTK::ClassificationError(classifierOutput1, labels, L"classificationError1");
     auto learner01 = SGDLearner(classifierOutput1->Parameters(), learningRateSchedule);
     Trainer trainer1(classifierOutput1, trainingLoss1, prediction1, { learner01 });
-    
+
     Internal::ResetUniqueId();
     auto classifierOutput2 = LSTMSequenceClassiferNet(features, numOutputClasses, embeddingDim, hiddenDim, cellDim, device, L"classifierOutput2");
     auto trainingLoss2 = CNTK::CrossEntropyWithSoftmax(classifierOutput2, labels, L"lossFunction2");
@@ -761,7 +763,7 @@ void TestLegacyModelSaving(const DeviceDescriptor& device)
 
      trainer.SaveCheckpoint(modelFile);
 
-      trainer.TrainMinibatch({ { features, minibatchData[featureStreamInfo].m_data }, { labels, minibatchData[labelStreamInfo].m_data } }, device);
+    trainer.TrainMinibatch({ { features, minibatchData[featureStreamInfo].m_data }, { labels, minibatchData[labelStreamInfo].m_data } }, device);
 //    auto MB2Loss = trainer.PreviousMinibatchLossAverage();
 
     /*trainer.TrainMinibatch({ { features, minibatchData[featureStreamInfo].m_data }, { labels, minibatchData[labelStreamInfo].m_data } }, device);
@@ -850,16 +852,11 @@ void SerializationTests()
 */
     TestLegacyModelSaving(DeviceDescriptor::CPUDevice());
 
-//    TestSerialization(DeviceDescriptor::CPUDevice());
+    if (IsGPUAvailable())
+    {
+        TestLearnerSerialization<float>(5, DeviceDescriptor::GPUDevice(0));
+        TestLearnerSerialization<double>(10, DeviceDescriptor::GPUDevice(0));
+        TestModelSaving(DeviceDescriptor::GPUDevice(0));
+    }
 
-    //TestFunctionSerialization(DeviceDescriptor::CPUDevice());
-    TestModelSerialization(DeviceDescriptor::CPUDevice());
-
-#ifndef CPUONLY
-    TestLearnerSerialization<float>(5, DeviceDescriptor::GPUDevice(0));
-    TestLearnerSerialization<double>(10, DeviceDescriptor::GPUDevice(0));;
-    TestModelSerialization(DeviceDescriptor::GPUDevice(0));
-    TestLegacyModelSaving(DeviceDescriptor::GPUDevice(0));
-#endif
- 
 }
