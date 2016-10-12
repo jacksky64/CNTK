@@ -2221,31 +2221,12 @@ void GranularGPUDataTransferer::WaitForSyncPointOnAssignStreamAsync() {}
 
 PrefetchGPUDataTransferer::PrefetchGPUDataTransferer(int /*deviceId*/) : GranularGPUDataTransferer() {}
 
-GPUDataTransferer::GPUDataTransferer(int, bool)
-{
-}
-
-GPUDataTransferer::~GPUDataTransferer()
-{
-}
-
-template <class ElemType>
-void GPUDataTransferer::CopyGPUToCPUAsync(ElemType*, size_t, ElemType*)
-{
-}
-
-void GPUDataTransferer::WaitForCopyGPUToCPUAsync()
-{
-}
-
-template <class ElemType>
-void GPUDataTransferer::CopyCPUToGPUAsync(ElemType*, size_t, ElemType*)
-{
-}
-
-void GPUDataTransferer::WaitForCopyCPUToGPUAsync()
-{
-}
+GPUDataTransferer::GPUDataTransferer(int, bool){}
+GPUDataTransferer::~GPUDataTransferer(){}
+void GPUDataTransferer::CopyGPUToCPUAsync(void*, size_t, void*){}
+void GPUDataTransferer::WaitForCopyGPUToCPUAsync(){}
+void GPUDataTransferer::CopyCPUToGPUAsync(void*, size_t, void*){}
+void GPUDataTransferer::WaitForCopyCPUToGPUAsync(){}
 
 #pragma endregion GPUDataTransferer functions
 

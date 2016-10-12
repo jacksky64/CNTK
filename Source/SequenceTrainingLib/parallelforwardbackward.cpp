@@ -19,9 +19,7 @@
 #define TWO_CHANNEL // [v-hansu]
 using namespace msra::cuda;
 
-#ifndef CPUONLY
-#pragma comment(lib, "Math.lib") // built by CNTKMathCUDA project
-#endif
+#pragma comment(lib, "Math.lib")
 
 namespace msra { namespace lattices {
 

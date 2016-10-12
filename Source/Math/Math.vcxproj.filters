@@ -49,6 +49,9 @@
       <Filter>CPU</Filter>
     </ClCompile>
     <ClCompile Include="DataTransferer.cpp" />
+    <ClCompile Include="latticeNoGPU.cpp">
+      <Filter>GPU</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonMatrix.h" />
