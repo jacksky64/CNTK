@@ -81,14 +81,26 @@ public:
     // Disallow copy and move construction and assignment
     DISABLE_COPY_AND_MOVE(GPUDataTransferer);
 
-    template <class ElemType>
-    void CopyGPUToCPUAsync(ElemType* gpuBuffer, size_t numElements, ElemType* cpuBuffer);
+    // GPU to CPU
     void CopyGPUToCPUAsync(void* gpuBuffer, size_t totalSize, void* cpuBuffer);
-    void WaitForCopyGPUToCPUAsync();
 
     template <class ElemType>
-    void CopyCPUToGPUAsync(ElemType* cpuBuffer, size_t numElements, ElemType* gpuBuffer);
+    void CopyGPUToCPUAsync(ElemType* gpuBuffer, size_t numElements, ElemType* cpuBuffer)
+    {
+        CopyGPUToCPUAsync(static_cast<void*>(gpuBuffer), numElements * sizeof(ElemType), cpuBuffer);
+    }
+
+    void WaitForCopyGPUToCPUAsync();
+
+    // CPU to GPU
     void CopyCPUToGPUAsync(void* cpuBuffer, size_t totalSize, void* gpuBuffer);
+
+    template <class ElemType>
+    void CopyCPUToGPUAsync(ElemType* cpuBuffer, size_t numElements, ElemType* gpuBuffer)
+    {
+        CopyCPUToGPUAsync(static_cast<void*>(cpuBuffer), numElements * sizeof(ElemType), gpuBuffer);
+    }
+
     void WaitForCopyCPUToGPUAsync();
 
 #ifndef CPUONLY

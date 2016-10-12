@@ -32,7 +32,7 @@ namespace msra { namespace cuda {
 // a vector type; use this as a basetype
 // Note that this will only be instantiated for types known inside this lib, and a newvector<> function must be exported for each.
 template <typename ELEMTYPE>
-struct /*interface*/ vectorbase
+struct MATH_API /*interface*/ vectorbase
 {
     virtual ~vectorbase()
     {
@@ -63,7 +63,7 @@ struct /*interface*/ vectorbase
 // The XXXvector classes must derive from vectorbase<XXX>.
 // ---------------------------------------------------------------------------
 
-struct somedatavector : public vectorbase<msra::lattices::somedata>
+struct MATH_API somedatavector : public vectorbase<msra::lattices::somedata>
 {
     // must implement all members of vectorbase<>, and can add operations here
     virtual int somedataoperation(size_t arg) = 0;
@@ -80,7 +80,7 @@ typedef vectorbase<msra::lattices::nodeinfo> nodeinfovector;
 typedef vectorbase<msra::lattices::edgeinfowithscores> edgeinfowithscoresvector;
 typedef vectorbase<msra::lattices::aligninfo> aligninfovector;
 
-struct latticefunctions : public vectorbase<msra::lattices::empty>
+struct MATH_API latticefunctions : public vectorbase<msra::lattices::empty>
 {
     virtual void edgealignment(const lrhmmdefvector& hmms, const lr3transPvector& transPs, const size_t spalignunitid,
                                const size_t silalignunitid, const Microsoft::MSR::CNTK::Matrix<float>& logLLs, const nodeinfovector& nodes,
@@ -115,17 +115,17 @@ struct latticefunctions : public vectorbase<msra::lattices::empty>
 // factor methods
 // ---------------------------------------------------------------------------
 
-somedatavector* newsomedatavector(size_t deviceid);
-ushortvector* newushortvector(size_t deviceid);
-uintvector* newuintvector(size_t deviceid);
-floatvector* newfloatvector(size_t deviceid);
-doublevector* newdoublevector(size_t deviceid);
-sizetvector* newsizetvector(size_t deviceid);
-latticefunctions* newlatticefunctions(size_t deviceid);
-lrhmmdefvector* newlrhmmdefvector(size_t deviceid);
-lr3transPvector* newlr3transPvector(size_t deviceid);
-nodeinfovector* newnodeinfovector(size_t deviceid);
-edgeinfowithscoresvector* newedgeinfovector(size_t deviceid);
-aligninfovector* newaligninfovector(size_t deviceid);
+//somedatavector* newsomedatavector(size_t deviceid);
+MATH_API ushortvector* newushortvector(size_t deviceid);
+MATH_API uintvector* newuintvector(size_t deviceid);
+MATH_API floatvector* newfloatvector(size_t deviceid);
+MATH_API doublevector* newdoublevector(size_t deviceid);
+MATH_API sizetvector* newsizetvector(size_t deviceid);
+MATH_API latticefunctions* newlatticefunctions(size_t deviceid);
+MATH_API lrhmmdefvector* newlrhmmdefvector(size_t deviceid);
+MATH_API lr3transPvector* newlr3transPvector(size_t deviceid);
+MATH_API nodeinfovector* newnodeinfovector(size_t deviceid);
+MATH_API edgeinfowithscoresvector* newedgeinfovector(size_t deviceid);
+MATH_API aligninfovector* newaligninfovector(size_t deviceid);
 };
 };

@@ -174,22 +174,10 @@ GPUDataTransferer::~GPUDataTransferer()
     // BUGBUG: we don't destroy our streams (they are static variables); we need a static destructor, I am too lazy now
 }
 
-template <class ElemType>
-void GPUDataTransferer::CopyGPUToCPUAsync(ElemType* gpuBuffer, size_t numElements, ElemType* cpuBuffer)
-{
-    CopyGPUToCPUAsync((void*)gpuBuffer, numElements * sizeof(ElemType), (void*)cpuBuffer);
-}
-
 void GPUDataTransferer::CopyGPUToCPUAsync(void* gpuBuffer, size_t totalSize, void* cpuBuffer)
 {
     m_inner->CopyGPUToCPUAsync(gpuBuffer, 1, totalSize, cpuBuffer);
     m_inner->RecordGPUToCPUCopy();
-}
-
-template <class ElemType>
-void GPUDataTransferer::CopyCPUToGPUAsync(ElemType* cpuBuffer, size_t numElements, ElemType* gpuBuffer)
-{
-    CopyCPUToGPUAsync((void*)cpuBuffer, numElements * sizeof(ElemType), (void*)gpuBuffer);
 }
 
 void GPUDataTransferer::CopyCPUToGPUAsync(void* cpuBuffer, size_t totalSize, void* gpuBuffer)
@@ -227,10 +215,5 @@ PrefetchGPUDataTransferer::PrefetchGPUDataTransferer(int deviceId) : GranularGPU
         cudaStreamCreateWithFlags(&s_prefetchStream, cudaStreamNonBlocking) || "cudaStreamCreateWithFlags failed";
     }
 }
-
-template void GPUDataTransferer::CopyGPUToCPUAsync<float>(float*, size_t, float*);
-template void GPUDataTransferer::CopyGPUToCPUAsync<double>(double*, size_t, double*);
-template void GPUDataTransferer::CopyCPUToGPUAsync<float>(float*, size_t, float*);
-template void GPUDataTransferer::CopyCPUToGPUAsync<double>(double*, size_t, double*);
 
 }}}
