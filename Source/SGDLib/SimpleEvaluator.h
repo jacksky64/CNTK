@@ -4,6 +4,8 @@
 //
 #pragma once
 
+#include "SimpleDistGradAggregator.h"
+
 #include "Basics.h"
 #include "DataReader.h"
 #include "ComputationNode.h"
@@ -13,7 +15,6 @@
 #include "ProgressTracing.h"
 #include "DistGradHeader.h"
 #include "IDistGradAggregator.h"
-#include "SimpleDistGradAggregator.h"
 #include "Criterion.h"
 
 #include <vector>
@@ -180,7 +181,8 @@ public:
                     m_gradHeader.reset(DistGradHeader::Create(evalNodes.size()), [](DistGradHeader* ptr) {
                         DistGradHeader::Destroy(ptr);
                     });
-                    m_distGradAgg = make_shared<SimpleDistGradAggregator<ElemType>>(m_mpi, false /*useAsyncAggregation*/, 0 /*syncStatsTrace*/);
+                    auto communicator = ::CNTK::MPICommunicator();
+                    m_distGradAgg = make_shared<SimpleDistGradAggregator<ElemType>>(m_mpi, false /*useAsyncAggregation*/, 0 /*syncStatsTrace*/, communicator);
                 }
 
                 m_gradHeader->numEvalNode = evalNodes.size();
@@ -377,7 +379,8 @@ public:
                         DistGradHeader::Destroy(ptr);
                     });
                 }
-                SimpleDistGradAggregator<ElemType> distGradAgg(m_mpi, false /*useAsyncAggregation*/, 0 /*syncStatsTrace*/);
+                auto communicator = ::CNTK::MPICommunicator();
+                SimpleDistGradAggregator<ElemType> distGradAgg(m_mpi, false /*useAsyncAggregation*/, 0 /*syncStatsTrace*/, communicator);
 
                 auto runMeanParameterPtr = node->GetInputs()[3];
                 auto runStdParameterPtr = node->GetInputs()[4];

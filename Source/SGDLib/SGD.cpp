@@ -1947,7 +1947,8 @@ void SGD<ElemType>::InitDistGradAgg(int numEvalNodes, int numGradientBits, int t
         RuntimeError("Gradient quantization is unsupported in CNTK binaries built without quantized gradient aggregation support!");
     }
 
-    m_distGradAgg = std::make_shared<SimpleDistGradAggregator<ElemType>>(m_mpi, m_bufferedAsyncGradientAggregation, m_syncStatsTrace);
+    auto communicator = ::CNTK::MPICommunicator();
+    m_distGradAgg = std::make_shared<SimpleDistGradAggregator<ElemType>>(m_mpi, m_bufferedAsyncGradientAggregation, m_syncStatsTrace, communicator);
 #endif // !CNTK_PARALLEL_TRAINING_SUPPORT
 
     m_gradHeader.reset(DistGradHeader::Create(numEvalNodes), [](DistGradHeader* ptr) { DistGradHeader::Destroy(ptr); });

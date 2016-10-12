@@ -1,5 +1,8 @@
 #pragma once
 
+#undef _SCL_SECURE_NO_WARNINGS
+#include "CNTKLibrary.h"
+
 #include "IDistGradAggregator.h"
 #include "CUDAPageLockedMemAllocator.h"
 #include <future>
@@ -13,10 +16,12 @@ template <class ElemType>
 class SimpleDistGradAggregator : public IDistGradAggregator<ElemType>
 {
     UsingIDistGradAggregatorMembers;
+    ::CNTK::DistributedCommunicatorPtr m_communicator;
 
 public:
-    SimpleDistGradAggregator(const MPIWrapperPtr& mpi, bool useAsyncAggregation, int syncStatsTrace)
-        : IDistGradAggregator<ElemType>(mpi), m_useAsyncAggregation(useAsyncAggregation), m_initialized(false), m_bufferedGradHeader(nullptr), m_syncStatsTrace(syncStatsTrace), m_iterationCount(0)
+    SimpleDistGradAggregator(const MPIWrapperPtr& mpi, bool useAsyncAggregation, int syncStatsTrace, ::CNTK::DistributedCommunicatorPtr communicator)
+        : IDistGradAggregator<ElemType>(mpi), m_useAsyncAggregation(useAsyncAggregation), m_initialized(false), m_bufferedGradHeader(nullptr), m_syncStatsTrace(syncStatsTrace), m_iterationCount(0),
+        m_communicator(communicator)
     {}
 
     ~SimpleDistGradAggregator()
