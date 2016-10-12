@@ -5,15 +5,17 @@
 
 #pragma once
 
-#include "stdafx.h"
 #include "CNTKLibrary.h"
-#include "GPUDataTransferer.h"
+
+namespace Microsoft { namespace MSR { namespace CNTK {
+    class GPUDataTransferer;
+
+    class MPIWrapper;
+    typedef std::shared_ptr<MPIWrapper> MPIWrapperPtr;
+}}}
 
 namespace CNTK
 {
-    class Microsoft::MSR::CNTK::MPIWrapper;
-    typedef std::shared_ptr<Microsoft::MSR::CNTK::MPIWrapper> MPIWrapperPtr;
-
     class MPICommunicatorImpl final : public DistributedCommunicator, public std::enable_shared_from_this<MPICommunicatorImpl>
     {
     public:

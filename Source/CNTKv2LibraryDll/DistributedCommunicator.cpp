@@ -12,6 +12,7 @@
 #include "MatrixQuantizerImpl.h"
 #include <functional>
 #include <mutex>
+#include "GPUDataTransferer.h"
 
 using namespace Microsoft::MSR::CNTK;
 
