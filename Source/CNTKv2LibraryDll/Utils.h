@@ -400,7 +400,7 @@ namespace CNTK
         return UidPrefix + uid + NamePrefix + name;
     }
 
-    inline std::pair<std::wstring, std::wstring> UidAndNameFromCNTKInternalNodeName(const std::wstring& CNTKInternalNodeName, VariableKind varKind)
+    inline std::pair<std::wstring, std::wstring> UidAndNameFromCNTKInternalNodeName(const std::wstring& CNTKInternalNodeName, const std::wstring& uidPrefix)
     {
         std::wstring uid, name;
         auto uidPrefixBeginPos = CNTKInternalNodeName.find(UidPrefix);
@@ -418,10 +418,15 @@ namespace CNTK
         else
         {
             name = CNTKInternalNodeName;
-            uid = Internal::GenerateUid(varKind);
+            uid = Internal::GenerateUid(uidPrefix);
         }
 
         return{ uid, name };
+    }
+
+    inline std::pair<std::wstring, std::wstring> UidAndNameFromCNTKInternalNodeName(const std::wstring& CNTKInternalNodeName, VariableKind varKind)
+    {
+        return UidAndNameFromCNTKInternalNodeName(CNTKInternalNodeName, std::wstring(VariableKindName(varKind)));
     }
 }
 

@@ -425,3 +425,41 @@ inline CNTK::FunctionPtr LSTMSequenceClassiferNet(const CNTK::Variable& input, s
     return FullyConnectedLinearLayer(thoughtVectorFunction, numOutputClasses, device, outputName);
 }
 
+template <typename ElementType> 
+bool AreEqual(CNTK::NDArrayView& view1, CNTK::NDArrayView& view2)
+{
+    if (view1.GetDataType() != view2.GetDataType() ||
+        view1.Shape() != view2.Shape())
+    {
+        return false;
+    }
+
+    ElementType* data1 = nullptr;
+    ElementType* data2 = nullptr;
+    if (view1.Device().Type() == DeviceKind::CPU)
+    {
+        data1 = const_cast<ElementType*>(view1.DataBuffer<ElementType>());
+        data2 = const_cast<ElementType*>(view2.DataBuffer<ElementType>());
+    }
+    else
+    {
+        CNTK::NDArrayViewPtr temp1CpuDataView = MakeSharedObject<CNTK::NDArrayView>(AsDataType<ElementType>(), view1.Shape(), DeviceDescriptor::CPUDevice());
+        temp1CpuDataView->CopyFrom(view1);
+        data1 = temp1CpuDataView->WritableDataBuffer<ElementType>();
+
+        CNTK::NDArrayViewPtr temp2CpuDataView = MakeSharedObject<CNTK::NDArrayView>(AsDataType<ElementType>(), view2.Shape(), DeviceDescriptor::CPUDevice());
+        temp2CpuDataView->CopyFrom(view2);
+        data2 = temp2CpuDataView->WritableDataBuffer<ElementType>();
+    }
+
+    size_t numElements = view1.Shape().TotalSize();
+
+    for (size_t i = 0; i < numElements; ++i)
+    {
+        if (data1[i] != data2[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}

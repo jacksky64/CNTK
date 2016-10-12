@@ -132,6 +132,17 @@ namespace CNTK
         {   
             vector<DictionaryValue>* vectorPtr1 = reinterpret_cast<vector<DictionaryValue>*>(m_data.m_ptr);
             vector<DictionaryValue>* vectorPtr2 = reinterpret_cast<vector<DictionaryValue>*>(other.m_data.m_ptr);
+
+            for (int i = 0; i < vectorPtr1->size(); i++)
+            {
+                DictionaryValue& dv1 = (*vectorPtr1)[i];
+                DictionaryValue& dv2 = (*vectorPtr2)[i];
+                if (dv1 != dv2)
+                {
+                    return false;
+                }
+            }
+
             return (*vectorPtr1 == *vectorPtr2);
         }
         case DictionaryValue::Type::Dictionary:

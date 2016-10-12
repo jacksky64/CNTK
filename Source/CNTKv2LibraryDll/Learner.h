@@ -16,8 +16,6 @@ namespace CNTK
     // and adds a few pre-/postprocessing methods (which are invoked before and after the update).
     class LearnerBase : public Learner
     {
-        static const std::wstring WasLearningRateResetAttributeName;
-
     public:
         virtual bool Update(const std::unordered_map<Parameter, NDArrayViewPtr>& gradientValues, size_t trainingSampleCount) override final;
 
@@ -42,6 +40,8 @@ namespace CNTK
         std::string LearnerType() const;
 
         AdditionalLearningOptions m_additionalOptions;
+
+
 
         std::unordered_map<Parameter, NDArrayViewPtr> m_smoothedGradientValues;
 
@@ -79,8 +79,6 @@ namespace CNTK
         // Retrieves the shape of the matrix corresponding to the parameter value.
         static NDShape GetMatrixShape(const Parameter& parameter);
 
-
-        size_t m_sampleCount;
         size_t m_minibatchCount;
 
     private:

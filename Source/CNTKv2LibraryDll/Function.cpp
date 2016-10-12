@@ -38,7 +38,7 @@ namespace CNTK
     }
 
     Function::Function(const std::vector<Variable>& inputs, const std::vector<Variable>& outputs, Dictionary&& functionConfig, const FunctionPtr& rootFunction, const std::wstring& name, const std::wstring& uid)
-        : m_rootFunction(rootFunction), m_name(name), m_uid(uid), m_attributes(std::move(functionConfig))
+        : m_rootFunction(rootFunction), m_name(name != L"" ? name : uid), m_uid(uid), m_attributes(std::move(functionConfig))
     {
         for (auto inputVar : inputs)
         {
@@ -60,7 +60,7 @@ namespace CNTK
             if (uniqueOutputs.find(outputVar) != uniqueOutputs.end())
                 RuntimeError("Same variable appears multiple times in the outputs vector passed to Function constructor");
 
-            if (m_rootFunction == nullptr && outputVar.IsOutput())
+            if (m_rootFunction == nullptr && outputVar.IsOutput() && outputVar.m_dataFields->m_ownerFunction == this)
             {
                 // in case of a primitive function, set uid of output vars to owner function uid + "_Output_" + output index.
                 outputVar.m_dataFields->m_uid = m_uid + L"_" + VariableKindName(outputVar.Kind()) + L"_" + std::to_wstring(m_outputs.size());
@@ -92,8 +92,31 @@ namespace CNTK
                     replacedPlaceholders.insert(placeholder);
                 }
             }
-            else if (inputVar.IsOutput() && (visitedFunctions.find(inputVar.Owner().get()) == visitedFunctions.end()))
+
+            if (inputVar.IsOutput() && (visitedFunctions.find(inputVar.Owner().get()) == visitedFunctions.end()))
+            {
                 inputVar.Owner()->ReplacePlaceholdersInPlace(placeholderReplacements, visitedFunctions, replacedPlaceholders);
+            }
+        }
+
+        auto primitiveFunction = dynamic_cast<PrimitiveFunction*>(this);
+        if (primitiveFunction != nullptr && primitiveFunction->OpType() == PrimitiveOpType::Combine)
+        {
+            // Again, combine needs a special treatment, since m_inputs and m_outputs are two 
+            // different vectors, and m_outputs is created by copying m_inputs content, there
+            // still can be placeholders cached in m_outputs, need to replace those as well.
+            for (auto& outputVar : m_outputs)
+            {
+                if (outputVar.IsPlaceholder())
+                {
+                    auto placeholder = outputVar;
+                    if (placeholderReplacements.find(placeholder) != placeholderReplacements.end())
+                    {
+                        outputVar = placeholderReplacements.at(placeholder);
+                        replacedPlaceholders.insert(placeholder);
+                    }
+                }
+            }
         }
     }
 
@@ -833,7 +856,7 @@ namespace CNTK
             const auto& inputUid = dictionaryValue.Value<std::wstring>();
             if (uidToVariableMap.find(inputUid) == uidToVariableMap.end())
             {
-                LogicError("There are no input corresponging to input uid = '%ls' "
+                LogicError("There are no inputs corresponging to input uid = '%ls' "
                         "(%s).", inputUid, GetVersionsString<PrimitiveFunction>(s_serializationVersion, version));
             }
             inputs.push_back(uidToVariableMap.at(inputUid));
@@ -854,18 +877,24 @@ namespace CNTK
         dict[rootKey] = RootFunction()->Uid();
         dict[nameKey] = Name();
 
-        std::unordered_set<Variable> inputs;
-
+       
         // Find cycles in the graph and "break" them by inserting placeholders.
         // This needs to be done on Save, since here we have easy access to the shape and 
         // dynamic axis info.
         std::unordered_set<FunctionPtr> visitedFunctions;
         std::vector<FunctionPtr> topoSortedPrimitiveFunctions;
+        std::vector<Variable> inputs;
         std::unordered_set<std::wstring> inputUids;
         Traverse([&visitedFunctions, &inputs, &topoSortedPrimitiveFunctions, &inputUids](const FunctionPtr& function) {
                     std::vector<Variable> functionInputs = function->Inputs();
                     for (const auto& input : functionInputs)
                     {
+                        auto& uid = input.Uid();
+                        if (inputUids.find(uid) != inputUids.end())
+                        {
+                            continue;
+                        }
+
                         // first, check if this input corresponds to a cyclic edge in the graph.
                         bool mustBeReplaced = input.IsOutput() && visitedFunctions.find(input.Owner()) != visitedFunctions.end();
                         
@@ -874,21 +903,17 @@ namespace CNTK
 
                         if (mustBeReplaced)
                         {
-                            auto& uid = input.Uid();
-                            // Check if we already created a place holder for this Output variable
-                            if (inputUids.find(uid) == inputUids.end())
-                            {
-                                auto varKind = VariableKind::Placeholder;
+                            auto varKind = VariableKind::Placeholder;
                                 Variable var(input.Shape(), varKind, input.GetDataType(), nullptr, 
                                              input.IsSparse(), input.DynamicAxes(), input.Name(), uid);
-                                inputs.insert(var);
+                                inputs.push_back(var);
                                 inputUids.insert(uid);
-                            }
                         }
                         else if (!input.IsOutput())
                         {
                             // leave the input as is.
-                            inputs.insert(input);
+                            inputs.push_back(input);
+                            inputUids.insert(uid);
                         }
                     }
                     visitedFunctions.insert(function);
@@ -964,11 +989,19 @@ namespace CNTK
 
         FunctionPtr root;
         std::unordered_map<Variable, Variable> placeholderReplacements;
-        std::unordered_set<FunctionPtr> allPrimitiveFunctions;
+        std::unordered_set<FunctionPtr> allPrimitiveFunctions; // this keeps all primitive functions alive until a composite function is created.
         for (const auto& dictionaryValue : functions)
         {
             root = PrimitiveFunction::Load(dictionaryValue.Value<Dictionary>(), uidToInputMap, device);
             allPrimitiveFunctions.insert(root);
+
+            auto primitiveFunction = dynamic_cast<const PrimitiveFunction*>(root.get());
+            // Since Combine simply forwards other functions' outputs, all of its outputs
+            // should already be in the uidToInputMap.
+            if (primitiveFunction->OpType() == PrimitiveOpType::Combine)
+            {
+                continue;
+            }
 
             for (const auto& output : root->Outputs())
             {
@@ -983,7 +1016,10 @@ namespace CNTK
                     }
                     placeholderReplacements[it->second] = output;
                 }
-                uidToInputMap[output.Uid()] = output;
+                else
+                {
+                    uidToInputMap[output.Uid()] = output;
+                }
             }
         }
 
@@ -1122,7 +1158,7 @@ namespace CNTK
     {
         ComputationNodeBasePtr computationNodePtr;
 
-        auto functionName = primitiveFunction->Name();
+        auto functionName = CNTKInternalNodeNameFromUidAndName(primitiveFunction->Uid(), primitiveFunction->Name());
         auto& functionConfig = primitiveFunction->Attributes();
         auto functionInputs = primitiveFunction->Inputs();
         PrimitiveOpType op = primitiveFunction->OpType();

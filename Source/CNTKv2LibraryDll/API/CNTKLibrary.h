@@ -23,6 +23,8 @@
 #include <mutex>
 
 
+#include <iostream>
+
 #ifdef SWIG
 #define final
 #define explicit
@@ -1471,6 +1473,7 @@ namespace CNTK
         friend bool operator==(const Variable& first, const Variable& second);
         friend class Function;
         friend class CompositeFunction;
+        friend class Trainer;
 
         template <typename T>
         friend struct std::hash;
@@ -2983,6 +2986,9 @@ namespace CNTK
         /// Learners associated with this Trainer for updating the model's parameters using computed gradients.
         ///
         const std::vector<LearnerPtr>& ParameterLearners() const { return m_parameterLearners; }
+
+       
+        FunctionPtr XXX() const { return m_combinedTrainingFunction; }
 
     private:
         FunctionPtr m_combinedTrainingFunction;

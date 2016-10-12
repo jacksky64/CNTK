@@ -287,7 +287,10 @@ namespace CNTK
             // Let's reorder inputVars properly since the ordering of inputs of CNTK internal ComputationNode may be different from the PrimitiveFunction inputs ordering
             ReorderAsPrimitiveFunctionInputs(opType, inputVars);
 
-            FunctionPtr primitiveFunction = MakeSharedObject<PrimitiveFunction>(opType, inputVars, std::move(primitiveFunctionConfigParameters), node->NodeName());
+            std::wstring functionUid, functionName;
+            std::tie(functionUid, functionName) = UidAndNameFromCNTKInternalNodeName(node->NodeName(), std::wstring(PrimitiveOpTypeName(opType)));
+
+            FunctionPtr primitiveFunction = MakeSharedObject<PrimitiveFunction>(opType, inputVars, std::move(primitiveFunctionConfigParameters), functionName, functionUid);
             allPrimitiveFunctions.insert(primitiveFunction);
             var = primitiveFunction->Output();
             if (placeholderReplacements.find(placeholderVar) != placeholderReplacements.end())

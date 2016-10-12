@@ -142,24 +142,34 @@ namespace CNTK
             rootGradientValue->Data()->SetValue(1.0);
 
         auto modelParameters = m_combinedTrainingFunction->Parameters();
+        // Since Variable hash function depends on the memory address pointed to by the m_dataFields,
+        // after restoring from a checkpoint, when model parameters created fresh,
+        // model parameters and learners' parameters no longer hash to the same value,
+        //  we need to use uid map here to be able to match parameters.
+        std::unordered_map<std::wstring, Variable> uidToParameterMap;
         std::unordered_map<Variable, ValuePtr> parameterGradients;
         for (const auto& parameter : modelParameters)
+        {
             parameterGradients[parameter] = nullptr;
+            uidToParameterMap[parameter.Uid()] = parameter;
+        }
 
         m_combinedTrainingFunction->Backward(backPropSate, { { m_aggregatedLossFunction, rootGradientValue } }, parameterGradients);
 
         m_prevMinibatchNumSamples = GetSampleCount(m_lossFunction, outputs[m_lossFunction]);
+
 
         bool anyUpdatesPerformed = false;
         for (auto learner : m_parameterLearners)
         {
             std::unordered_map<Parameter, NDArrayViewPtr> learnerParameterGradients;
             const auto& learnerParameters = learner->Parameters();
-            for (const auto& parameter : learnerParameters)
+            for (const auto& learnerParameter : learnerParameters)
             {
-                learnerParameterGradients[parameter] = parameterGradients[parameter]->Data();
+                const auto& modelParameter = uidToParameterMap[learnerParameter.Uid()];
+                learnerParameterGradients[learnerParameter] = parameterGradients[modelParameter]->Data();
 
-                if (parameterGradients[parameter]->Mask())
+                if (parameterGradients[modelParameter]->Mask())
                     LogicError("The gradient value for a Parameter cannot have an associated mask!");
             }
 
@@ -227,7 +237,7 @@ namespace CNTK
             auto stream = GetFstream(modelFilePath, true);
             Dictionary model;
             *stream >> model;
-            auto reloadedFunction = Function::Load(model);
+            auto reloadedFunction = Function::Load(model, DeviceDescriptor::CPUDevice());
 
             std::unordered_map<std::wstring, Variable> inputMap;
             const auto& inputs = m_combinedTrainingFunction->Inputs();
@@ -251,8 +261,16 @@ namespace CNTK
                 }
             }
 
-            reloadedFunction->ReplacePlaceholders(replacements);
-            m_combinedTrainingFunction = reloadedFunction;
+            m_combinedTrainingFunction = reloadedFunction->ReplacePlaceholders(replacements);
+            auto outputs = m_combinedTrainingFunction->Outputs();
+            m_model = outputs[0].Owner();
+            m_aggregatedLossFunction = outputs[1].Owner();
+            m_lossFunction = outputs[2].Owner();
+            if (outputs.size() > 3)
+            {
+                m_aggregatedEvaluationFunction = outputs[3].Owner();
+                m_evaluationFunction = outputs[4].Owner();
+            }
         }
 
         std::wstring trainerStateCheckpointFilePath = GetTrainerStateCheckpointFilePath(modelFilePath);
@@ -269,9 +287,42 @@ namespace CNTK
                        learnerStates.size(), m_parameterLearners.size());
         }
 
+        std::unordered_map<std::wstring, Variable> uidToParameterMap;
+        const auto& modelParameters = m_combinedTrainingFunction->Parameters();
+        for (const auto& parameter : modelParameters)
+        {
+            uidToParameterMap[parameter.Uid()] = parameter;
+        }
+
+        std::unordered_set<std::wstring> learnerParameterUids;
         for (int i = 0; i < m_parameterLearners.size(); ++i)
         {
             m_parameterLearners[i]->RestoreFromCheckpoint(learnerStates[i].Value<Dictionary>());
+            auto& learnerParameters = m_parameterLearners[i]->Parameters(); // returns const set.
+            for (const auto& parameter : learnerParameters) 
+            {
+                //auto& p = const_cast<Parameter&>(parameter);
+                auto& modelParameter = uidToParameterMap[parameter.Uid()];
+                auto value = reinterpret_cast<Parameter&>(modelParameter).Value();
+                parameter.m_dataFields->m_value = value;
+                learnerParameterUids.insert(parameter.Uid());
+            }
+        }
+
+        if (modelParameters.size() != learnerParameterUids.size())
+        {
+            LogicError("Trainer::RestoreFromCheckpoint: "
+                       "Number of unique model parameters (%d) and does not match the number of unique learner parameters (%d)",
+                       modelParameters.size(), learnerParameterUids.size());
+        }
+
+        for (const auto& p : modelParameters) 
+        {
+            if (learnerParameterUids.find(p.Uid()) == learnerParameterUids.end())
+            {
+                LogicError("Trainer::RestoreFromCheckpoint: "
+                           "No learner is associated with the parameter %ls (uid: %ls)", p.Name().c_str(), p.Uid().c_str());
+            }
         }
     }
 

@@ -22,6 +22,12 @@ namespace CNTK
             return s_nextUniqueId++;
         }
 
+
+        void ResetUniqueId()
+        {
+            s_nextUniqueId.store(0);
+        }
+
         std::atomic<bool> s_reverseTensorShapesInErrorMessages(false);
         void EnableReversingTensorShapesInErrorMessages()
         {

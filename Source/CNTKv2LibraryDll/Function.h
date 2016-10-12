@@ -130,6 +130,8 @@ namespace CNTK
     class PrimitiveFunction final : public Function
     {
         friend class Function;
+        template <typename T, typename ...CtorArgTypes>
+        friend inline std::shared_ptr<T> MakeSharedObject(CtorArgTypes&& ...ctorArgs);
 
     public:
         static const std::wstring InternalSumReductionOpName;
@@ -168,7 +170,7 @@ namespace CNTK
 
     public:
         PrimitiveFunction(PrimitiveOpType op, const std::vector<Variable>& inputs, Dictionary&& functionConfig, const std::wstring& functionName = L"")
-            : Function(inputs, GetOutputVariables(op, inputs, this, functionConfig, functionName), std::move(functionConfig), functionName, Internal::GenerateUid(PrimitiveOpTypeName(op))), m_op(op)
+            : PrimitiveFunction(op, inputs, std::move(functionConfig), functionName, Internal::GenerateUid(PrimitiveOpTypeName(op)))
         {
         }
 
@@ -208,8 +210,8 @@ namespace CNTK
 
     private:
 
-         PrimitiveFunction(PrimitiveOpType op, const std::vector<Variable>& inputs, Dictionary&& functionConfig, const std::wstring& functionName, const std::wstring& uid)
-            : Function(inputs, GetOutputVariables(op, inputs, this, functionConfig, functionName), std::move(functionConfig), functionName, uid), m_op(op)
+        PrimitiveFunction(PrimitiveOpType op, const std::vector<Variable>& inputs, Dictionary&& functionConfig, const std::wstring& functionName, const std::wstring& uid)
+            : Function(inputs, GetOutputVariables(op, inputs, this, functionConfig, (functionName != L"" ? functionName : uid)), std::move(functionConfig), functionName, uid), m_op(op)
         {
         }
 
@@ -508,19 +510,19 @@ namespace CNTK
         {}
 
         template <typename FunctionType>
-        void Traverse(FunctionType&& func) const
+        void Traverse(const FunctionType& functor) const
         {
             const auto& root = RootFunction();
             std::unordered_set<FunctionPtr> visitedFunctions;
-            Traverse(root, visitedFunctions, func);
+            Traverse(root, visitedFunctions, functor);
         }
 
-        // Recursively traverses the Function graph underlying the 'rootFunction' invoking the provided func for all visited nodes in the graph.
+        // Recursively traverses the Function graph underlying the 'rootFunction' invoking the provided functor for all visited nodes in the graph.
         template <typename FunctionType>
-        static void Traverse(const FunctionPtr& rootFunction, std::unordered_set<FunctionPtr>& visitedFunctions, FunctionType&& func)
+        static void Traverse(const FunctionPtr& rootFunction, std::unordered_set<FunctionPtr>& visitedFunctions, const FunctionType& functor)
         {
             visitedFunctions.insert(rootFunction);
-            func(rootFunction);
+            functor(rootFunction);
 
             std::vector<Variable> rootFunctionInputs = rootFunction->Inputs();
             for (const auto& rootInput : rootFunctionInputs)
@@ -528,7 +530,7 @@ namespace CNTK
                 if (rootInput.IsOutput() && visitedFunctions.find(rootInput.Owner()) == visitedFunctions.end())
                 {
                     const auto& function = rootInput.Owner();
-                    Traverse(function, visitedFunctions, func);
+                    Traverse(function, visitedFunctions, functor);
                 }
             }
         }
@@ -550,17 +552,21 @@ namespace CNTK
         // Recursively traverses the Function graph underlying the 'rootFunction' to determine all the leaves (aka inputs) of the graph
         static std::vector<Variable> DetermineInputs(const FunctionPtr& rootFunction, std::unordered_set<FunctionPtr>& visitedFunctions)
         {
+            vector<FunctionPtr> functions;
             std::vector<Variable> inputs;
-            Traverse(rootFunction, visitedFunctions, [&inputs](const FunctionPtr& function) {
-                        std::vector<Variable> functionInputs = function->Inputs();
-                        for (const auto& input : functionInputs)
+            std::unordered_set<Variable> uniqueInputs;
+            Traverse(rootFunction, visitedFunctions, [&inputs, &uniqueInputs](const FunctionPtr& f){ 
+                    std::vector<Variable> functionInputs = f->Inputs();
+                    for (auto input : functionInputs)
+                    {
+                        if (!input.IsOutput() && uniqueInputs.find(input) == uniqueInputs.end()) 
                         {
-                            if (!input.IsOutput())
-                            {
-                                inputs.push_back(input);
-                            }
+                            inputs.push_back(input);
+                            uniqueInputs.insert(input);
                         }
-                    });
+                    }
+                });
+
             return inputs;
         }
 

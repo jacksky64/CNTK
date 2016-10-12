@@ -33,9 +33,6 @@
     <ClCompile Include="TrainerTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CifarResNet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SequenceClassification.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
