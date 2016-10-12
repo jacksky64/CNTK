@@ -331,7 +331,8 @@ MATH_SRC +=\
 
 else
 MATH_SRC +=\
-	$(SOURCEDIR)/Math/NoGPU.cpp
+	$(SOURCEDIR)/Math/NoGPU.cpp \
+	$(SOURCEDIR)/Math/latticeNoGPU.cpp
 
 endif
 
@@ -386,7 +387,7 @@ SEQUENCE_TRAINING_LIB_SRC +=\
 
 else
 SEQUENCE_TRAINING_LIB_SRC +=\
-	$(SOURCEDIR)/SequenceTrainingLib/latticeNoGPU.cpp \
+	$(SOURCEDIR)/Math/latticeNoGPU.cpp \
 
 endif
 
