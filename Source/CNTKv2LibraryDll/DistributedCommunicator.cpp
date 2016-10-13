@@ -4,14 +4,13 @@
 //
 
 #include "stdafx.h"
+#include <functional>
 #include "Basics.h"
 #include "MPIWrapper.h"
 #include "CNTKLibrary.h"
 #include "DistributedCommunicator.h"
 #include "CUDAPageLockedMemAllocator.h"
 #include "MatrixQuantizerImpl.h"
-#include <functional>
-#include <mutex>
 #include "GPUDataTransferer.h"
 
 using namespace Microsoft::MSR::CNTK;
@@ -27,13 +26,10 @@ namespace CNTK
     {
         assert(deviceID >= 0);
         Buffer buffer;
-        // Use pinned memory for GPU devices for better copy performance
         buffer.totalSize = totalSize;
-        buffer.data = std::shared_ptr<void>(CUDAPageLockedMemAllocator::Malloc(totalSize, deviceID),
-                                            [deviceID](void* p)
-                                            {
-                                                CUDAPageLockedMemAllocator::Free(p, deviceID);
-                                            });
+        buffer.data = std::shared_ptr<void>(
+            CUDAPageLockedMemAllocator::Malloc(totalSize, deviceID),
+            [deviceID](void* p) { CUDAPageLockedMemAllocator::Free(p, deviceID); });
         return buffer;
     }
 
@@ -44,16 +40,18 @@ namespace CNTK
 
     inline void* GetDataBuffer(const NDArrayViewPtr& viewPtr)
     {
-       if (viewPtr->GetDataType() == DataType::Float)
-        {
-            return (void*) viewPtr->DataBuffer<float>();
-        }
-        else if (viewPtr->GetDataType() == DataType::Double)
-        {
-            return (void*) viewPtr->DataBuffer<double>();
-        }
-        else
-            LogicError("Unknown DataType");
+        if (viewPtr->GetDataType() == DataType::Float)
+            return const_cast<float*>(viewPtr->DataBuffer<float>());
+        if (viewPtr->GetDataType() == DataType::Double)
+            return const_cast<double*>(viewPtr->DataBuffer<double>());
+        LogicError("Unknown DataType");
+        return nullptr; // Make compiler happy.
+    }
+
+    inline DeviceDescriptor GetNonCPUDevice(const std::vector<ValuePtr>& values)
+    {
+        auto device = std::find_if(values.begin(), values.end(), [](const ValuePtr v) { return v->Device().Type() != DeviceKind::CPU; });
+        return values.end() == device ? DeviceDescriptor::CPUDevice() : (*device)->Device();
     }
 
     MPICommunicatorImpl::MPICommunicatorImpl()
@@ -61,32 +59,68 @@ namespace CNTK
         m_mpi = MPIWrapper::GetInstance(true);
         m_currentWorker.m_globalRank = m_mpi->CurrentNodeRank();
         m_currentWorker.m_hostId = std::wstring(m_mpi->CurrentNodeName());
-        for (auto i = 0; i < m_mpi->NumNodesInUse(); ++i)
+        for (size_t i = 0; i < m_mpi->NumNodesInUse(); ++i)
         {
             if (i == m_currentWorker.m_globalRank)
-            {
                 m_workers.insert(m_currentWorker);
-            }
             else
-            {
-                m_workers.insert({ i, L"" });
-            }
+                m_workers.insert({ i,  L"" });
         }
     }
 
+    std::vector<int> MPICommunicatorImpl::Initialize(const std::vector<ValuePtr>& values)
+    {
+        assert(CPUDEVICE < 0); // just in case somebody decides to change CPUDEVICE macro.
 
-    /*virtual*/ std::unordered_set<DistributedWorkerDescriptor> MPICommunicatorImpl::Workers() const
+        std::vector<int> indices(values.size(), CPUDEVICE);
+        int numGPUValues = 0;
+        DeviceDescriptor lastGpuDevice = DeviceDescriptor::CPUDevice();
+        for (auto i = 0; i < values.size(); ++i)
+        {
+            auto& value = values[i];
+            auto view = value->Data();
+            auto device = view->Device();
+
+            // Make sure none of the values are sparse - we currently do not support aggregation of sparse matrices
+            if (view->GetStorageFormat() != StorageFormat::Dense)
+                RuntimeError("Aggregation for sparse matrices is currently not supported!");
+
+            if (device.Type() != DeviceKind::GPU)
+                continue;
+
+            if (lastGpuDevice.Type() == DeviceKind::CPU)
+                lastGpuDevice = device;
+            else if (device.Id() != lastGpuDevice.Id()) // For the time being, assume all devices have the same id.
+                LogicError("Not all values share the same GPU device id");
+
+            auto index = numGPUValues++;
+            if (m_gpuDataTransferers.size() < numGPUValues)
+                m_gpuDataTransferers.push_back(std::make_unique<GPUDataTransferer>(device.Id(), true));
+
+            if (m_intermediateCPUBuffers.size() < numGPUValues)
+                m_intermediateCPUBuffers.push_back(Buffer());
+
+            auto requiredSize = GetBufferSize(view);
+            if (m_intermediateCPUBuffers[index].totalSize < requiredSize)
+                m_intermediateCPUBuffers[index] = AllocateIntermediateBuffer(device.Id(), requiredSize);
+
+            indices[i] = index;
+        }
+        return indices;
+    }
+
+    std::unordered_set<DistributedWorkerDescriptor> MPICommunicatorImpl::Workers() const
     {
         return m_workers;
     }
 
-    /*virtual*/ const DistributedWorkerDescriptor& MPICommunicatorImpl::CurrentWorker() const
+    const DistributedWorkerDescriptor& MPICommunicatorImpl::CurrentWorker() const
     {
         return m_currentWorker;
     }
 
-    /*virtual*/ std::vector<ValuePtr> MPICommunicatorImpl::Aggregate(const std::vector<ValuePtr>& values,
-                                                                     const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers)
+    std::vector<ValuePtr> MPICommunicatorImpl::Aggregate(const std::vector<ValuePtr>& values,
+        const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers)
     {
         std::vector<ValuePtr> outputValues;
         for (const auto& inputValue : values)
@@ -95,115 +129,88 @@ namespace CNTK
             const auto& outputView = MakeSharedObject<NDArrayView>(inputView->GetDataType(), inputView->Shape(), inputView->Device());
             const auto& inputMask = inputValue->Mask();
             const auto& outputMask = MakeSharedObject<NDMask>(inputMask->Shape(), inputMask->Device());
-            outputValues.push_back(MakeSharedObject<Value>(outputView, outputMask)); 
+            outputValues.push_back(MakeSharedObject<Value>(outputView, outputMask));
         }
+
+        auto device = GetNonCPUDevice(values);
+        if (device.Type() != DeviceKind::CPU)
+        {
+            // Since we will be copying the gradients asynchronously, let us
+            // ensure that the gradient matrices have been computed before starting to aggregate
+            // them asynchronously on another thread. This essentially means that when we are using
+            // a GPU device, we will synchronize on the main GPU compute stream before starting
+            // the gradient aggregation asynchronously on a separate stream
+            std::unique_ptr<MatrixComputeStreamEvent> mainStreamSyncEvent(MatrixComputeStreamEvent::Create(device.Id()));
+            mainStreamSyncEvent->SynchronizeDataTransferFetchStreamWithEvent<float>();
+        }
+
         AggregateImpl(values, outputValues, sendToWorkers);
-       
         return outputValues;
     }
 
-    /*virtual*/ DistributedCommunicatorPtr MPICommunicatorImpl::SubGroup(const std::unordered_set<DistributedWorkerDescriptor>& subGroupWorkers) const 
+    DistributedCommunicatorPtr MPICommunicatorImpl::SubGroup(const std::unordered_set<DistributedWorkerDescriptor>&) const
     {
-        UNUSED(subGroupWorkers);
         NOT_IMPLEMENTED;
     }
 
-    /*virtual*/ std::unordered_set<ValuePtr> MPICommunicatorImpl::Concatenate(const std::unordered_set<ValuePtr>& values, const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers)
+    std::unordered_set<ValuePtr> MPICommunicatorImpl::Concatenate(const std::unordered_set<ValuePtr>&, const std::unordered_set<DistributedWorkerDescriptor>&)
     {
-        UNUSED(values);
-        UNUSED(sendToWorkers);
         NOT_IMPLEMENTED;
     }
-    
-    /*virtual*/ std::future<std::vector<ValuePtr>> MPICommunicatorImpl::AggregateAsync(const std::vector<ValuePtr>& values,
-                                                                                       const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers)
-    {
-        return std::async(std::launch::async, [this, &values, &sendToWorkers]() { 
 
-            for (const auto& value : values)
+    std::future<std::vector<ValuePtr>> MPICommunicatorImpl::AggregateAsync(const std::vector<ValuePtr>& values,
+        const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers)
+    {
+        auto device = GetNonCPUDevice(values);
+
+        std::shared_ptr<MatrixComputeStreamEvent> mainStreamSyncEvent;
+        if (device.Type() != DeviceKind::CPU)
+            mainStreamSyncEvent.reset(MatrixComputeStreamEvent::Create(device.Id()));
+
+        return std::async(std::launch::async, [this, &values, &sendToWorkers, device, mainStreamSyncEvent]()
+        {
+            if (device.Type() != DeviceKind::CPU)
             {
-                const auto& device = value->Data()->Device();
-                if (device.Type() == DeviceKind::GPU)
-                {
-                    // We are starting on a new thread. Make sure the new thread is
-                    // setup to use the right device
-                    // TODO: SetDevice is type agnostic, move it to the base matrix class. 
-                    Matrix<float>::SetDevice(device.Id());
-                    // For the time being, we assume that all gpu-bound values reside on the same device.
-                    break;
-                }
+                // We are starting on a new thread. Make sure the new thread is setup to use the right device
+                // TODO: SetDevice is type agnostic, move it to the base matrix class. 
+                Matrix<float>::SetDevice(device.Id());
+
+                // Since we will be copying the gradients asynchronously, let us
+                // ensure that the gradient matrices have been computed before starting to aggregate
+                // them asynchronously on another thread. This essentially means that when we are using
+                // a GPU device, we will synchronize on the main GPU compute stream before starting
+                // the gradient aggregation asynchronously on a separate stream
+                mainStreamSyncEvent->SynchronizeDataTransferFetchStreamWithEvent<float>();
             }
 
             return this->Aggregate(values, sendToWorkers);
         });
     }
 
-    std::pair<DeviceDescriptor, std::vector<int>> MPICommunicatorImpl::Prepare(const std::vector<ValuePtr>& values)
+    void MPICommunicatorImpl::AggregateInPlace(const std::vector<ValuePtr>& values,
+        const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers)
     {
-        assert(CPUDEVICE < 0); // just in case somebody decides to change CPUDEVICE macro.
-        std::vector<int> indices(values.size(), CPUDEVICE);
-        int numGPUValues = 0;
-        DeviceDescriptor lastGpuDevice = DeviceDescriptor::CPUDevice();
-        for (auto i = 0; i < values.size(); ++i)
+        auto device = GetNonCPUDevice(values);
+        if (device.Type() != DeviceKind::CPU)
         {
-            auto& value = values[i];
-            auto view = value->Data();
-            auto device= view->Device();
-
-            // Make sure none of the values are sparse - we currently do not support aggregation of sparse matrices
-            if (view->GetStorageFormat() != StorageFormat::Dense)
-            {
-                RuntimeError("Aggregation for sparse matrices is currently not supported!");
-            }
-
-            if (device.Type() == DeviceKind::GPU)
-            {
-                if (lastGpuDevice.Type() == DeviceKind::CPU)
-                {
-                    lastGpuDevice = device;
-                } 
-                else if (device.Id() != lastGpuDevice.Id())
-                {
-                    // For the time being, assume all devices have the same id.
-                    LogicError("Not all values share the same GPU device id"); 
-                }
-
-                auto index = numGPUValues++;
-                if (m_gpuDataTransferers.size() < numGPUValues)
-                {
-                     m_gpuDataTransferers.push_back(std::unique_ptr<GPUDataTransferer>(new GPUDataTransferer(device.Id(), true)));
-                }
-
-                if (m_intermediateCPUBuffers.size() < numGPUValues)
-                {
-                    m_intermediateCPUBuffers.push_back(Buffer());
-                }
-
-                auto requiredSize = GetBufferSize(view);
-                if (m_intermediateCPUBuffers[index].totalSize < requiredSize)
-                {
-                    m_intermediateCPUBuffers[index] = AllocateIntermediateBuffer(device.Id(), requiredSize);
-                }
-
-                indices[i] = index;
-            }
+            // Since we will be copying the gradients asynchronously, let us
+            // ensure that the gradient matrices have been computed before starting to aggregate
+            // them asynchronously on another thread. This essentially means that when we are using
+            // a GPU device, we will synchronize on the main GPU compute stream before starting
+            // the gradient aggregation asynchronously on a separate stream
+            std::unique_ptr<MatrixComputeStreamEvent> mainStreamSyncEvent(MatrixComputeStreamEvent::Create(device.Id()));
+            mainStreamSyncEvent->SynchronizeDataTransferFetchStreamWithEvent<float>();
         }
-
-        return std::make_pair(lastGpuDevice, indices);
-    }
-
-    /*virtual*/ void MPICommunicatorImpl::AggregateInPlace(const std::vector<ValuePtr>& values,
-                                                           const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers)
-    {
-        if (m_mpi->NumNodesInUse() == 1) // No need to aggregate anything.
-            return;
         AggregateImpl(values, values, sendToWorkers);
     }
 
     void  MPICommunicatorImpl::AggregateImpl(const std::vector<ValuePtr>& inputValues,
-                                             const std::vector<ValuePtr>& outputValues,
-                                             const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers)
+        const std::vector<ValuePtr>& outputValues,
+        const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers)
     {
+        if (m_mpi->NumNodesInUse() == 1) // No need to aggregate anything.
+            return;
+
         UNUSED(sendToWorkers);
         assert(inputValues.size() == outputValues.size());
 
@@ -213,19 +220,8 @@ namespace CNTK
             return;
         }
 
-        auto prepared = Prepare(inputValues);
-        auto gpuIndexVector = prepared.second;
-        auto device = prepared.first;
-        if (device.Type() != DeviceKind::CPU)
-        {
-            // Before initiating gpu-to-cpu transfer, make sure that all the computations on the main GPU
-            // stream are finished.
-            const auto& gpuValue = inputValues[gpuIndexVector[0]];
-            const auto& device = gpuValue->Data()->Device();
-            std::unique_ptr<MatrixComputeStreamEvent> mainStreamSyncEvent(MatrixComputeStreamEvent::Create(device.Id()));
-            // TODO: the method below is actually type-agnostic, it needs refactoring.
-            mainStreamSyncEvent->SynchronizeDataTransferFetchStreamWithEvent<float>();
-        }
+        auto prepared = Initialize(inputValues);
+        auto gpuIndexVector = prepared;
 
         // for all values residing on GPU initiate async transfer to CPU buffers.
         for (auto i = 0; i < numValues; ++i)
@@ -240,7 +236,7 @@ namespace CNTK
                 transferer->CopyGPUToCPUAsync(GetDataBuffer(view), GetBufferSize(view), buffer.data.get());
             }
         }
-        
+
         std::vector<MPI_Request> allReduceRequests(numValues);
         for (auto i = 0; i < numValues; ++i)
         {
@@ -297,7 +293,7 @@ namespace CNTK
             }
 
             numAllReduceRequestsCompleted++;
-            
+
             auto gpuIndex = gpuIndexVector[idx];
 
             if (gpuIndex != CPUDEVICE)
@@ -310,6 +306,7 @@ namespace CNTK
             }
         }
 
+        // TODO: Should not wait, simply publishing event on the compute stream should be sufficient.
         for (auto i = 0; i < numValues; ++i)
         {
             auto gpuIndex = gpuIndexVector[i];
@@ -318,17 +315,12 @@ namespace CNTK
         }
     }
 
-    /*virtual*/ void MPICommunicatorImpl::QuantizedAggregate(const std::vector<ValuePtr>& inValues,
-                                        const std::unordered_set<ValuePtr>& inPreviousQuantizationResidues,
-                                        const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers,
-                                        const std::unordered_set<ValuePtr>& aggregatedOutputs,
-                                        const std::unordered_set<ValuePtr>& newQuantizationResidues)
+    void MPICommunicatorImpl::QuantizedAggregate(const std::vector<ValuePtr>& /*inValues*/,
+        const std::unordered_set<ValuePtr>& /*inPreviousQuantizationResidues*/,
+        const std::unordered_set<DistributedWorkerDescriptor>& /*sendToWorkers*/,
+        const std::unordered_set<ValuePtr>& /*aggregatedOutputs*/,
+        const std::unordered_set<ValuePtr>& /*newQuantizationResidues*/)
     {
-        UNUSED(inValues);
-        UNUSED(inPreviousQuantizationResidues);
-        UNUSED(sendToWorkers);
-        UNUSED(aggregatedOutputs);
-        UNUSED(newQuantizationResidues);
         NOT_IMPLEMENTED;
     }
 }

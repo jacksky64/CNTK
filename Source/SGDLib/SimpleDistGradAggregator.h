@@ -1,12 +1,10 @@
 #pragma once
 
+#include <future>
+
 #undef _SCL_SECURE_NO_WARNINGS
 #include "CNTKLibrary.h"
-
 #include "IDistGradAggregator.h"
-#include "CUDAPageLockedMemAllocator.h"
-#include <future>
-#include "GPUDataTransferer.h"
 #include "TimerUtility.h"
 #include "MatrixQuantizerImpl.h"
 #include "Utils.h"
@@ -27,9 +25,6 @@ public:
 
     ~SimpleDistGradAggregator()
     {
-        for (size_t i = 0; i < m_recvHeaders.size(); ++i)
-            DistGradHeader::Destroy(m_recvHeaders[i]);
-
         if (m_bufferedGradHeader != nullptr)
             DistGradHeader::Destroy(m_bufferedGradHeader);
     }
@@ -37,168 +32,147 @@ public:
     // Aggregate the gradient matrices across all nodes
     bool AggregateGradients(const std::vector<Matrix<ElemType>*>& gradients, DistGradHeader* headerCPU, bool resetState) override
     {
-        ResetState(gradients, headerCPU->numEvalNode, resetState);
+        if (!IsInitialized())
+            Initialize(gradients, headerCPU->numEvalNode);
+        else if (resetState)
+            ResetState(gradients);
+
         bool showSyncPerfStats = (m_syncStatsTrace > 0) && ((m_iterationCount % m_syncStatsTrace) == 0);
         m_iterationCount++;
 
-        if (m_useAsyncAggregation)
-        {
-            // If we are performing async gradient aggregation, let's wait for the pending gradient aggregation to finish
-            // then swap the contents of the buffered gradients and the new gradient matrices and fire an async aggreagation
-            // of the new gradient matrices
-            if (m_pendingAsyncAggregation.valid())
-            {
-                Timer aggregationTimer;
-                if (showSyncPerfStats)
-                    aggregationTimer.Start();
-
-                m_pendingAsyncAggregation.get();
-
-                if (showSyncPerfStats)
-                {
-                    aggregationTimer.Stop();
-                    double gradientAggregationTime = aggregationTimer.ElapsedSeconds();
-                    fprintf(stderr, "Async gradient aggregation wait time: %.6g\n", gradientAggregationTime);
-                }
-            }
-
-            std::vector<Matrix<ElemType>*> newGradients;
-            size_t numGradMatrices = gradients.size();
-            for (size_t i = 0; i < numGradMatrices; i++)
-            {
-                Matrix<ElemType>* bufferedGradientMatrix = m_bufferedGradients[gradients[i]].get();
-                if ((bufferedGradientMatrix == nullptr) ||
-                    (bufferedGradientMatrix->GetNumCols() != gradients[i]->GetNumCols()) ||
-                    (bufferedGradientMatrix->GetNumRows() != gradients[i]->GetNumRows()) ||
-                    (bufferedGradientMatrix->GetDeviceId() != gradients[i]->GetDeviceId()))
-                {
-                    LogicError("No buffered gradient matrix found corresponding to a gradient matrix to be aggregated!");
-                }
-
-                // Swap the gradient matrix contents with the buffered matrices
-                std::swap(*(gradients[i]), *bufferedGradientMatrix);
-
-                newGradients.push_back(bufferedGradientMatrix);
-            }
-
-            // Swap the grad header contents with the buffered grad header
-            swap(*headerCPU, *m_bufferedGradHeader);
-
-            // Initiate aggregation only if any samples were processed in previous iteration
-            if (resetState || (headerCPU->numSamples != 0))
-            {
-                int deviceId = gradients[0]->GetDeviceId();
-                DistGradHeader* newGradHeader = m_bufferedGradHeader;
-
-                // Since we will be aggregating the gradients assynchronously, let us
-                // ensure that the gradient matrices have been computed before starting to aggregate
-                // them asynchronously on another thread. This essentially means that when we are using
-                // a GPU device, we will synchronize on the main GPU compute stream before starting
-                // the gradient aggregation asynchronously on a separate stream
-                MatrixComputeStreamEvent* mainStreamSyncEvent = MatrixComputeStreamEvent::Create(deviceId);
-
-                m_pendingAsyncAggregation = std::async(std::launch::async, [=] {
-                    // We are starting on a new thread. Make sure the new thread is
-                    // setup to use the right device
-                    Matrix<ElemType>::SetDevice(deviceId);
-
-                    // Synchronize the Quantization compute stream with the completion of
-                    // compute of the gradient matrices on the main compute stream
-                    mainStreamSyncEvent->SynchronizeDataTransferFetchStreamWithEvent<ElemType>();
-                    delete mainStreamSyncEvent;
-
-                    AggregateGradientsImpl(newGradients, newGradHeader, showSyncPerfStats);
-                });
-
-                return true;
-            }
-
-            return false;
-        }
-        else
+        if (!m_useAsyncAggregation) // In case we do not use asyn aggregation, simply aggregate.
         {
             AggregateGradientsImpl(gradients, headerCPU, showSyncPerfStats);
             return (headerCPU->numSamples != 0);
         }
+
+        // If we are performing async gradient aggregation, let's wait for the pending gradient aggregation to finish
+        // then swap the contents of the buffered gradients and the new gradient matrices and fire an async aggreagation
+        // of the new gradient matrices
+        if (m_pendingAsyncAggregation.valid())
+        {
+            Timer aggregationTimer;
+            if (showSyncPerfStats)
+                aggregationTimer.Start();
+
+            m_pendingAsyncAggregation.get();
+
+            if (showSyncPerfStats)
+            {
+                aggregationTimer.Stop();
+                double gradientAggregationTime = aggregationTimer.ElapsedSeconds();
+                fprintf(stderr, "Async gradient aggregation wait time: %.6g\n", gradientAggregationTime);
+            }
+        }
+
+        std::vector<Matrix<ElemType>*> newGradients;
+        size_t numGradMatrices = gradients.size();
+        for (size_t i = 0; i < numGradMatrices; i++)
+        {
+            Matrix<ElemType>* bufferedGradientMatrix = m_bufferedGradients[gradients[i]].get();
+            if ((bufferedGradientMatrix == nullptr) ||
+                (bufferedGradientMatrix->GetNumCols() != gradients[i]->GetNumCols()) ||
+                (bufferedGradientMatrix->GetNumRows() != gradients[i]->GetNumRows()) ||
+                (bufferedGradientMatrix->GetDeviceId() != gradients[i]->GetDeviceId()))
+            {
+                LogicError("No buffered gradient matrix found corresponding to a gradient matrix to be aggregated!");
+            }
+
+            // Swap the gradient matrix contents with the buffered matrices
+            std::swap(*(gradients[i]), *bufferedGradientMatrix);
+
+            newGradients.push_back(bufferedGradientMatrix);
+        }
+
+        // Swap the grad header contents with the buffered grad header
+        swap(*headerCPU, *m_bufferedGradHeader);
+
+        // Initiate aggregation only if any samples were processed in previous iteration
+        if (resetState || (headerCPU->numSamples != 0))
+        {
+            int deviceId = gradients[0]->GetDeviceId();
+            DistGradHeader* newGradHeader = m_bufferedGradHeader;
+            MatrixComputeStreamEvent* mainStreamSyncEvent = MatrixComputeStreamEvent::Create(deviceId);
+
+            m_pendingAsyncAggregation = std::async(std::launch::async, [=] {
+                // We are starting on a new thread. Make sure the new thread is
+                // setup to use the right device
+                Matrix<ElemType>::SetDevice(deviceId);
+
+                // Synchronize the Quantization compute stream with the completion of
+                // compute of the gradient matrices on the main compute stream
+                mainStreamSyncEvent->SynchronizeDataTransferFetchStreamWithEvent<ElemType>();
+                delete mainStreamSyncEvent;
+
+                AggregateGradientsImpl(newGradients, newGradHeader, showSyncPerfStats);
+            });
+
+            return true;
+        }
+
+        return false;
     }
 
 private:
-    std::shared_ptr<ElemType> AllocateIntermediateBuffer(int deviceID, size_t numElements)
+    bool IsInitialized() const { return m_initialized; }
+    void Initialize(const std::vector<Matrix<ElemType>*>& gradients, int numEvalNodes)
     {
-        assert(deviceID >= 0);
+        int deviceId = gradients[0]->GetDeviceId();
+        for (size_t i = 0; i < gradients.size(); i++)
+        {
+            // Make sure none of the gradient matrixes are sparse - we currently do not support aggregation of sparse gradient matrices
+            if (gradients[i]->GetMatrixType() != DENSE)
+                RuntimeError("Gradient aggregation for sparse gradient matrices is currently unsupported!");
 
-        // Use pinned memory for GPU devices for better copy performance
-        size_t totalSize = sizeof(ElemType) * numElements;
-        return std::shared_ptr<ElemType>((ElemType*) m_allocator->Malloc(totalSize), [this, deviceID](ElemType* p)
-                                         {
-                                             m_allocator->Free(p);
-                                         });
+            if (m_useAsyncAggregation)
+                m_bufferedGradients[gradients[i]].reset(new Matrix<ElemType>(gradients[i]->GetNumRows(), gradients[i]->GetNumCols(), deviceId));
+        }
+
+        if (m_useAsyncAggregation)
+        {
+            m_bufferedGradHeader = DistGradHeader::Create(numEvalNodes);
+            m_bufferedGradHeader->Clear();
+        }
+        m_initialized = true;
     }
 
-    void ResetState(const std::vector<Matrix<ElemType>*>& gradients, int numEvalNodes, bool resetState)
+    void ResetState(const std::vector<Matrix<ElemType>*>& gradients)
     {
-        // When called the first time let's setup the intermediateCPU buffers for gradient aggregation if needed
-        if (!m_initialized)
-        {
-            m_initialized = true;
-            int deviceId = gradients[0]->GetDeviceId();
-            if (deviceId != CPUDEVICE)
-                m_allocator.reset(new CUDAPageLockedMemAllocator(deviceId));
+        if (!m_useAsyncAggregation)
+            return;
 
-            for (size_t i = 0; i < gradients.size(); i++)
-            {
-                // Make sure none of the gradient matrixes are sparse - we currently do not support aggregation of sparse gradient matrices
-                if (gradients[i]->GetMatrixType() != DENSE)
-                    RuntimeError("Gradient aggregation for sparse gradient matrices is currently unsupported!");
+        // Make sure there is no pending async aggregation
+        if (m_pendingAsyncAggregation.valid())
+            LogicError("Unexpected pending async gradient aggregation found when resetting aggregator state!");
 
-                if (deviceId != CPUDEVICE)
-                {
-                    m_gpuDataTransferers.push_back(std::unique_ptr<GPUDataTransferer>(new GPUDataTransferer(deviceId, m_useAsyncAggregation)));
-                    m_intermediateCPUBuffers.push_back(AllocateIntermediateBuffer(deviceId, gradients[i]->GetNumElements()));
-                }
+        // Zero out the buffered gradients if resetting state
+        for (size_t i = 0; i < gradients.size(); i++)
+            m_bufferedGradients[gradients[i]]->SetValue(0);
 
-                if (m_useAsyncAggregation)
-                    m_bufferedGradients[gradients[i]].reset(new Matrix<ElemType>(gradients[i]->GetNumRows(), gradients[i]->GetNumCols(), deviceId));
-            }
-
-            if (m_useAsyncAggregation)
-            {
-                m_bufferedGradHeader = DistGradHeader::Create(numEvalNodes);
-                m_bufferedGradHeader->Clear();
-            }
-
-            if (m_mpi->IsMainNode())
-            {
-                for (size_t i = 0; i < NumProc() - 1; ++i)
-                    m_recvHeaders.push_back(DistGradHeader::Create(numEvalNodes));
-            }
-        }
-        else if (resetState)
-        {
-            // Make sure there is no pending async aggregation
-            if (m_useAsyncAggregation && m_pendingAsyncAggregation.valid())
-                LogicError("Unexpected pending async gradient aggregation found when resetting aggregator state!");
-
-            // Zero out the buffered gradients if resetting state
-            if (m_useAsyncAggregation)
-            {
-                for (size_t i = 0; i < gradients.size(); i++)
-                    m_bufferedGradients[gradients[i]]->SetValue(0);
-
-                m_bufferedGradHeader->Clear();
-            }
-        }
+        m_bufferedGradHeader->Clear();
     }
 
     void AggregateGradientsImpl(const std::vector<Matrix<ElemType>*>& gradients, DistGradHeader* headerCPU, bool showSyncPerfStats)
     {
         Timer aggregationTimer;
-        int deviceId = gradients[0]->GetDeviceId();
+        int deviceId = gradients.front()->GetDeviceId();
         if (showSyncPerfStats)
         {
             std::unique_ptr<MatrixComputeStreamEvent> mainStreamSyncEvent(MatrixComputeStreamEvent::Create(deviceId));
             mainStreamSyncEvent->SynchronizeEvent();
             aggregationTimer.Start();
+        }
+
+        if (headerCPU->numSamples == 0)
+        {
+            assert(headerCPU->criterion == 0.0);
+            assert(headerCPU->numSamplesWithLabel == 0);
+            for (int i = 0; i < headerCPU->numEvalNode; ++i)
+                assert(headerCPU->evalErrors[i].first == 0 && headerCPU->evalErrors[i].second == 0);
+
+            // If the current node did not process any samples, the gradients should be zero'd
+            for (size_t i = 0; i < gradients.size(); ++i)
+                gradients[i]->SetValue(0);
         }
 
         // Prepare gradients.
@@ -248,13 +222,6 @@ private:
     }
 
 private:
-    std::unique_ptr<CUDAPageLockedMemAllocator> m_allocator;
-    std::vector<std::shared_ptr<ElemType>> m_intermediateCPUBuffers;
-
-    std::vector<std::unique_ptr<GPUDataTransferer>> m_gpuDataTransferers;
-
-    std::vector<DistGradHeader*> m_recvHeaders;
-
     // Perform aysnchronous gradient aggregation using double buffering of the gradient matrices
     bool m_useAsyncAggregation;
 
@@ -265,11 +232,9 @@ private:
     std::unordered_map<Matrix<ElemType>*, std::unique_ptr<Matrix<ElemType>>> m_bufferedGradients;
     DistGradHeader* m_bufferedGradHeader;
 
-    int m_syncStatsTrace;
-
     // Only used for controlling frequency of measuring/showing gradient aggregation perf stats
+    int m_syncStatsTrace;
     size_t m_iterationCount;
-
     bool m_initialized;
 };
 

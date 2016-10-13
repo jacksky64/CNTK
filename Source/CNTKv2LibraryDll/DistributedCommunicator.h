@@ -6,6 +6,7 @@
 #pragma once
 
 #include "CNTKLibrary.h"
+#include <MatrixQuantizerImpl.h>
 
 namespace Microsoft { namespace MSR { namespace CNTK {
     class GPUDataTransferer;
@@ -51,8 +52,7 @@ namespace CNTK
                                 const std::unordered_set<ValuePtr>& newQuantizationResidues) override;
 
     private:
-        std::pair<DeviceDescriptor, std::vector<int>> Prepare(const std::vector<ValuePtr>& values);
-
+        std::vector<int> Initialize(const std::vector<ValuePtr>& values);
         void AggregateImpl(const std::vector<ValuePtr>& inputValues,
                            const std::vector<ValuePtr>& outputValues,
                            const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers);
