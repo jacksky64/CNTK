@@ -398,7 +398,7 @@ public:
     }
 
     template <class ElemType>
-    void AllReduceAsync(ElemType *sendData, ElemType *receiveData, size_t numElements, MPI_Request* request, MPI_Op op = MPI_SUM)
+    void AllReduceAsync(ElemType *sendData, ElemType *receiveData, size_t numElements, MPI_Request* request, MPI_Op op = MPI_SUM) const
     {
         if ((NumNodesInUse() > 1 && (Communicator() != MPI_COMM_NULL)))
         {

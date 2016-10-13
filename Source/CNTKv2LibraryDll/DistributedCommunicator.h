@@ -20,7 +20,7 @@ namespace CNTK
     {
     public:
         MPICommunicatorImpl();
-        
+
         virtual std::unordered_set<DistributedWorkerDescriptor> Workers() const override;
 
         virtual const DistributedWorkerDescriptor& CurrentWorker() const override;

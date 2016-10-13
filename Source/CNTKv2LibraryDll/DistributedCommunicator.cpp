@@ -18,15 +18,9 @@ using namespace Microsoft::MSR::CNTK;
 
 namespace CNTK
 {
-    static std::once_flag s_initMPICommunicatorFlag;
-    static DistributedCommunicatorPtr s_MPICommunicator;
-
     DistributedCommunicatorPtr MPICommunicator()
     {
-        std::call_once(s_initMPICommunicatorFlag, [=]{
-            s_MPICommunicator.reset(new MPICommunicatorImpl());
-        });
-        return s_MPICommunicator;
+        return std::make_shared<MPICommunicatorImpl>();
     }
 
     MPICommunicatorImpl::Buffer MPICommunicatorImpl::AllocateIntermediateBuffer(int deviceID, size_t totalSize)
@@ -35,7 +29,7 @@ namespace CNTK
         Buffer buffer;
         // Use pinned memory for GPU devices for better copy performance
         buffer.totalSize = totalSize;
-        buffer.data = std::shared_ptr<void>(CUDAPageLockedMemAllocator::Malloc(totalSize, deviceID), 
+        buffer.data = std::shared_ptr<void>(CUDAPageLockedMemAllocator::Malloc(totalSize, deviceID),
                                             [deviceID](void* p)
                                             {
                                                 CUDAPageLockedMemAllocator::Free(p, deviceID);
@@ -201,8 +195,8 @@ namespace CNTK
     /*virtual*/ void MPICommunicatorImpl::AggregateInPlace(const std::vector<ValuePtr>& values,
                                                            const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers)
     {
-        //if (m_mpi->NumNodesInUse() == 1) // No need to aggregate anything.
-            //return;
+        if (m_mpi->NumNodesInUse() == 1) // No need to aggregate anything.
+            return;
         AggregateImpl(values, values, sendToWorkers);
     }
 
