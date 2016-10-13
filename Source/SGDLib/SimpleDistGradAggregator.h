@@ -9,6 +9,7 @@
 #include "GPUDataTransferer.h"
 #include "TimerUtility.h"
 #include "MatrixQuantizerImpl.h"
+#include "Utils.h"
 
 namespace Microsoft { namespace MSR { namespace CNTK {
 
@@ -200,127 +201,48 @@ private:
             aggregationTimer.Start();
         }
 
-        size_t numGradMatrices = gradients.size();
-
-        if (headerCPU->numSamples == 0)
+        // Aggregate gradients.
+        std::vector<::CNTK::ValuePtr> v2Gradients;
+        std::vector<::CNTK::NDArrayView> values;
+        for (size_t i = 0; i < gradients.size(); ++i)
         {
-            assert(headerCPU->criterion == 0.0);
-            assert(headerCPU->numSamplesWithLabel == 0);
-            for (int i = 0; i < headerCPU->numEvalNode; ++i)
-                assert(headerCPU->evalErrors[i].first == 0 && headerCPU->evalErrors[i].second == 0);
-
-            // If the current node did not process any samples, the gradients should be zero'd
-            for (size_t i = 0; i < numGradMatrices; ++i)
-                gradients[i]->SetValue(0);
-
-            if (m_useAsyncAggregation)
-            {
-                std::unique_ptr<MatrixComputeStreamEvent> mainStreamSyncEvent(MatrixComputeStreamEvent::Create(deviceId));
-                mainStreamSyncEvent->SynchronizeDataTransferFetchStreamWithEvent<ElemType>();
-            }
+            ::CNTK::NDShape shape{ gradients[i]->GetNumElements() };
+            auto data = ::CNTK::MakeSharedObject<::CNTK::NDArrayView>(::CNTK::AsDataType<ElemType>(), shape, gradients[i]->Data(), gradients[i]->GetNumElements() * sizeof(ElemType), ::CNTK::AsDeviceDescriptor(gradients[i]->GetDeviceId()));
+            auto value = ::CNTK::MakeSharedObject<::CNTK::Value>(data);
+            v2Gradients.push_back(value);
         }
 
-        // Initiate transfer of the gradient matrices to the CPU if needed
-        if (deviceId >= 0)
+        m_communicator->AggregateInPlace(v2Gradients, std::unordered_set<::CNTK::DistributedWorkerDescriptor>());
+
+        // Aggregate header as all doubles.
+        size_t numberOfElements = 1 + 1 + 1 + headerCPU->numEvalNode * 2;
+        std::unique_ptr<double[]> headerBuffer(new double[numberOfElements]);
+        headerBuffer[0] = headerCPU->criterion;
+        headerBuffer[1] = static_cast<double>(headerCPU->numSamples);
+        headerBuffer[2] = static_cast<double>(headerCPU->numSamplesWithLabel);
+        for (size_t i = 0; i < headerCPU->numEvalNode; ++i)
         {
-            for (size_t i = 0; i < numGradMatrices; ++i)
-                m_gpuDataTransferers[i]->CopyGPUToCPUAsync<ElemType>(gradients[i]->Data(), gradients[i]->GetNumElements(), m_intermediateCPUBuffers[i].get());
+            headerBuffer[3 + 2 * i] = headerCPU->evalErrors[i].first;
+            headerBuffer[3 + 2 * i + 1] = static_cast<double>(headerCPU->evalErrors[i].second);
         }
 
-        // Initiate receive of the header on the main node
-        std::vector<MPI_Request> recvHeaderRequests(NumProc() - 1);
-        if (m_mpi->IsMainNode())
+        auto headerData = ::CNTK::MakeSharedObject<::CNTK::NDArrayView>(::CNTK::DataType::Double, ::CNTK::NDShape{ numberOfElements }, headerBuffer.get(), numberOfElements * sizeof(double), ::CNTK::DeviceDescriptor::CPUDevice());
+        auto headerValue = ::CNTK::MakeSharedObject<::CNTK::Value>(headerData);
+        std::vector<::CNTK::ValuePtr> header {headerValue};
+        m_communicator->AggregateInPlace(header, std::unordered_set<::CNTK::DistributedWorkerDescriptor>());
+
+        // Copy data back to the header
+        headerCPU->criterion = headerBuffer[0];
+        headerCPU->numSamples = static_cast<size_t>(headerBuffer[1]);
+        headerCPU->numSamplesWithLabel = static_cast<size_t>(headerBuffer[2]);
+        for (size_t i = 0; i < headerCPU->numEvalNode; ++i)
         {
-            for (size_t j = 0; j < NumProc() - 1; ++j)
-            {
-                int source = (j >= MyRank()) ? (j + 1) : j;
-                // We use a tag of 'numGradMatrices' for the pre-aggregation header
-                MPI_Irecv(m_recvHeaders[j], m_recvHeaders[j]->Size(), MPI_CHAR, source, numGradMatrices, m_mpi->Communicator(), &(recvHeaderRequests[j])) || MpiFail("MPI_Irecv");
-            }
+            headerCPU->evalErrors[i].first = headerBuffer[3 + 2 * i];
+            headerCPU->evalErrors[i].second = static_cast<size_t>(headerBuffer[3 + 2 * i + 1]);
         }
 
-        // Send the headers from all nodes but the main node
-        MPI_Request sendHeaderRequest;
-        if (!m_mpi->IsMainNode())
-            MPI_Isend(headerCPU, headerCPU->Size(), MPI_CHAR, m_mpi->MainNodeRank(), numGradMatrices, m_mpi->Communicator(), &sendHeaderRequest) || MpiFail("MPI_Isend");
-
-        // Perform MPI async allreduce on the gradient data
-        std::vector<MPI_Request> allReduceRequests(numGradMatrices);
-        for (size_t i = 0; i < numGradMatrices; ++i)
-        {
-            ElemType* reductionBuffer = gradients[i]->Data();
-            if (deviceId >= 0)
-            {
-                m_gpuDataTransferers[i]->WaitForCopyGPUToCPUAsync();
-                reductionBuffer = m_intermediateCPUBuffers[i].get();
-            }
-
-            // On Windows this async MPI_Iallreduce call requires MS MPI v7 or higher to be installed
-            MPI_Iallreduce(MPI_IN_PLACE, reductionBuffer, gradients[i]->GetNumElements(), MPIWrapper::GetDataType(reductionBuffer), MPI_SUM, m_mpi->Communicator(), &allReduceRequests[i]) || MpiFail("MPI_Iallreduce");
-        }
-
-        // On the main node wait for the headers to arrive and aggregate
-        if (m_mpi->IsMainNode())
-        {
-            size_t numNodesHeadersReceivedFrom = 0;
-            while (numNodesHeadersReceivedFrom < (NumProc() - 1))
-            {
-                int idx = MPI_UNDEFINED;
-                MPI_Waitany(recvHeaderRequests.size(), recvHeaderRequests.data(), &idx, MPI_STATUS_IGNORE) || MpiFail("MPI_Waitany");
-                if (idx == MPI_UNDEFINED)
-                {
-                    break;
-                }
-
-                numNodesHeadersReceivedFrom++;
-
-                headerCPU->Aggregate(m_recvHeaders[idx], true);
-            }
-
-            assert(numNodesHeadersReceivedFrom == (NumProc() - 1));
-        }
-
-        // Initiate receive of the aggregate header
-        MPI_Request recvAggHeaderRequest;
-        if (!m_mpi->IsMainNode())
-            MPI_Irecv(headerCPU, headerCPU->Size(), MPI_CHAR, m_mpi->MainNodeRank(), numGradMatrices + 1 + numGradMatrices, m_mpi->Communicator(), &recvAggHeaderRequest) || MpiFail("MPI_Irecv");
-
-        // Intiate send of the aggregate header from main node
-        std::vector<MPI_Request> sendAggHeaderRequests(NumProc() - 1);
-        if (m_mpi->IsMainNode())
-        {
-            for (size_t j = 0; j < NumProc() - 1; ++j)
-            {
-                int dest = (j >= MyRank()) ? (j + 1) : j;
-                // TODO: Should we use MPI_Bcast instead for better performance
-                MPI_Isend(headerCPU, headerCPU->Size(), MPI_CHAR, dest, numGradMatrices + 1 + numGradMatrices, m_mpi->Communicator(), &(sendAggHeaderRequests[j])) || MpiFail("MPI_Isend");
-            }
-        }
-
-        // Wait for the allreduce operations to finish and initiate transfer back to the GPU if needed
-        for (size_t i = 0; i < numGradMatrices; ++i)
-        {
-            MPI_Wait(&allReduceRequests[i], MPI_STATUSES_IGNORE) || MpiFail("MPI_Wait");
-            if (deviceId >= 0)
-                m_gpuDataTransferers[i]->CopyCPUToGPUAsync<ElemType>(m_intermediateCPUBuffers[i].get(), gradients[i]->GetNumElements(), gradients[i]->Data());
-        }
-
-        // Wait to receive aggregate header
-        if (!m_mpi->IsMainNode())
-            MPI_Wait(&recvAggHeaderRequest, MPI_STATUSES_IGNORE) || MpiFail("MPI_Wait");
-
-        // Wait for all the transfers to finish
-        if (deviceId >= 0)
-        {
-            for (size_t i = 0; i < numGradMatrices; ++i)
-                m_gpuDataTransferers[i]->WaitForCopyCPUToGPUAsync();
-        }
-
-        // Wait for completion of the async send requests
-        if (!m_mpi->IsMainNode())
-            MPI_Wait(&sendHeaderRequest, MPI_STATUSES_IGNORE) || MpiFail("MPI_Wait");
-        else
-            MPI_Waitall(sendAggHeaderRequests.size(), sendAggHeaderRequests.data(), MPI_STATUSES_IGNORE) || MpiFail("MPI_Waitall");
+        // Make sure the aggregation of gradients finished.
+        // aggregatedGradientsFuture.get();
 
         if (showSyncPerfStats)
         {
@@ -355,4 +277,5 @@ private:
 
     bool m_initialized;
 };
-} } }
+
+}}}

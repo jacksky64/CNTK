@@ -144,11 +144,12 @@ namespace CNTK
         });
     }
 
-    std::vector<int> MPICommunicatorImpl::Prepare(const std::vector<ValuePtr>& values)
+    std::pair<DeviceDescriptor, std::vector<int>> MPICommunicatorImpl::Prepare(const std::vector<ValuePtr>& values)
     {
         assert(CPUDEVICE < 0); // just in case somebody decides to change CPUDEVICE macro.
         std::vector<int> indices(values.size(), CPUDEVICE);
         int numGPUValues = 0;
+        DeviceDescriptor lastGpuDevice = DeviceDescriptor::CPUDevice();
         for (auto i = 0; i < values.size(); ++i)
         {
             auto& value = values[i];
@@ -160,8 +161,6 @@ namespace CNTK
             {
                 RuntimeError("Aggregation for sparse matrices is currently not supported!");
             }
-            
-            DeviceDescriptor lastGpuDevice = DeviceDescriptor::CPUDevice();
 
             if (device.Type() == DeviceKind::GPU)
             {
@@ -196,12 +195,14 @@ namespace CNTK
             }
         }
 
-        return indices;
+        return std::make_pair(lastGpuDevice, indices);
     }
 
     /*virtual*/ void MPICommunicatorImpl::AggregateInPlace(const std::vector<ValuePtr>& values,
                                                            const std::unordered_set<DistributedWorkerDescriptor>& sendToWorkers)
     {
+        //if (m_mpi->NumNodesInUse() == 1) // No need to aggregate anything.
+            //return;
         AggregateImpl(values, values, sendToWorkers);
     }
 
@@ -217,10 +218,11 @@ namespace CNTK
         {
             return;
         }
-        
-        const auto& gpuIndexVector = Prepare(inputValues);
 
-        if (gpuIndexVector.size() > 0)
+        auto prepared = Prepare(inputValues);
+        auto gpuIndexVector = prepared.second;
+        auto device = prepared.first;
+        if (device.Type() != DeviceKind::CPU)
         {
             // Before initiating gpu-to-cpu transfer, make sure that all the computations on the main GPU
             // stream are finished.
@@ -270,14 +272,19 @@ namespace CNTK
             void* inputData = (gpuIndex != CPUDEVICE) ? m_intermediateCPUBuffers[gpuIndex].data.get() : GetDataBuffer(inputView);
             void* outputData = (gpuIndex != CPUDEVICE) ? m_intermediateCPUBuffers[gpuIndex].data.get() : GetDataBuffer(outputView);
 
-
             if (dataType == DataType::Float)
-            {          
-                m_mpi->AllReduceAsync<float>(static_cast<float*>(inputData), static_cast<float*>(outputData), numElements, &allReduceRequests[i]);
+            {
+                if (inputData == outputData)
+                    m_mpi->AllReduceAsync<float>(static_cast<float*>(outputData), numElements, &allReduceRequests[i]);
+                else
+                    m_mpi->AllReduceAsync<float>(static_cast<float*>(inputData), static_cast<float*>(outputData), numElements, &allReduceRequests[i]);
             }
             else if (dataType == DataType::Double)
             {
-                m_mpi->AllReduceAsync<double>(static_cast<double*>(inputData), static_cast<double*>(outputData), numElements, &allReduceRequests[i]);
+                if (inputData == outputData)
+                    m_mpi->AllReduceAsync<double>(static_cast<double*>(outputData), numElements, &allReduceRequests[i]);
+                else
+                    m_mpi->AllReduceAsync<double>(static_cast<double*>(inputData), static_cast<double*>(outputData), numElements, &allReduceRequests[i]);
             }
             else
                 LogicError("Unknown DataType");
@@ -309,9 +316,11 @@ namespace CNTK
             }
         }
 
-        for (auto gpuIndex : gpuIndexVector)
+        for (auto i = 0; i < numValues; ++i)
         {
-            m_gpuDataTransferers[gpuIndex]->WaitForCopyCPUToGPUAsync();
+            auto gpuIndex = gpuIndexVector[i];
+            if (gpuIndex != CPUDEVICE)
+                m_gpuDataTransferers[gpuIndex]->WaitForCopyCPUToGPUAsync();
         }
     }
 
