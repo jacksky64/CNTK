@@ -49,45 +49,7 @@ namespace CNTK
         m_data.m_ptr = nullptr;
     }
 
-    template <typename ElementType> 
-    bool AreEqual(NDArrayView& view1, NDArrayView& view2)
-    {
-        if (view1.GetDataType() != view2.GetDataType() ||
-            view1.Shape() != view2.Shape())
-        {
-            return false;
-        }
-
-        ElementType* data1 = nullptr;
-        ElementType* data2 = nullptr;
-        if (view1.Device().Type() == DeviceKind::CPU)
-        {
-            data1 = view1.WritableDataBuffer<ElementType>();
-            data2 = view2.WritableDataBuffer<ElementType>();
-        }
-        else
-        {
-            NDArrayViewPtr temp1CpuDataView = MakeSharedObject<NDArrayView>(AsDataType<ElementType>(), view1.Shape(), DeviceDescriptor::CPUDevice());
-            temp1CpuDataView->CopyFrom(view1);
-            data1 = temp1CpuDataView->WritableDataBuffer<ElementType>();
-
-            NDArrayViewPtr temp2CpuDataView = MakeSharedObject<NDArrayView>(AsDataType<ElementType>(), view2.Shape(), DeviceDescriptor::CPUDevice());
-            temp2CpuDataView->CopyFrom(view2);
-            data2 = temp2CpuDataView->WritableDataBuffer<ElementType>();
-        }
-
-        size_t numElements = view1.Shape().TotalSize();
-
-        for (size_t i = 0; i < numElements; ++i)
-        {
-            if (data1[i] != data2[i])
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
+    
     bool DictionaryValue::operator==(const DictionaryValue& other) const
     {
         if (this == &other)
@@ -132,17 +94,6 @@ namespace CNTK
         {   
             vector<DictionaryValue>* vectorPtr1 = reinterpret_cast<vector<DictionaryValue>*>(m_data.m_ptr);
             vector<DictionaryValue>* vectorPtr2 = reinterpret_cast<vector<DictionaryValue>*>(other.m_data.m_ptr);
-
-            for (int i = 0; i < vectorPtr1->size(); i++)
-            {
-                DictionaryValue& dv1 = (*vectorPtr1)[i];
-                DictionaryValue& dv2 = (*vectorPtr2)[i];
-                if (dv1 != dv2)
-                {
-                    return false;
-                }
-            }
-
             return (*vectorPtr1 == *vectorPtr2);
         }
         case DictionaryValue::Type::Dictionary:
@@ -156,15 +107,7 @@ namespace CNTK
             NDArrayView* viewPtr1 = reinterpret_cast<NDArrayView*>(m_data.m_ptr);
             NDArrayView* viewPtr2 = reinterpret_cast<NDArrayView*>(other.m_data.m_ptr);
 
-            switch (viewPtr1->GetDataType())
-            {
-            case DataType::Float:
-                return AreEqual<float>(*viewPtr1, *viewPtr2);
-            case DataType::Double:
-                return AreEqual<double>(*viewPtr1, *viewPtr2);
-            default:
-                NOT_IMPLEMENTED;
-            }
+            return Internal::AreEqual(*viewPtr1, *viewPtr2);
         }
         default:
             NOT_IMPLEMENTED;

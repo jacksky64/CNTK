@@ -203,7 +203,7 @@ namespace CNTK
         }
         else
         {
-             Dictionary model = Function::Save(m_combinedTrainingFunction);
+             Dictionary model = m_combinedTrainingFunction->Serialize();
              auto stream = GetFstream(modelFilePath, false);
             *stream << model;
              stream->flush();
@@ -237,40 +237,7 @@ namespace CNTK
             auto stream = GetFstream(modelFilePath, true);
             Dictionary model;
             *stream >> model;
-            auto reloadedFunction = Function::Load(model, DeviceDescriptor::CPUDevice());
-
-            std::unordered_map<std::wstring, Variable> inputMap;
-            const auto& inputs = m_combinedTrainingFunction->Inputs();
-            for (const auto& input : inputs)
-            {
-                if (input.IsInput())
-                {
-                    inputMap[input.Uid()] = input;
-                }
-            }
-
-            std::unordered_map<Variable, Variable> replacements;
-            const auto& reloadedFunctionInputs = reloadedFunction->Inputs();
-            for (const auto& input : reloadedFunctionInputs)
-            {
-                if (input.IsPlaceholder())
-                {
-                    const auto& it = inputMap.find(input.Uid());
-                    assert(it != inputMap.end());
-                    replacements[input] = it->second;
-                }
-            }
-
-            m_combinedTrainingFunction = reloadedFunction->ReplacePlaceholders(replacements);
-            auto outputs = m_combinedTrainingFunction->Outputs();
-            m_model = outputs[0].Owner();
-            m_aggregatedLossFunction = outputs[1].Owner();
-            m_lossFunction = outputs[2].Owner();
-            if (outputs.size() > 3)
-            {
-                m_aggregatedEvaluationFunction = outputs[3].Owner();
-                m_evaluationFunction = outputs[4].Owner();
-            }
+            m_combinedTrainingFunction->RestoreFromCheckpoint(model);
         }
 
         std::wstring trainerStateCheckpointFilePath = GetTrainerStateCheckpointFilePath(modelFilePath);
@@ -287,42 +254,9 @@ namespace CNTK
                        learnerStates.size(), m_parameterLearners.size());
         }
 
-        std::unordered_map<std::wstring, Variable> uidToParameterMap;
-        const auto& modelParameters = m_combinedTrainingFunction->Parameters();
-        for (const auto& parameter : modelParameters)
-        {
-            uidToParameterMap[parameter.Uid()] = parameter;
-        }
-
-        std::unordered_set<std::wstring> learnerParameterUids;
         for (int i = 0; i < m_parameterLearners.size(); ++i)
         {
             m_parameterLearners[i]->RestoreFromCheckpoint(learnerStates[i].Value<Dictionary>());
-            auto& learnerParameters = m_parameterLearners[i]->Parameters(); // returns const set.
-            for (const auto& parameter : learnerParameters) 
-            {
-                //auto& p = const_cast<Parameter&>(parameter);
-                auto& modelParameter = uidToParameterMap[parameter.Uid()];
-                auto value = reinterpret_cast<Parameter&>(modelParameter).Value();
-                parameter.m_dataFields->m_value = value;
-                learnerParameterUids.insert(parameter.Uid());
-            }
-        }
-
-        if (modelParameters.size() != learnerParameterUids.size())
-        {
-            LogicError("Trainer::RestoreFromCheckpoint: "
-                       "Number of unique model parameters (%d) and does not match the number of unique learner parameters (%d)",
-                       modelParameters.size(), learnerParameterUids.size());
-        }
-
-        for (const auto& p : modelParameters) 
-        {
-            if (learnerParameterUids.find(p.Uid()) == learnerParameterUids.end())
-            {
-                LogicError("Trainer::RestoreFromCheckpoint: "
-                           "No learner is associated with the parameter %ls (uid: %ls)", p.Name().c_str(), p.Uid().c_str());
-            }
         }
     }
 

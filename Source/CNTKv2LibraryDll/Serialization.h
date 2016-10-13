@@ -30,6 +30,7 @@ namespace CNTK
     const std::wstring unitKey = L"unit";
     const std::wstring scheduleKey = L"schedule";
     const std::wstring learningRateScheduleKey = L"learnig_rate_schedule";
+    const std::wstring parametersKey = L"parameters";
 
     template <typename T> 
     inline std::string GetVersionsString(size_t currentVersion, size_t dictVersion)

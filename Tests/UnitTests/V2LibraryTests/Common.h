@@ -162,6 +162,24 @@ inline CNTK::FunctionPtr FullyConnectedDNNLayer(CNTK::Variable input, size_t out
     return nonLinearity(FullyConnectedLinearLayer(input, outputDim, device));
 }
 
+inline CNTK::FunctionPtr FullyConnectedFeedForwardClassifierNet(CNTK::Variable input,
+                                                   size_t numOutputClasses,
+                                                   size_t hiddenLayerDim,
+                                                   size_t numHiddenLayers,
+                                                   const CNTK::DeviceDescriptor& device,
+                                                   const std::function<CNTK::FunctionPtr(const CNTK::FunctionPtr&)>& nonLinearity,
+                                                   const std::wstring& outputName,
+                                                   size_t seed = CNTK::DefaultRandomSeed)
+{
+    assert(numHiddenLayers >= 1);
+    auto classifierRoot = FullyConnectedDNNLayer(input, hiddenLayerDim, device, nonLinearity);
+    for (size_t i = 1; i < numHiddenLayers; ++i)
+        classifierRoot = FullyConnectedDNNLayer(classifierRoot, hiddenLayerDim, device, nonLinearity);
+
+    auto outputTimesParam = CNTK::Parameter(CNTK::NDArrayView::RandomUniform<float>({ numOutputClasses, hiddenLayerDim }, -0.5, 0.5, unsigned long(seed), device));
+    return Times(outputTimesParam, classifierRoot, 1, outputName);
+}
+
 template <typename ElementType>
 inline CNTK::FunctionPtr Stabilize(const CNTK::Variable& x, const CNTK::DeviceDescriptor& device)
 {
@@ -428,40 +446,67 @@ inline CNTK::FunctionPtr LSTMSequenceClassiferNet(const CNTK::Variable& input, s
 }
 
 template <typename ElementType> 
-bool AreEqual(CNTK::NDArrayView& view1, CNTK::NDArrayView& view2)
+inline bool AreEqual(const CNTK::NDArrayViewPtr& view1, const CNTK::NDArrayViewPtr& view2)
 {
-    if (view1.GetDataType() != view2.GetDataType() ||
-        view1.Shape() != view2.Shape())
+    return AreEqual<ElementType>(*view1, *view2);
+}
+
+inline bool AreEqual(const CNTK::Variable& var1, const CNTK::Variable& var2)
+{
+    if (var1 == var2)
+    {
+        return true;
+    }
+
+    if (!CNTK::Internal::AreEquivalent(var1, var2))
     {
         return false;
     }
 
-    ElementType* data1 = nullptr;
-    ElementType* data2 = nullptr;
-    if (view1.Device().Type() == DeviceKind::CPU)
+    if (!(var1.IsParameter() || var1.IsConstant()))
     {
-        data1 = const_cast<ElementType*>(view1.DataBuffer<ElementType>());
-        data2 = const_cast<ElementType*>(view2.DataBuffer<ElementType>());
-    }
-    else
-    {
-        CNTK::NDArrayViewPtr temp1CpuDataView = MakeSharedObject<CNTK::NDArrayView>(AsDataType<ElementType>(), view1.Shape(), DeviceDescriptor::CPUDevice());
-        temp1CpuDataView->CopyFrom(view1);
-        data1 = temp1CpuDataView->WritableDataBuffer<ElementType>();
-
-        CNTK::NDArrayViewPtr temp2CpuDataView = MakeSharedObject<CNTK::NDArrayView>(AsDataType<ElementType>(), view2.Shape(), DeviceDescriptor::CPUDevice());
-        temp2CpuDataView->CopyFrom(view2);
-        data2 = temp2CpuDataView->WritableDataBuffer<ElementType>();
+        return true;
     }
 
-    size_t numElements = view1.Shape().TotalSize();
-
-    for (size_t i = 0; i < numElements; ++i)
+    CNTK::NDArrayViewPtr ptr1, ptr2;
+    if (var1.IsParameter()) 
     {
-        if (data1[i] != data2[i])
-        {
+        ptr1 = reinterpret_cast<const CNTK::Parameter&>(var1).Value();
+        ptr2 = reinterpret_cast<const CNTK::Parameter&>(var2).Value();
+    }
+    if (var1.IsConstant()) 
+    {
+        ptr1 = reinterpret_cast<const CNTK::Constant&>(var1).Value();
+        ptr2 = reinterpret_cast<const CNTK::Constant&>(var2).Value();
+    }
+
+    return CNTK::Internal::AreEqual(*ptr1, *ptr2);
+}
+
+inline bool AreEqual(const CNTK::FunctionPtr& f1, const CNTK::FunctionPtr& f2)
+{
+    if (f1 == f2)
+    { 
+        return true;
+    }
+
+    if (!CNTK::Internal::AreEquivalent(f1, f2))
+    {
+        return false;
+    }
+
+    auto inputs1 = f1->Inputs();
+    auto inputs2 = f2->Inputs();
+
+    assert(inputs1.size() == inputs2.size());
+
+    for (int i = 0; i < inputs1.size(); i++)
+    {
+        if (!AreEqual(inputs1[i], inputs2[i]))
+        { 
             return false;
         }
     }
+
     return true;
 }

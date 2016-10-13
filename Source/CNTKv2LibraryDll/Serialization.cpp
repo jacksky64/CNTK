@@ -21,11 +21,7 @@ namespace CNTK
         typename std::enable_if<std::is_pod<T>::value, BinaryOStreamWrapper&>::type
         operator<<(const T& value)
         { 
-#ifndef NDEBUG
-            m_stream << value << "\n";
-#else
             m_stream.write(reinterpret_cast<const char*>(&value), sizeof(T)); 
-#endif
             return *this ; 
         }
 
@@ -33,11 +29,7 @@ namespace CNTK
         {
             size_t length = str.length();
             *this << length;
-#ifndef NDEBUG
-            m_stream << std::string(str.begin(), str.end()) << "\n";
-#else
             m_stream.write(reinterpret_cast<const char*>(str.c_str()), str.length() * sizeof(wchar_t)); 
-#endif
             return *this; 
         }
 
@@ -56,13 +48,9 @@ namespace CNTK
         typename std::enable_if<std::is_pod<T>::value, BinaryIStreamWrapper&>::type
         operator>>(T& value)
         { 
-#ifndef NDEBUG
-            m_stream >> value;
-#else
             static_assert(sizeof(T) <= sizeof(size_t), "size_t is the largest supported type.");
             m_stream.read(buf, sizeof(T)); 
             value = *(reinterpret_cast<T*>(buf));
-#endif
             return *this ; 
         }
 
@@ -70,21 +58,12 @@ namespace CNTK
         { 
             size_t length;
             *this >> length;
-#ifndef NDEBUG
-            std::string s;
-            if (length > 0)
-            {
-                m_stream >> s;
-            }
-            str.append(s.begin(), s.end()); 
-#else
             str.reserve(length);
             for (size_t i = 0; i < length; ++i)
             {
                 m_stream.read(buf, sizeof(wchar_t)); 
                 str.append(reinterpret_cast<wchar_t*>(buf));
             }
-#endif
             return *this; 
         }
 

@@ -2059,7 +2059,7 @@ namespace CNTK
     /// (denoting data) as the edges and leaves of the graph.
     /// Function class inherits from  IDictionarySerializable to allow derived 'Function' types to specify custom serialization procedure.
     ///
-    class Function : public std::enable_shared_from_this<Function>, protected IDictionarySerializable
+    class Function : public std::enable_shared_from_this<Function>, public IDictionarySerializable
     {
         friend class CompositeFunction;
         friend class Trainer;
@@ -2120,7 +2120,7 @@ namespace CNTK
         ///
         /// Generates a dictionary that captures the state of the Function graph underlying this Function.
         ///
-        CNTK_API static Dictionary Save(const FunctionPtr& rootFunction);
+        CNTK_API virtual Dictionary Serialize() const override { return Dictionary(); }
 
         ///
         /// Loads a Function from the dictionary.
@@ -2131,7 +2131,7 @@ namespace CNTK
 
     public:
         ///
-        /// Returns the name of 'this' variable.
+        /// Returns the name of 'this' function.
         ///
         const std::wstring& Name() const { return m_name; }
 
@@ -2262,6 +2262,7 @@ namespace CNTK
                                                 std::unordered_set<const Function*>& visitedFunctions,
                                                 std::unordered_set<Variable>& replacedPlaceholders);
 
+
         static FunctionPtr Clone(const FunctionPtr& clonee,
                                  ParameterCloningMethod parameterCloneMethod,
                                  const std::unordered_map<Variable, Variable>& replacements,
@@ -2279,6 +2280,10 @@ namespace CNTK
         Function(const std::vector<Variable>& inputs, const std::vector<Variable>& outputs, Dictionary&& functionConfig, const std::wstring& name = L"", const std::wstring& uid = Internal::GenerateUid(L"UserDefinedFunction"))
             : Function(inputs, outputs, std::move(functionConfig), nullptr, name, uid)
         {}
+
+        /// Restores the state of the 'this' function in place using the provided dictionary.
+        /// Structurally, 'this' function graph has to be identical to the state captured in the dictionary.
+        CNTK_API virtual void RestoreFromCheckpoint(const Dictionary& dictionary);
 
     private:
 
@@ -2794,7 +2799,7 @@ namespace CNTK
         ///
         /// Returns the set of parameters associated with this learner.
         ///
-        const std::unordered_set<Parameter>& Parameters() const { return m_parameters; }
+        const std::vector<Parameter>& Parameters() const { return m_parameters; }
 
         ///
         /// Optionally overridable method to checkpoint the learner's state.
@@ -2835,12 +2840,12 @@ namespace CNTK
 
     protected:
         Learner(const std::vector<Parameter>& parameters, const LearningRatesPerSample& learningRateSchedule)
-            : m_parameters(parameters.begin(), parameters.end()),
+            : m_parameters(parameters),
             m_learningRateSchedule(learningRateSchedule),
             m_sampleCount(0)
         {}
 
-        std::unordered_set<Parameter> m_parameters;
+        std::vector<Parameter> m_parameters;
         LearningRatesPerSample m_learningRateSchedule;
         size_t m_sampleCount;
     };
@@ -2945,12 +2950,12 @@ namespace CNTK
         ///
         /// Checkpoint the model and other Trainer state at the specified file location
         ///
-        CNTK_API void SaveCheckpoint(const std::wstring& modelFilePath, bool usinglegacyModelFormat = true);
+        CNTK_API void SaveCheckpoint(const std::wstring& modelFilePath, bool usingLegacyModelFormat = true);
 
         ///
         /// Restore the model and trainer state from a previously saved model and checkpoint from the specified file location
         ///
-        CNTK_API void RestoreFromCheckpoint(const std::wstring& modelFilePath, bool usinglegacyModelFormat = true);
+        CNTK_API void RestoreFromCheckpoint(const std::wstring& modelFilePath, bool usingLegacyModelFormat = true);
 
         ///
         /// Model being trained by 'this' Trainer.
@@ -2986,9 +2991,6 @@ namespace CNTK
         /// Learners associated with this Trainer for updating the model's parameters using computed gradients.
         ///
         const std::vector<LearnerPtr>& ParameterLearners() const { return m_parameterLearners; }
-
-       
-        FunctionPtr XXX() const { return m_combinedTrainingFunction; }
 
     private:
         FunctionPtr m_combinedTrainingFunction;

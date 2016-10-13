@@ -22,12 +22,6 @@ namespace CNTK
             return s_nextUniqueId++;
         }
 
-
-        void ResetUniqueId()
-        {
-            s_nextUniqueId.store(0);
-        }
-
         std::atomic<bool> s_reverseTensorShapesInErrorMessages(false);
         void EnableReversingTensorShapesInErrorMessages()
         {
@@ -59,6 +53,143 @@ namespace CNTK
         bool IsAutomaticUnpackingOfPackedValuesDisabled()
         {
             return s_disableAutomaticUnpackingOfPackedValues.load();
+        }
+
+        bool AreEquivalent(const Variable& var1, const Variable& var2)
+        {
+            return (var1.Kind() == var2.Kind() &&
+                    var1.GetDataType() == var2.GetDataType() &&
+                    var1.NeedsGradient() == var2.NeedsGradient() &&
+                    var1.IsSparse() == var2.IsSparse() ||
+                    var1.DynamicAxes() == var2.DynamicAxes() ||
+                    var1.Shape() == var2.Shape());
+        }
+
+        bool AreEquivalent(const FunctionPtr& f1, const FunctionPtr& f2, std::unordered_set<std::wstring>& uids)
+        {
+            if (uids.find(f1->Uid()) != uids.end())
+            {
+                return true;
+            }
+            else
+            {
+                uids.insert(f1->Uid());
+            }
+
+            if((f1->RootFunction() == nullptr) != (f2->RootFunction() == nullptr))
+            {
+                return false;
+            }
+
+            if (f1->OpName() != f2->OpName())
+            {
+                return false;
+            }
+
+            auto outputs1 = f1->Outputs();
+            auto outputs2 = f2->Outputs();
+
+            if (outputs1.size() != outputs2.size())
+            {
+                return false;
+            }
+
+            for (int i = 0; i < outputs1.size(); ++i)
+            {
+                if (!AreEquivalent(outputs1[i], outputs2[i]))
+                {
+                    return false;
+                }
+            }
+
+            auto inputs1 = f1->Inputs();
+            auto inputs2 = f2->Inputs();
+
+            if (inputs1.size() != inputs2.size())
+            {
+                return false;
+            }
+
+            for (int i = 0; i < inputs1.size(); ++i)
+            {
+                if (!AreEquivalent(inputs1[i], inputs2[i]))
+                {
+                    return false;
+                }
+
+                if (inputs1[i].IsOutput() && !AreEquivalent(inputs1[i].Owner(), inputs2[i].Owner(), uids))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        bool AreEquivalent(const FunctionPtr& f1, const FunctionPtr& f2)
+        {
+            std::unordered_set<std::wstring> uids;
+            return AreEquivalent(f1, f2, uids);
+        }
+
+        template <typename ElementType> 
+        bool AreEqual(const NDArrayView& view1, const NDArrayView& view2)
+        {
+            if (view1.GetDataType() != view2.GetDataType() ||
+                view1.Shape() != view2.Shape())
+            {
+                return false;
+            }
+
+            CNTK::NDArrayViewPtr temp1CpuDataView, temp2CpuDataView;
+            ElementType* data1 = nullptr;
+            ElementType* data2 = nullptr;
+            if (view1.Device().Type() == DeviceKind::CPU)
+            {
+                data1 = const_cast<ElementType*>(view1.DataBuffer<ElementType>());
+            }
+            else
+            {
+                temp1CpuDataView = MakeSharedObject<CNTK::NDArrayView>(AsDataType<ElementType>(), view1.Shape(), DeviceDescriptor::CPUDevice());
+                temp1CpuDataView->CopyFrom(view1);
+                data1 = temp1CpuDataView->WritableDataBuffer<ElementType>();
+            }
+
+            if (view2.Device().Type() == DeviceKind::CPU)
+            {
+                data2 = const_cast<ElementType*>(view2.DataBuffer<ElementType>());
+            }
+            else
+            {
+                temp2CpuDataView = MakeSharedObject<CNTK::NDArrayView>(AsDataType<ElementType>(), view2.Shape(), DeviceDescriptor::CPUDevice());
+                temp2CpuDataView->CopyFrom(view2);
+                data2 = temp2CpuDataView->WritableDataBuffer<ElementType>();
+            }
+
+            size_t numElements = view1.Shape().TotalSize();
+
+            for (size_t i = 0; i < numElements; ++i)
+            {
+                if (data1[i] != data2[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        bool AreEqual(const NDArrayView& view1, const NDArrayView& view2)
+        {
+            if (view1.GetDataType() == DataType::Float)
+            {
+                return AreEqual<float>(view1, view2);
+            } 
+            if (view1.GetDataType() == DataType::Double)
+            {
+                return AreEqual<double>(view1, view2);
+            }
+
+            LogicError("Unknown DataType");
         }
     }
 

@@ -438,13 +438,28 @@ namespace CNTK
         return clonedComposite;
     }
 
-    /*static*/ Dictionary Function::Save(const FunctionPtr& rootFunction)
-    {
-        CompositeFunction* compositeFunction = dynamic_cast<CompositeFunction*>(rootFunction.get());
-        if (compositeFunction == nullptr)
-            InvalidArgument("Primitive (aka non-composite) Function instances cannot be saved");
 
-        return compositeFunction->Serialize();
+    /*virtual*/ void Function::RestoreFromCheckpoint(const Dictionary& modelDictionar)
+    {
+        CompositeFunction* compositeFunction = dynamic_cast<CompositeFunction*>(this);
+        if (compositeFunction == nullptr)
+            InvalidArgument("Primitive (aka non-composite) Function instances cannot be restored from a checkpoint.");
+
+        auto restoredFunction = Function::Load(modelDictionar, DeviceDescriptor::CPUDevice());
+
+        if (!Internal::AreEquivalent(shared_from_this(), restoredFunction))
+            InvalidArgument("This function is not equivalent (isomorphic) to the function restored from a checkpoint.");
+
+        auto parameters = Parameters();
+        auto restoredParameters = restoredFunction->Parameters();
+
+        assert(parameters.size() == restoredParameters.size());
+
+        for (int i = 0; i < parameters.size(); i++)
+        {
+            assert(Internal::AreEquivalent(parameters[i], restoredParameters[i]));
+            parameters[i].Value()->CopyFrom(*(restoredParameters[i].Value().get()));
+        }
     }
 
     /*static*/ FunctionPtr Function::Load(const Dictionary& modelDictionary, const CNTK::DeviceDescriptor& device)
@@ -876,6 +891,7 @@ namespace CNTK
         dict[typeKey] = s_compositeFunctionTypeValue;
         dict[rootKey] = RootFunction()->Uid();
         dict[nameKey] = Name();
+        dict[uidKey] = Uid();
 
        
         // Find cycles in the graph and "break" them by inserting placeholders.
@@ -895,11 +911,8 @@ namespace CNTK
                             continue;
                         }
 
-                        // first, check if this input corresponds to a cyclic edge in the graph.
+                        // check if this input corresponds to a cyclic edge in the graph.
                         bool mustBeReplaced = input.IsOutput() && visitedFunctions.find(input.Owner()) != visitedFunctions.end();
-                        
-                        // second, if this is an actual input, it also needs to be replaced with a placeholder.
-                        mustBeReplaced |= input.IsInput();
 
                         if (mustBeReplaced)
                         {
@@ -962,12 +975,13 @@ namespace CNTK
 
     /*static*/ FunctionPtr CompositeFunction::Load(const Dictionary& dict, const CNTK::DeviceDescriptor& device)
     {
-        static const vector<std::wstring> s_requiredDictionaryKeys = { typeKey, rootKey, nameKey, inputsKey, functionsKey };
+        static const vector<std::wstring> s_requiredDictionaryKeys = { typeKey, rootKey, nameKey, uidKey, inputsKey, functionsKey };
        
         size_t version = ValidateDictionary<CompositeFunction>(dict, s_requiredDictionaryKeys, s_compositeFunctionTypeValue, s_serializationVersion);
 
         const auto& rootUid = dict[rootKey].Value<std::wstring>();
         const auto& name = dict[nameKey].Value<std::wstring>();
+        const auto& uid = dict[uidKey].Value<std::wstring>();
         const auto& inputs = dict[inputsKey].Value<vector<DictionaryValue>>();
 
         std::unordered_map<std::wstring, Variable> uidToInputMap(inputs.size());
@@ -1025,7 +1039,7 @@ namespace CNTK
 
         assert(root->Uid() == rootUid);
 
-        auto compositeFunction = CompositeFunction::Create(root, name);
+        auto compositeFunction = CompositeFunction::Create(root, name, uid);
 
         if (placeholderReplacements.size() > 0)
         {

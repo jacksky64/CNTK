@@ -198,7 +198,6 @@ namespace CNTK
         CNTK_API FunctionPtr ReduceElements(const Variable& operand, const std::wstring& reductionOpName, const Axis& axis, const std::wstring& name = L"");
 
         CNTK_API size_t NewUniqueId();
-        CNTK_API void ResetUniqueId();
 
         // Internal hooks for testing and higher-level bindings
         // These should not be directly called by C++ API users
@@ -210,6 +209,9 @@ namespace CNTK
 
         CNTK_API void DisableAutomaticUnpackingOfPackedValues();
         bool IsAutomaticUnpackingOfPackedValuesDisabled();
+
+        CNTK_API bool AreEquivalent(const CNTK::FunctionPtr& f1, const CNTK::FunctionPtr& f2);
+        CNTK_API bool AreEqual(const CNTK::NDArrayView& view1, const CNTK::NDArrayView& view2);
     }
 
     enum class PrimitiveOpType : unsigned int

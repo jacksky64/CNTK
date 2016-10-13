@@ -44,15 +44,15 @@ int main()
     // which will have a silent performance degradation otherwise
     Internal::DisableAutomaticUnpackingOfPackedValues();
 
-   /* NDArrayViewTests();
+    NDArrayViewTests();
     TensorTests();
     FunctionTests();
 
     FeedForwardTests();
     RecurrentFunctionTests();
-*/
+
     SerializationTests();
-   /* LearnerTests();
+    LearnerTests();
 
     TrainerTests();
     TrainCifarResnet();
@@ -64,7 +64,7 @@ int main()
     MultiThreadsEvaluation(IsGPUAvailable());
 
     fprintf(stderr, "Test device selection API\n");
-    DeviceSelectionTests();*/
+    DeviceSelectionTests();
 
     fprintf(stderr, "\nCNTKv2Library tests: Passed\n");
     fflush(stderr);

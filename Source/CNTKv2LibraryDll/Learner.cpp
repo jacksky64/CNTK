@@ -163,6 +163,13 @@ namespace CNTK
         m_minibatchCount(0),
         m_additionalOptions(additionalOptions)
     {
+        std::unordered_set<Parameter> uniqueParameters(parameters.begin(), parameters.end());
+
+        if (uniqueParameters.size() != parameters.size()) 
+        {
+            LogicError("Learner parameters contain duplicates.");
+        }
+        
         for (const auto& parameter : parameters)
         {
             if (!allocateSmoothGradients)
@@ -275,24 +282,22 @@ namespace CNTK
 
         // TODO: should we also save momentum schedule into the checkpoint?
         // If that is the case, need to be able to override this method in subclasses,
-
+        std::vector<DictionaryValue> parameters;
+        parameters.reserve(Parameters().size());
         for (const auto& parameter : Parameters())
         {
-            if (checkpoint.Contains(parameter.Uid()))
-            {
-                LogicError("Parameter uids must be unique");
-            }
-
             const auto& smoothedGradientValue = m_smoothedGradientValues.at(parameter);
-            checkpoint[parameter.Uid()] = *smoothedGradientValue;
+            parameters.push_back(*smoothedGradientValue);
         }
+       
+        checkpoint[parametersKey] = parameters;
 
         return checkpoint;
     }
 
     /*virtual*/ void LearnerBase::RestoreFromCheckpoint(const Dictionary& checkpoint) /*override*/
     {
-        static const vector<std::wstring> s_requiredDictionaryKeys = { typeKey, sampleCountKey, minibatchCountKey, learningRateScheduleKey };
+        static const vector<std::wstring> s_requiredDictionaryKeys = { typeKey, sampleCountKey, minibatchCountKey, learningRateScheduleKey, parametersKey };
         
         ValidateDictionary<LearnerBase>(checkpoint, s_requiredDictionaryKeys, s_learnerTypeValue, CurrentVersion());
 
@@ -302,15 +307,22 @@ namespace CNTK
         // The one given at construction time or the one loaded from a checkpoint?
         m_learningRateSchedule = TrainingParameterSchedule<double>::Load(checkpoint[learningRateScheduleKey].Value<Dictionary>());
 
-        for (const auto& parameter : Parameters())
+        auto parameters = Parameters();
+        auto dictParameters = checkpoint[parametersKey].Value<vector<DictionaryValue>>();
+
+        if (parameters.size() != dictParameters.size())
         {
-            if (!checkpoint.Contains(parameter.Uid()))
-            {
-                LogicError("Checkpoint does not contain state for parameter %ls", parameter.Uid().c_str());
-            }
+            LogicError("Number of parameters in the dictionary (%d) does not match the expected number of learner's parameters (%d)",
+                       dictParameters.size(), parameters.size());
+        }
+
+        for (int i = 0; i < parameters.size(); i++)
+        {
+            auto parameter = parameters[i];
 
             const auto& smoothedGradientValue = m_smoothedGradientValues.at(parameter);
-            const NDArrayView& checkpointedValue = checkpoint[parameter.Uid()].Value<NDArrayView>();
+
+            const NDArrayView& checkpointedValue = dictParameters[i].Value<NDArrayView>();
             
             if (smoothedGradientValue->GetDataType() != checkpointedValue.GetDataType())
             {

@@ -469,14 +469,14 @@ namespace CNTK
         }
 
     public:
-        static CompositeFunctionPtr Create(const FunctionPtr& rootFunction, const std::wstring& name = L"")
+        static CompositeFunctionPtr Create(const FunctionPtr& rootFunction, const std::wstring& name = L"", const std::wstring& uid = L"")
         {
             std::unordered_set<FunctionPtr> visitedFunctions;
 
             // Call Collect to get the set of all functions in the graph
             Collect(rootFunction, visitedFunctions);
 
-            return MakeSharedObject<CompositeFunction>(rootFunction, std::move(visitedFunctions), name);
+            return MakeSharedObject<CompositeFunction>(rootFunction, std::move(visitedFunctions), name, uid);
         }
 
         virtual BackPropStatePtr Forward(const std::unordered_map<Variable, ValuePtr>& arguments,
@@ -504,8 +504,8 @@ namespace CNTK
                                                 std::unordered_set<const Function*>& visitedFunctions,
                                                 std::unordered_set<Variable>& replacedPlaceholders) override;
 
-        CompositeFunction(const FunctionPtr& rootFunction, std::unordered_set<FunctionPtr>&& allPrimitiveFunctions, const std::wstring& name)
-            : Function({}, rootFunction->Outputs(), Dictionary(), rootFunction, name, Internal::GenerateUid(L"CompositeFunction")),
+        CompositeFunction(const FunctionPtr& rootFunction, std::unordered_set<FunctionPtr>&& allPrimitiveFunctions, const std::wstring& name, const std::wstring& uid = Internal::GenerateUid(L"CompositeFunction"))
+            : Function({}, rootFunction->Outputs(), Dictionary(), rootFunction, name, uid),
             m_allPrimitiveFunctions(std::move(allPrimitiveFunctions)), m_networkMatricesAllocated(false)
         {}
 
