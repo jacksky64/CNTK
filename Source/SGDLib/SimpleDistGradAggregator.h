@@ -201,20 +201,17 @@ private:
             aggregationTimer.Start();
         }
 
-        // Aggregate gradients.
-        std::vector<::CNTK::ValuePtr> v2Gradients;
-        std::vector<::CNTK::NDArrayView> values;
+        // Prepare gradients.
+        std::vector<::CNTK::ValuePtr> valuesToAggregate;
         for (size_t i = 0; i < gradients.size(); ++i)
         {
             ::CNTK::NDShape shape{ gradients[i]->GetNumElements() };
             auto data = ::CNTK::MakeSharedObject<::CNTK::NDArrayView>(::CNTK::AsDataType<ElemType>(), shape, gradients[i]->Data(), gradients[i]->GetNumElements() * sizeof(ElemType), ::CNTK::AsDeviceDescriptor(gradients[i]->GetDeviceId()));
             auto value = ::CNTK::MakeSharedObject<::CNTK::Value>(data);
-            v2Gradients.push_back(value);
+            valuesToAggregate.push_back(value);
         }
 
-        m_communicator->AggregateInPlace(v2Gradients, std::unordered_set<::CNTK::DistributedWorkerDescriptor>());
-
-        // Aggregate header as all doubles.
+        // Prepare header.
         size_t numberOfElements = 1 + 1 + 1 + headerCPU->numEvalNode * 2;
         std::unique_ptr<double[]> headerBuffer(new double[numberOfElements]);
         headerBuffer[0] = headerCPU->criterion;
@@ -228,8 +225,9 @@ private:
 
         auto headerData = ::CNTK::MakeSharedObject<::CNTK::NDArrayView>(::CNTK::DataType::Double, ::CNTK::NDShape{ numberOfElements }, headerBuffer.get(), numberOfElements * sizeof(double), ::CNTK::DeviceDescriptor::CPUDevice());
         auto headerValue = ::CNTK::MakeSharedObject<::CNTK::Value>(headerData);
-        std::vector<::CNTK::ValuePtr> header {headerValue};
-        m_communicator->AggregateInPlace(header, std::unordered_set<::CNTK::DistributedWorkerDescriptor>());
+        valuesToAggregate.push_back(headerValue);
+
+        m_communicator->AggregateInPlace(valuesToAggregate, std::unordered_set<::CNTK::DistributedWorkerDescriptor>());
 
         // Copy data back to the header
         headerCPU->criterion = headerBuffer[0];
@@ -240,9 +238,6 @@ private:
             headerCPU->evalErrors[i].first = headerBuffer[3 + 2 * i];
             headerCPU->evalErrors[i].second = static_cast<size_t>(headerBuffer[3 + 2 * i + 1]);
         }
-
-        // Make sure the aggregation of gradients finished.
-        // aggregatedGradientsFuture.get();
 
         if (showSyncPerfStats)
         {

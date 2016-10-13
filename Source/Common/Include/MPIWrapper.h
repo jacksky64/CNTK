@@ -372,7 +372,7 @@ public:
         size_t totalnumelements = accumulator.size();
 
         // use MPI to compute the sum over all elements in (dataptr, totalnumelements) and redistribute to all nodes
-        AllReduce<VECTORLIKEOBJECT::value_type>(dataptr, totalnumelements);
+        AllReduce<typename VECTORLIKEOBJECT::value_type>(dataptr, totalnumelements);
     }
 
     // for raw pointer
