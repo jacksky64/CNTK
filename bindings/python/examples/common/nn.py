@@ -9,7 +9,7 @@ import sys
 import os
 from cntk.ops import *
 from cntk.utils import sanitize_dtype_cntk, get_train_eval_criterion, get_train_loss
-from cntk.initializer import glorot_uniform
+from cntk.initializer import glorot_uniform, he_normal
 
 
 def linear_layer(input_var, output_dim):
@@ -38,11 +38,11 @@ def fully_connected_classifier_net(input, num_output_classes, hidden_layer_dim, 
     return linear_layer(r, num_output_classes)
 
 
-def conv_bn_layer(input, out_feature_map_count, kernel_width, kernel_height, h_stride, v_stride, w_scale, b_value, sc_value, bn_time_const):
+def conv_bn_layer(input, out_feature_map_count, kernel_width, kernel_height, h_stride, v_stride, bn_time_const, b_value=0, sc_value=1):
     shape = input.shape()
     num_in_channels = shape[0]
     #TODO: use RandomNormal to initialize, needs to be exposed in the python api
-    conv_params = parameter(shape=(out_feature_map_count, num_in_channels, kernel_height, kernel_width), init=glorot_uniform(output_rank=-1, filter_rank=2))
+    conv_params = parameter(shape=(out_feature_map_count, num_in_channels, kernel_height, kernel_width), init=he_normal())
     conv_func = convolution(conv_params, input, (num_in_channels, v_stride, h_stride))
 
     #TODO: initialize using b_value and sc_value, needs to be exposed in the python api
@@ -50,47 +50,13 @@ def conv_bn_layer(input, out_feature_map_count, kernel_width, kernel_height, h_s
     scale_params = parameter(shape=(out_feature_map_count), init=sc_value)
     running_mean = constant((out_feature_map_count), 0.0)
     running_invstd = constant((out_feature_map_count), 0.0)
-    return batch_normalization(conv_func, scale_params, bias_params, running_mean, running_invstd, True, bn_time_const, 0.0, 0.000000001)
+    return batch_normalization(conv_func, scale_params, bias_params, running_mean, running_invstd, True, bn_time_const, use_cudnn_engine=True)
 
 
-def conv_bn_relu_layer(input, out_feature_map_count, kernel_width, kernel_height, h_stride, v_stride, w_scale, b_value, sc_value, bn_time_const):
+def conv_bn_relu_layer(input, out_feature_map_count, kernel_width, kernel_height, h_stride, v_stride, bn_time_const, b_value=0, sc_value=1):
     conv_bn_function = conv_bn_layer(input, out_feature_map_count, kernel_width,
-                                     kernel_height, h_stride, v_stride, w_scale, b_value, sc_value, bn_time_const)
+                                     kernel_height, h_stride, v_stride, bn_time_const, b_value, sc_value)
     return relu(conv_bn_function)
-
-
-def resnet_node2(input, out_feature_map_count, kernel_width, kernel_height, w_scale, b_value, sc_value, bn_time_const):
-    c1 = conv_bn_relu_layer(input, out_feature_map_count, kernel_width,
-                            kernel_height, 1, 1, w_scale, b_value, sc_value, bn_time_const)
-    c2 = conv_bn_layer(c1, out_feature_map_count, kernel_width,
-                       kernel_height, 1, 1, w_scale, b_value, sc_value, bn_time_const)
-    p = c2 + input
-    return relu(p)
-
-
-def proj_layer(w_proj, input, h_stride, v_stride, b_value, sc_value, bn_time_const):
-    shape = input.shape()
-    num_in_channels = shape[0]
-    conv_func = convolution(w_proj, input, (num_in_channels, v_stride, h_stride))
-    out_feature_map_count = w_proj.shape()[-1];
-    #TODO: initialize using b_value and sc_value, needs to be exposed in the python api
-    bias_params = parameter(shape=(out_feature_map_count), init=b_value)
-    scale_params = parameter(shape=(out_feature_map_count), init=sc_value)
-    running_mean = constant((out_feature_map_count), 0.0)
-    running_invstd = constant((out_feature_map_count), 0.0)
-    return batch_normalization(conv_func, scale_params, bias_params, running_mean, running_invstd, True, bn_time_const)
-
-
-def resnet_node2_inc(input, out_feature_map_count, kernel_width, kernel_height, w_scale, b_value, sc_value, bn_time_const, w_proj):
-    c1 = conv_bn_relu_layer(input, out_feature_map_count, kernel_width,
-                            kernel_height, 2, 2, w_scale, b_value, sc_value, bn_time_const)
-    c2 = conv_bn_layer(c1, out_feature_map_count, kernel_width,
-                       kernel_height, 1, 1, w_scale, b_value, sc_value, bn_time_const)
-
-    c_proj = proj_layer(w_proj, input, 2, 2, b_value, sc_value, bn_time_const)
-    p = c2 + c_proj
-    return relu(p)
-
 
 def embedding(input, embedding_dim):
     input_dim = input.shape()[0]

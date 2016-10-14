@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft. All rights reserved.
+﻿# Copyright (c) Microsoft. All rights reserved.
 
 # Licensed under the MIT license. See LICENSE.md file in the project root
 # for full license information.
@@ -9,7 +9,7 @@ import sys
 import os
 from cntk import Trainer, StreamConfiguration, DeviceDescriptor, text_format_minibatch_source
 from cntk.learner import sgd
-from cntk.ops import input_variable, cross_entropy_with_softmax, combine, classification_error, sigmoid, element_times, constant
+from cntk.ops import input_variable, cross_entropy_with_softmax, combine, classification_error, relu, element_times, constant
 
 abs_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(abs_path, "..", ".."))
@@ -37,7 +37,7 @@ def simple_mnist(debug_output=False):
     # Instantiate the feedforward classification model
     scaled_input = element_times(constant((), 0.00390625), input)
     netout = fully_connected_classifier_net(
-        scaled_input, num_output_classes, hidden_layers_dim, num_hidden_layers, sigmoid)
+        scaled_input, num_output_classes, hidden_layers_dim, num_hidden_layers, relu)
 
     ce = cross_entropy_with_softmax(netout, label)
     pe = classification_error(netout, label)
@@ -64,11 +64,11 @@ def simple_mnist(debug_output=False):
         lr=0.003125)])
 
     # Get minibatches of images to train with and perform model training
-    minibatch_size = 32
+    minibatch_size = 64
     num_samples_per_sweep = 60000
-    num_sweeps_to_train_with = 1
+    num_sweeps_to_train_with = 10
     num_minibatches_to_train = (num_samples_per_sweep * num_sweeps_to_train_with) / minibatch_size
-    training_progress_output_freq = 80
+    training_progress_output_freq = 500
 
     if debug_output:
         training_progress_output_freq = training_progress_output_freq/4
@@ -100,7 +100,7 @@ def simple_mnist(debug_output=False):
     labels_si = test_mb_source[labels_stream_name]
 
     # Test data for trained model
-    test_minibatch_size = 512
+    test_minibatch_size = 1024
     num_samples = 10000
     num_minibatches_to_test = num_samples / test_minibatch_size
     test_result = 0.0
