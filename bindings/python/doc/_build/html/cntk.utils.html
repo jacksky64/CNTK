@@ -1,0 +1,736 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cntk.utils package &mdash; Python API for CNTK 2.0a4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Python API for CNTK 2.0a4 documentation" href="index.html"/>
+        <link rel="next" title="cntk" href="modules.html"/>
+        <link rel="prev" title="cntk.ops.sequence package" href="cntk.ops.sequence.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Python API for CNTK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0a4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Graph components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.io.html">IO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.trainer.html">Trainer &amp; learners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.ops.html">Operators</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cntk.utils.persist">cntk.utils.persist module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cntk.utils.swig_helper">cntk.utils.swig_helper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cntk.utils">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Python API for CNTK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>cntk.utils package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/cntk.utils.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cntk-utils-package">
+<h1>cntk.utils package<a class="headerlink" href="#cntk-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-cntk.utils.persist">
+<span id="cntk-utils-persist-module"></span><h2>cntk.utils.persist module<a class="headerlink" href="#module-cntk.utils.persist" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="cntk.utils.persist.load_model">
+<code class="descname">load_model</code><span class="sig-paren">(</span><em>data_type</em>, <em>filename</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils/persist.html#load_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.persist.load_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the network in <cite>model_file</cite>, that has been saved using
+<cite>:func:save_model</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data_type</strong> (<em>'float' or 'double', or NumPy type</em>) &#8211; data type of the operation</li>
+<li><strong>filename</strong> (<cite>str</cite>) &#8211; filename to load the model from</li>
+<li><strong>device</strong> (<code class="xref py py-class docutils literal"><span class="pre">cntk.DeviceDescriptor</span></code>, default to default device) &#8211; instance of DeviceDescriptor</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">root node</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.persist.save_model">
+<code class="descname">save_model</code><span class="sig-paren">(</span><em>root_op</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils/persist.html#save_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.persist.save_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the network of <cite>root_op</cite> in <cite>model_file</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>root_op</strong> (<cite>:class:cntk.functions.Function</cite>) &#8211; op of the graph to save</li>
+<li><strong>filename</strong> (<cite>str</cite>) &#8211; filename to store the model in</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cntk.utils.swig_helper">
+<span id="cntk-utils-swig-helper-module"></span><h2>cntk.utils.swig_helper module<a class="headerlink" href="#module-cntk.utils.swig_helper" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="cntk.utils.swig_helper.typemap">
+<code class="descname">typemap</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils/swig_helper.html#typemap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.swig_helper.typemap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upcasts Swig types to cntk types that inherit from Swig.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cntk.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cntk.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="cntk.utils.cntk_device">
+<code class="descname">cntk_device</code><span class="sig-paren">(</span><em>device_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#cntk_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.cntk_device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the legacy device ID as it was used in CNTK 1 to CNTK
+DeviceDescriptor instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>device_id</strong> (<em>int</em>) &#8211; device id, -1 for CPU, 0 or higher for GPU</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">CNTK DeviceDescriptor</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.create_NDArrayView">
+<code class="descname">create_NDArrayView</code><span class="sig-paren">(</span><em>shape</em>, <em>data_type=1</em>, <em>dev=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#create_NDArrayView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.create_NDArrayView" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.create_NDArrayView_from_NumPy">
+<code class="descname">create_NDArrayView_from_NumPy</code><span class="sig-paren">(</span><em>nd</em>, <em>dev=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#create_NDArrayView_from_NumPy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.create_NDArrayView_from_NumPy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.create_Value">
+<code class="descname">create_Value</code><span class="sig-paren">(</span><em>shape</em>, <em>data_type</em>, <em>dev</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#create_Value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.create_Value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.create_Value_from_NumPy">
+<code class="descname">create_Value_from_NumPy</code><span class="sig-paren">(</span><em>nd</em>, <em>dev</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#create_Value_from_NumPy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.create_Value_from_NumPy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.dense_to_str">
+<code class="descname">dense_to_str</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#dense_to_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.dense_to_str" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.ensure_dev">
+<code class="descname">ensure_dev</code><span class="sig-paren">(</span><em>ndav</em>, <em>dev</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#ensure_dev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.ensure_dev" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.eval">
+<code class="descname">eval</code><span class="sig-paren">(</span><em>op</em>, <em>arguments=None</em>, <em>precision=None</em>, <em>device=None</em>, <em>backward_pass=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#eval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>It evaluates <cite>op</cite> on the data provided by the reader. This is useful
+mainly to explore the operators and for convenient unit testing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>op</strong> (<code class="xref py py-class docutils literal"><span class="pre">Function</span></code>) &#8211; operation to evaluate</li>
+<li><strong>arguments</strong> (<cite>dict</cite> or <cite>list</cite> or <cite>tuple</cite>) &#8211; <p>maps variables to their
+input data. The interpretation depends on the input type:</p>
+<blockquote>
+<div><ul>
+<li><cite>dict</cite>: keys are input variable or names and values are the input data.</li>
+<li><cite>list</cite>: elements are input data in the order their respective variables have been defined in the network.</li>
+</ul>
+</div></blockquote>
+<p>In both cases, every every sample in the data will be interpreted
+as a new sequence. To mark samples as continuations of the
+previous sequence, specify <cite>arguments</cite> as <cite>tuple</cite>: the
+first element will be used as <cite>arguments</cite>, and the second one will
+be used as a list of bools, denoting whether a sequence is a new
+one (<cite>True</cite>) or a continuation of the previous one (<cite>False</cite>).
+Data should be either NumPy arrays or a
+<a class="reference internal" href="cntk.io.html#cntk.io.MinibatchData" title="cntk.io.MinibatchData"><code class="xref py py-class docutils literal"><span class="pre">cntk.io.MinibatchData</span></code></a> instance.</p>
+</li>
+<li><strong>seq_starts</strong> (<cite>list</cite> of <cite>bool`s or `None</cite>) &#8211; if <cite>None</cite>, every sequence is
+treated as a new sequence. Otherwise, it is interpreted as a list of
+Booleans that tell whether a sequence is a new sequence (<cite>True</cite>) or a
+continuation of the previous one (<cite>False</cite>)</li>
+<li><strong>precision</strong> (<cite>str</cite> or <cite>None</cite>) &#8211; precision being &#8216;float32&#8217;, &#8216;float64&#8217;, or
+<cite>None</cite>, in which case it will be determined by inspecting the operator
+(costly)</li>
+<li><strong>device</strong> (<code class="xref py py-class docutils literal"><span class="pre">cntk.DeviceDescriptor</span></code>) &#8211; the device the descriptor,
+whether it is CPU or GPU (and which one)</li>
+<li><strong>backward_pass</strong> (<cite>bool</cite>, optional) &#8211; whether a backward pass is performed</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">mapping of output variables to their values.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.get_data_type">
+<code class="descname">get_data_type</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#get_data_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.get_data_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the highest precision numpy datatype of the provided parameters.
+If the parameter is a Function instance, it calculates it based on its
+inputs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (number, <cite>list</cite>, NumPy array, <cite>Variable</cite>, or <cite>Function</cite>) &#8211; input</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>np.float32</cite> or <cite>np.float64</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.get_temp_filename">
+<code class="descname">get_temp_filename</code><span class="sig-paren">(</span><em>directory=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#get_temp_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.get_temp_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and return a temporary filename.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>directory</strong> (<em>str</em>) &#8211; optional directory, in which the temporary file will</li>
+<li><strong>created</strong> (<em>be</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Filename of the temporary file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.get_train_eval_criterion">
+<code class="descname">get_train_eval_criterion</code><span class="sig-paren">(</span><em>trainer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#get_train_eval_criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.get_train_eval_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch the train evaluation criterion (e.g., classification error) from the last minibatch and copy it to the CPU in case it is on the GPU.
+:param trainer: the trainer used.
+:type trainer: <code class="xref py py-class docutils literal"><span class="pre">Trainer</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the criterion value</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.get_train_loss">
+<code class="descname">get_train_loss</code><span class="sig-paren">(</span><em>trainer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#get_train_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.get_train_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch the train loss from the last minibatch and copy it to the CPU in case it is on the GPU.
+:param trainer: the trainer used.
+:type trainer: <code class="xref py py-class docutils literal"><span class="pre">Trainer</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the loss value</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.is_string">
+<code class="descname">is_string</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#is_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.is_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.is_tensor">
+<code class="descname">is_tensor</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#is_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.is_tensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether the data is a tensor, i.e. whether it is a NumPy array or a
+list of NumPy arrays.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; data to check</td>
+</tr>
+</tbody>
+</table>
+<p>Returns: True, if it is a tensor.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.is_tensor_list">
+<code class="descname">is_tensor_list</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#is_tensor_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.is_tensor_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether the data is a CNTK sequence, which is expressed in Python as
+a list of varying sized NumPy objects.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.ones_like">
+<code class="descname">ones_like</code><span class="sig-paren">(</span><em>batch</em>, <em>precision</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#ones_like"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.ones_like" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new batch, which has the same format as <cite>batch</cite> but all values
+set to 1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>batch</strong> (<em>list of NumPy arrays</em>) &#8211; a list of sequences, which are NumPy arrays</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.pad_to_dense">
+<code class="descname">pad_to_dense</code><span class="sig-paren">(</span><em>batch</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#pad_to_dense"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.pad_to_dense" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends the minimal required amount of zeroes at the end of each sample
+in the batch so that it becomes rectangular. <cite>batch</cite> is assumed to be
+row-major: first index is batch item, second is sequence item, then comes
+that actual sample. The sequence length is assumed to be the only varying
+dimension.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>batch</strong> (<em>list of NumPy arrays</em>) &#8211; list of arrays that differ only in their</li>
+<li><strong>dimension</strong> (<a class="reference internal" href="cntk.ops.sequence.html#cntk.ops.sequence.first" title="cntk.ops.sequence.first"><em>first</em></a>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Padded NumPy array</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.sanitize_axis">
+<code class="descname">sanitize_axis</code><span class="sig-paren">(</span><em>rank</em>, <em>axis</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#sanitize_axis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.sanitize_axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sanitizes the axis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rank</strong> (<cite>int</cite>) &#8211; rank of the tensor on which <cite>axis</cite> is to be used</li>
+<li><strong>axis</strong> (<cite>:class:Axis</cite> or <cite>int</cite> or <cite>None</cite>) &#8211; <p>the axis to be used.
+* <cite>:class:Axis</cite>: use axis instance directly (will convert row- to</p>
+<blockquote>
+<div>col-major in case of static axis.</div></blockquote>
+<ul>
+<li><cite>int</cite>: if positive, use it as static axis. If negative, count from
+last to first axis</li>
+<li><cite>None</cite>: denote all available axes</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.sanitize_batch">
+<code class="descname">sanitize_batch</code><span class="sig-paren">(</span><em>var</em>, <em>batch</em>, <em>seq_starts=None</em>, <em>data_type=None</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#sanitize_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.sanitize_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert to <a href="#id1"><span class="problematic" id="id2">:cntk:`Value`</span></a> with <cite>data_type</cite>. If the samples in <cite>batch</cite> have
+different sequence lengths, pad them to max sequence length and create a
+mask.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>var</strong> (<cite>:class:Variable</cite>) &#8211; variable node for which the <cite>batch</cite> is
+meant</li>
+<li><strong>batch</strong> (<cite>list</cite> of NumPy arrays) &#8211; input</li>
+<li><strong>seq_starts</strong> (<cite>list</cite> of <cite>bool`s or `None</cite>) &#8211; if <cite>None</cite>, every sequence is
+treated as a new sequence. Otherwise, it is interpreted as a list of
+Booleans that tell whether a sequence is a new sequence (<cite>True</cite>) or a
+continuation of the previous one (<cite>False</cite>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">converted batch</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><cite>:class:Value</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.sanitize_dtype_cntk">
+<code class="descname">sanitize_dtype_cntk</code><span class="sig-paren">(</span><em>dtype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#sanitize_dtype_cntk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.sanitize_dtype_cntk" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.sanitize_dtype_numpy">
+<code class="descname">sanitize_dtype_numpy</code><span class="sig-paren">(</span><em>dtype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#sanitize_dtype_numpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.sanitize_dtype_numpy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.sanitize_dynamic_axes">
+<code class="descname">sanitize_dynamic_axes</code><span class="sig-paren">(</span><em>axes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#sanitize_dynamic_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.sanitize_dynamic_axes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.sanitize_function">
+<code class="descname">sanitize_function</code><span class="sig-paren">(</span><em>arg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#sanitize_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.sanitize_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries to retrieve a Function from the argument or throws an exception if
+that&#8217;s not possible.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.sanitize_input">
+<code class="descname">sanitize_input</code><span class="sig-paren">(</span><em>arg</em>, <em>fallback_dtype=&lt;class 'numpy.float32'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#sanitize_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.sanitize_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert to Variable or Constant so that it can be passed as Variable to the
+CNTK operators.</p>
+<blockquote>
+<div><ul class="simple">
+<li>If <cite>arg</cite> is a NumPy array and its type is neither <cite>np.float32</cite> nor</li>
+</ul>
+<blockquote>
+<div><cite>np.float64</cite>, it sets it to <cite>np.float32</cite>.</div></blockquote>
+<ul class="simple">
+<li>If <cite>arg</cite> is an op, it is assumed that it has only one output, which will
+be returned.</li>
+</ul>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>arg</strong> (number, NumPy array, <cite>Variable</cite>, or <cite>Function</cite>) &#8211; input</li>
+<li><strong>fallback_dtype</strong> (<em>numpy dtype</em>) &#8211; fallback dtype in case <cite>arg</cite> is a list</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Constant, if <cite>arg</cite> was a number or NumPy array. Variable otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.sanitize_precision">
+<code class="descname">sanitize_precision</code><span class="sig-paren">(</span><em>precision</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#sanitize_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.sanitize_precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts precision to NumPy precision</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>precision</strong> (<cite>str</cite> or <cite>np.float32</cite> or <cite>np.float64</cite>) &#8211; precision, if string
+it can be one of &#8216;float&#8217; &#8216;float32, &#8216;double&#8217;, or &#8216;float64&#8217;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">NumPy precision</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.sanitize_shape">
+<code class="descname">sanitize_shape</code><span class="sig-paren">(</span><em>shape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#sanitize_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.sanitize_shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>If shape is scalar, it creates a tuple out of it and reverse it as cntk uses
+column major.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.sanitize_var_map">
+<code class="descname">sanitize_var_map</code><span class="sig-paren">(</span><em>op_arguments</em>, <em>arguments</em>, <em>precision=None</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#sanitize_var_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.sanitize_var_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sanitizes a dictionary of <cite>Variable`s to input data such that it can be
+handed off to the `Forward</cite> method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>op_arguments</strong> (<a class="reference internal" href="graph.html#cntk.ops.functions.Function" title="cntk.ops.functions.Function"><code class="xref py py-class docutils literal"><span class="pre">cntk.ops.functions.Function</span></code></a>) &#8211; arguments of the root function. In
+forward pass it is typically <cite>op.arguments()</cite>, in backward mode it is
+<cite>op.outputs()</cite></li>
+<li><strong>arguments</strong> (<cite>dict</cite> or <cite>list</cite> or <cite>tuple</cite>) &#8211; <p>maps variables to their
+input data. The interpretation depends on the input type:</p>
+<blockquote>
+<div><ul>
+<li><cite>dict</cite>: keys are input variable or names and values are the input data.</li>
+<li><cite>list</cite>: elements are input data in the order their respective variables have been defined in the network.</li>
+</ul>
+</div></blockquote>
+<p>In both cases, every every sample in the data will be interpreted
+as a new sequence. To mark samples as continuations of the
+previous sequence, specify <cite>arguments</cite> as <cite>tuple</cite>: the
+first element will be used as <cite>arguments</cite>, and the second one will
+be used as a list of bools, denoting whether a sequence is a new
+one (<cite>True</cite>) or a continuation of the previous one (<cite>False</cite>).
+Data should be either NumPy arrays or a
+<a class="reference internal" href="cntk.io.html#cntk.io.MinibatchData" title="cntk.io.MinibatchData"><code class="xref py py-class docutils literal"><span class="pre">cntk.io.MinibatchData</span></code></a> instance.</p>
+</li>
+<li><strong>precision</strong> (<cite>str</cite> or <cite>np.float32</cite> or <cite>np.float64</cite>) &#8211; if string it can be
+one of &#8216;float&#8217; &#8216;float32, &#8216;double&#8217;, &#8216;float64&#8217;, or <cite>None</cite></li>
+<li><strong>device</strong> (<cite>DeviceDescriptor</cite> or <cite>None</cite>) &#8211; CNTK DeviceDescriptor</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>dict</cite> that maps variables to sanitized batches</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.sparse_to_str">
+<code class="descname">sparse_to_str</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#sparse_to_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.sparse_to_str" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.tensors_to_text_format">
+<code class="descname">tensors_to_text_format</code><span class="sig-paren">(</span><em>sample_idx</em>, <em>alias_tensor_map</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#tensors_to_text_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.tensors_to_text_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a list of NumPy arrays representing tensors of inputs into a
+format that is readable by <cite>CNTKTextReader</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sample_idx</strong> (<em>int</em>) &#8211; number of current sample</li>
+<li><strong>alias_tensor_map</strong> (<em>dict</em>) &#8211; maps alias (str) to tensor (ndarray). Tensors
+are assumed to have dynamic axis.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">String representation in CNTKTextReader format</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.utils.value_to_seq">
+<code class="descname">value_to_seq</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/utils.html#value_to_seq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.utils.value_to_seq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a Value to a sequence of NumPy arrays that have their masked
+entries removed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<cite>Value</cite>) &#8211; Value as it is returned by Swig</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a list of NumPy arrays</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="modules.html" class="btn btn-neutral float-right" title="cntk" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="cntk.ops.sequence.html" class="btn btn-neutral" title="cntk.ops.sequence package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0a4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

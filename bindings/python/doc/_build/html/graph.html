@@ -1,0 +1,887 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Graph components &mdash; Python API for CNTK 2.0a4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Python API for CNTK 2.0a4 documentation" href="index.html"/>
+        <link rel="next" title="cntk.io package" href="cntk.io.html"/>
+        <link rel="prev" title="Getting started" href="gettingstarted.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Python API for CNTK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0a4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Graph components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.io.html">IO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.trainer.html">Trainer &amp; learners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.ops.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Python API for CNTK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Graph components</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/graph.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-cntk.ops.variables">
+<span id="graph-components"></span><h1>Graph components<a class="headerlink" href="#module-cntk.ops.variables" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="cntk.ops.variables.Constant">
+<em class="property">class </em><code class="descname">Constant</code><span class="sig-paren">(</span><em>shape=None</em>, <em>value=None</em>, <em>data_type=None</em>, <em>device=None</em>, <em>name=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Constant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Constant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="cntk.html#cntk.tensor.TensorOpsMixin" title="cntk.tensor.TensorOpsMixin"><code class="xref py py-class docutils literal"><span class="pre">cntk.tensor.TensorOpsMixin</span></code></a>, <a class="reference internal" href="cntk.html#cntk.cntk_py.Constant" title="cntk.cntk_py.Constant"><code class="xref py py-class docutils literal"><span class="pre">cntk.cntk_py.Constant</span></code></a></p>
+<p>A constant value. It can be a scalar, vector, matrix, or tensor
+of floating point numbers that cannot be modified.</p>
+<p>Constants are :class:<a href="#id1"><span class="problematic" id="id2">`</span></a>cntk.ops.Variable`s and therefore they inherit all their methods.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>value</strong> (<cite>np.ndarray</cite> or <cite>list</cite> or <cite>float</cite> or <cite>int</cite>) &#8211; Initial value.</li>
+<li><strong>data_type</strong> (<cite>np.float32 or np.float64</cite>) &#8211; data type to store the values as.</li>
+<li><strong>device</strong> (<cite>dev</cite>) &#8211; the device on which the values should reside.</li>
+<li><strong>name</strong> (<cite>str</cite>) &#8211; an optional name for this constant.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cntk.ops.variables.Constant.value">
+<code class="descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Constant.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Constant.value" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the value of the constant.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>NDArrayView</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.ops.variables.Parameter">
+<em class="property">class </em><code class="descname">Parameter</code><span class="sig-paren">(</span><em>shape=None</em>, <em>init=None</em>, <em>data_type=None</em>, <em>device=None</em>, <em>name=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="cntk.html#cntk.tensor.TensorOpsMixin" title="cntk.tensor.TensorOpsMixin"><code class="xref py py-class docutils literal"><span class="pre">cntk.tensor.TensorOpsMixin</span></code></a>, <a class="reference internal" href="cntk.html#cntk.cntk_py.Parameter" title="cntk.cntk_py.Parameter"><code class="xref py py-class docutils literal"><span class="pre">cntk.cntk_py.Parameter</span></code></a></p>
+<p>A trainable parameter. It can be a scalar, vector, matrix, or tensor
+of floating point numbers that can be modified by a training
+procedure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>shape</strong> (<cite>tuple</cite>) &#8211; the shape of the tensor holding the parameters</li>
+<li><strong>init</strong> (<cite>np.ndarray</cite> or <cite>list</cite> or <cite>float</cite> or <cite>int</cite>) &#8211; Initial value.
+If a numpy array is specified the shape argument is ignored and
+the tensor gets the shape of this argument.</li>
+<li><strong>data_type</strong> (<cite>np.float32 or np.float64</cite>) &#8211; data type of the values stored.</li>
+<li><strong>device</strong> (<cite>dev</cite>) &#8211; the device on which the values should reside.</li>
+<li><strong>name</strong> (<cite>str</cite>) &#8211; an optional name for this parameter</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Parameters are Variables and therefore they inherit all their methods.</p>
+<dl class="method">
+<dt id="cntk.ops.variables.Parameter.value">
+<code class="descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Parameter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Parameter.value" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current value of the parameter.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>NDArrayView</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.ops.variables.Variable">
+<em class="property">class </em><code class="descname">Variable</code><span class="sig-paren">(</span><em>shape=None, data_type=None, needs_gradient=False, is_sparse=False, dynamic_axes=[&lt;cntk.cntk_py.Axis; proxy of &lt;Swig Object of type 'CNTK::Axis *' at 0x00000000065B07B0&gt; &gt;, &lt;cntk.cntk_py.Axis; proxy of &lt;Swig Object of type 'CNTK::Axis *' at 0x00000000065B07E0&gt; &gt;], name=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Variable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Variable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="cntk.html#cntk.tensor.TensorOpsMixin" title="cntk.tensor.TensorOpsMixin"><code class="xref py py-class docutils literal"><span class="pre">cntk.tensor.TensorOpsMixin</span></code></a>, <a class="reference internal" href="cntk.html#cntk.cntk_py.Variable" title="cntk.cntk_py.Variable"><code class="xref py py-class docutils literal"><span class="pre">cntk.cntk_py.Variable</span></code></a></p>
+<p>Denotes a symbolic entity corresponding to the inputs and outputs of a Function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>shape</strong> (<cite>tuple</cite>) &#8211; the shape of this variable.</li>
+<li><strong>data_type</strong> (<cite>np.float32 or np.float64</cite>) &#8211; data type of the values that will be bound to this variable.
+Default is np.float32</li>
+<li><strong>needs_gradient</strong> (<cite>bool</cite>) &#8211; if set to True any expression that contains this variable
+will also be differentiated with respect to this variable.</li>
+<li><strong>is_sparse</strong> (<cite>bool</cite>) &#8211; whether this is a sparse or dense input (or output)</li>
+<li><strong>dynamic_axes</strong> (<cite>list</cite> of <cite>cntk.Axis</cite>) &#8211; the dynamic axes of this variable. These
+express dimensions that can vary across examples or minibatches.</li>
+<li><strong>name</strong> (<cite>str</cite>) &#8211; an optional name for this parameter.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cntk.ops.variables.Variable.dynamic_axes">
+<code class="descname">dynamic_axes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Variable.dynamic_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Variable.dynamic_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the dynamic axes of this variable</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of <cite>:class:cntk.Axis</cite> that are the dynamic_axes of this Variable</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>list</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.variables.Variable.get_data_type">
+<code class="descname">get_data_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Variable.get_data_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Variable.get_data_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the data type of the data that this Variable symbolically represents</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the data type of the data that this Variable symbolically represents</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>DataType</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.variables.Variable.is_constant">
+<code class="descname">is_constant</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Variable.is_constant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Variable.is_constant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if this variable is a constant and False otherwise</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if this variable is a Constant and False otherwise</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>bool</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.variables.Variable.is_input">
+<code class="descname">is_input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Variable.is_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Variable.is_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if this variable is an input and False otherwise</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if this variable is an input and False otherwise</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>bool</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.variables.Variable.is_output">
+<code class="descname">is_output</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Variable.is_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Variable.is_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if this variable is an output and False otherwise</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if this variable is an output and False otherwise</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>bool</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.variables.Variable.is_parameter">
+<code class="descname">is_parameter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Variable.is_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Variable.is_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if this variable is a parameter and False otherwise</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if this variable is a parameter and False otherwise</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>bool</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.variables.Variable.is_placeholder">
+<code class="descname">is_placeholder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Variable.is_placeholder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Variable.is_placeholder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if this variable is a placeholder and False otherwise</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if this variable is a placeholder and False otherwise</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>bool</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.variables.Variable.is_sparse">
+<code class="descname">is_sparse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Variable.is_sparse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Variable.is_sparse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if this variable will be bound to sparse data and False otherwise</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if this variable will be bound to sparse data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>bool</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.variables.Variable.name">
+<code class="descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Variable.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Variable.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of this variable</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the name of this variable</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>str</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.variables.Variable.needs_gradient">
+<code class="descname">needs_gradient</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Variable.needs_gradient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Variable.needs_gradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if gradient computation is enabled for this variable and False otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if gradient computation is enabled for this variable and False otherwise.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>bool</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.variables.Variable.owner">
+<code class="descname">owner</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Variable.owner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Variable.owner" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the Function object which &#8216;this&#8217; variable is an ouptut of.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>Function</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.variables.Variable.shape">
+<code class="descname">shape</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Variable.shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Variable.shape" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the shape of the Variable</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>NDShape</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.variables.Variable.uid">
+<code class="descname">uid</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/variables.html#Variable.uid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.variables.Variable.uid" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the internally generated unique name of the variable</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>str</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-cntk.ops.functions"></span><dl class="class">
+<dt id="cntk.ops.functions.CloneMethod">
+<em class="property">class </em><code class="descname">CloneMethod</code><a class="reference internal" href="_modules/cntk/ops/functions.html#CloneMethod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.CloneMethod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.ops.functions.Function">
+<em class="property">class </em><code class="descname">Function</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="cntk.html#cntk.cntk_py.Function" title="cntk.cntk_py.Function"><code class="xref py py-class docutils literal"><span class="pre">cntk.cntk_py.Function</span></code></a></p>
+<p>Base class of all operators.</p>
+<p>If it has only one output, one can invoke Variable methods on it, which it
+will relay to its only output.</p>
+<dl class="method">
+<dt id="cntk.ops.functions.Function.arguments">
+<code class="descname">arguments</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.arguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.arguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of all input variables of the Function that are not of type Parameter or Constant</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of input variables</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>list</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.attributes">
+<code class="descname">attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the attributes of the function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of string, value pairs</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>dict</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.backward">
+<code class="descname">backward</code><span class="sig-paren">(</span><em>state</em>, <em>root_gradients</em>, <em>variables</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.backward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.backward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Backpropagates supplied <cite>root_gradients</cite> for one or more of the output
+variables of the Function, to calculate gradients with respect to
+<cite>variables</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>state</strong> (<cite>BackPropState</cite>) &#8211; state obtained from a previous call to the
+func:<cite>cntk.ops.Function.forward</cite> method on this Function for the
+computation that this gradient backpropagation corresponds to.</li>
+<li><strong>root_gradients</strong> (<cite>dict</cite>) &#8211; the gradients that will be backpropagated</li>
+<li><strong>variables</strong> (<cite>set</cite>) &#8211; a list of input variables with respect to which
+the gradients have to be computed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">mapping of <cite>variables</cite> to NumPy arrays</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><cite>dict</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.clone">
+<code class="descname">clone</code><span class="sig-paren">(</span><em>method=&lt;CloneMethod.freeze: 3&gt;</em>, <em>replacements=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.clone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.clone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clones the function. The parameters of the Function are either cloned,
+shared or frozen as specified by the method argument and any variable
+replacements requested are applied in the cloned Function instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>method</strong> (<code class="xref py py-class docutils literal"><span class="pre">cntk.ops.function.CloneMethod</span></code>) &#8211; one of
+* &#8216;clone&#8217;: the returned function gets its own copy of parameters (default)
+* &#8216;share&#8217;: the returned function shares its parameters with this function
+* &#8216;freeze&#8217;: parameters are cloned and made immutable (constant).</li>
+<li><strong>replacements</strong> (<cite>dict</cite>) &#8211; a dictionary mapping variables in this
+function to variables in the cloned function</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the cloned Function</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><cite>Function</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.constants">
+<code class="descname">constants</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.constants"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.constants" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of all <cite>Constant</cite> variables of this <cite>Function</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">all <cite>Constant</cite> variables of this <cite>Function</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>list</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.eval">
+<code class="descname">eval</code><span class="sig-paren">(</span><em>arguments=None</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.eval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the node using the specified <cite>arguments</cite> as input.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>arguments</strong> (<cite>dict</cite> or <cite>list</cite> or <cite>tuple</cite>) &#8211; <p>maps variables to their
+input data. The interpretation depends on the input type:</p>
+<blockquote>
+<div><ul>
+<li><cite>dict</cite>: keys are input variable or names and values are the input data.</li>
+<li><cite>list</cite>: elements are input data in the order their respective variables have been defined in the network.</li>
+</ul>
+</div></blockquote>
+<p>In both cases, every every sample in the data will be interpreted
+as a new sequence. To mark samples as continuations of the
+previous sequence, specify <cite>arguments</cite> as <cite>tuple</cite>: the
+first element will be used as <cite>arguments</cite>, and the second one will
+be used as a list of bools, denoting whether a sequence is a new
+one (<cite>True</cite>) or a continuation of the previous one (<cite>False</cite>).
+Data should be either NumPy arrays or a
+<a class="reference internal" href="cntk.io.html#cntk.io.MinibatchData" title="cntk.io.MinibatchData"><code class="xref py py-class docutils literal"><span class="pre">cntk.io.MinibatchData</span></code></a> instance.</p>
+</li>
+<li><strong>device</strong> (<code class="xref py py-class docutils literal"><span class="pre">cntk.DeviceDescriptor</span></code>) &#8211; the device descriptor that
+contains the type and id of the device on which the computation is
+to be performed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><cite>True</cite> if updates have been performed</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><cite>bool</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>arguments</em>, <em>outputs</em>, <em>keep_for_backward=None</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes and stores the values of speficied variables in <cite>outputs</cite>,
+using provided <cite>arguments</cite> values corresponding to each leaf <cite>Variable</cite>
+of the function whose is_input() is true.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>arguments</strong> (<cite>dict</cite> or <cite>list</cite> or <cite>tuple</cite>) &#8211; <p>maps variables to their
+input data. The interpretation depends on the input type:</p>
+<blockquote>
+<div><ul>
+<li><cite>dict</cite>: keys are input variable or names and values are the input data.</li>
+<li><cite>list</cite>: elements are input data in the order their respective variables have been defined in the network.</li>
+</ul>
+</div></blockquote>
+<p>In both cases, every every sample in the data will be interpreted
+as a new sequence. To mark samples as continuations of the
+previous sequence, specify <cite>arguments</cite> as <cite>tuple</cite>: the
+first element will be used as <cite>arguments</cite>, and the second one will
+be used as a list of bools, denoting whether a sequence is a new
+one (<cite>True</cite>) or a continuation of the previous one (<cite>False</cite>).
+Data should be either NumPy arrays or a
+<a class="reference internal" href="cntk.io.html#cntk.io.MinibatchData" title="cntk.io.MinibatchData"><code class="xref py py-class docutils literal"><span class="pre">cntk.io.MinibatchData</span></code></a> instance.</p>
+</li>
+<li><strong>outputs</strong> (<em>iterable</em>) &#8211; outputs to fetch values for.</li>
+<li><strong>keep_for_backward</strong> (<cite>set</cite>, default <a href="#id3"><span class="problematic" id="id4">`</span></a>None) &#8211; the subset of the
+Function&#8217;s output variables for which gradients shall be calculated
+in a subsequent backward call. If <cite>None</cite>, the returned state will
+be <cite>None</cite> and a subsequent call to <cite>backward</cite> will not be
+possible.
+for backpropagation.</li>
+<li><strong>device</strong> (<code class="xref py py-class docutils literal"><span class="pre">cntk.DeviceDescriptor</span></code>, default <a href="#id5"><span class="problematic" id="id6">`</span></a>None) &#8211; the device
+descriptor that contains the type and id of the device on which the
+computation is. If <cite>None</cite>, the default device is used.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tuple (<cite>BackpropState</cite>, <cite>map</cite> of outputs to NumPy arrays). The
+BackpropState is a handle taken by <a class="reference internal" href="#cntk.ops.functions.Function.backward" title="cntk.ops.functions.Function.backward"><code class="xref py py-func docutils literal"><span class="pre">backward()</span></code></a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.inputs">
+<code class="descname">inputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all input variables of this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">all input variables of this function.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>list</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.name">
+<code class="descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of &#8216;this&#8217; function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the name of &#8216;this&#8217; function.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>str</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.op_name">
+<code class="descname">op_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.op_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.op_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the operation that this Function denotes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the name of the operation that this Function denotes</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>str</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.outputs">
+<code class="descname">outputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.outputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list consisting of all output variables of this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">all output variables of this function</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>list</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.parameters">
+<code class="descname">parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of all parameter variables of this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">all parameter variables of this function.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>list</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.placeholders">
+<code class="descname">placeholders</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.placeholders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.placeholders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of all placeholders variables of this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">all placeholders variables of this function</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>list</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.replace_placeholder">
+<code class="descname">replace_placeholder</code><span class="sig-paren">(</span><em>placeholderReplacement</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.replace_placeholder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.replace_placeholder" title="Permalink to this definition">¶</a></dt>
+<dd><p>In-place replace the only placeholder in the function graph with the specified replacement</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>placeholderReplacement</strong> (<cite>Variable</cite>) &#8211; the variable that will replace the placeholder</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">itself</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><cite>Function</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>ExceptionType</strong> &#8211; when the function has multiple placeholders.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.restore_from_legacy_model">
+<code class="descname">restore_from_legacy_model</code><span class="sig-paren">(</span><em>modelFilePath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.restore_from_legacy_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.restore_from_legacy_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restore the models parameters from a saved model file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>modelFilePath</strong> (<cite>str</cite>) &#8211; saved model path</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">this method only has the side-effect of loading the model parameters from the file</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><cite>None</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.ops.functions.Function.root_function">
+<code class="descname">root_function</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/ops/functions.html#Function.root_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.ops.functions.Function.root_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the primitive function at the root of the graph of functions underlying this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the primitive function at the root of the graph of functions underlying this function</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>Function</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cntk.io.html" class="btn btn-neutral float-right" title="cntk.io package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="gettingstarted.html" class="btn btn-neutral" title="Getting started" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0a4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,410 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cntk.trainer &mdash; Python API for CNTK 2.0a4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Python API for CNTK 2.0a4 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Python API for CNTK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0a4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graph.html">Graph components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.io.html">IO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.trainer.html">Trainer &amp; learners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.ops.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">Python API for CNTK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>cntk.trainer</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cntk.trainer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c1"># Licensed under the MIT license. See LICENSE.md file in the project root</span>
+<span class="c1"># for full license information.</span>
+<span class="c1"># ==============================================================================</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">cntk_py</span>
+<span class="kn">from</span> <span class="nn">.cntk_py</span> <span class="k">import</span> <span class="n">DeviceDescriptor</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">sanitize_var_map</span><span class="p">,</span> <span class="n">sanitize_function</span><span class="p">,</span> <span class="n">typemap</span><span class="p">,</span> <span class="n">value_to_seq</span>
+
+<span class="n">__doc__</span><span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">A trainer supervises the overall training process and commands one or more</span>
+<span class="s1">:doc:`learner &lt;cntk.learner&gt;` that learn the parameters.</span>
+<span class="s1">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="Trainer"><a class="viewcode-back" href="../../cntk.trainer.html#cntk.trainer.Trainer">[docs]</a><span class="k">class</span> <span class="nc">Trainer</span><span class="p">(</span><span class="n">cntk_py</span><span class="o">.</span><span class="n">Trainer</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Trainer to train the specified `model` with the specified `training_loss`</span>
+<span class="sd">    as the training criterion, the specified `evaluation_function` as the</span>
+<span class="sd">    criterion for evaluating the trained model&#39;s quality, and using the</span>
+<span class="sd">    specified set of `parameter_learners` for updating the model&#39;s parameters</span>
+<span class="sd">    using computed gradients.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">       model (:class:`cntk.ops.function.Function`): root node of the function to train</span>
+<span class="sd">       loss_function (:class:`cntk.ops.functions.Function`): loss function </span>
+<span class="sd">       eval_function (:class:`cntk.ops.functions.Function`): evaluation function</span>
+<span class="sd">       parameter_learners (`list`): list of learners from :cntk:`cntk.learner`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">loss_function</span><span class="p">,</span> <span class="n">eval_function</span><span class="p">,</span> <span class="n">parameter_learners</span><span class="p">):</span>
+        <span class="c1"># TODO sanitizing should be removed once Swig&#39;s typemaps are in place</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">sanitize_function</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">loss_function</span> <span class="o">=</span> <span class="n">sanitize_function</span><span class="p">(</span><span class="n">loss_function</span><span class="p">)</span>
+        <span class="n">eval_function</span> <span class="o">=</span> <span class="n">sanitize_function</span><span class="p">(</span><span class="n">eval_function</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">Trainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">loss_function</span><span class="p">,</span> <span class="n">eval_function</span><span class="p">,</span>
+                <span class="n">parameter_learners</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Trainer.train_minibatch"><a class="viewcode-back" href="../../cntk.trainer.html#cntk.trainer.Trainer.train_minibatch">[docs]</a>    <span class="k">def</span> <span class="nf">train_minibatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Optimize model parameters using the specified &#39;arguments&#39; minibatch of training samples.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            arguments (`dict` or `list` or `tuple`): maps variables to their</span>
+<span class="sd">             input data. The interpretation depends on the input type:</span>
+<span class="sd">               * `dict`: keys are input variable or names and values are the input data. </span>
+<span class="sd">               * `list`: elements are input data in the order their respective variables have been defined in the network. </span>
+<span class="sd">             In both cases, every every sample in the data will be interpreted</span>
+<span class="sd">             as a new sequence. To mark samples as continuations of the</span>
+<span class="sd">             previous sequence, specify `arguments` as `tuple`: the</span>
+<span class="sd">             first element will be used as `arguments`, and the second one will</span>
+<span class="sd">             be used as a list of bools, denoting whether a sequence is a new</span>
+<span class="sd">             one (`True`) or a continuation of the previous one (`False`).</span>
+<span class="sd">             Data should be either NumPy arrays or a</span>
+<span class="sd">             :class:`cntk.io.MinibatchData` instance.</span>
+<span class="sd">            outputs (iterable): outputs to fetch values for.</span>
+<span class="sd">            device (:class:`cntk.DeviceDescriptor`): the device descriptor that</span>
+<span class="sd">             contains the type and id of the device on which the computation is</span>
+<span class="sd">             to be performed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `bool` or `tuple`: </span>
+<span class="sd">            If `outputs` have not been provided, the returned value is `True`</span>
+<span class="sd">            if updates have been performed, `False` if all parameter learners</span>
+<span class="sd">            indicate end of learning (through their `update`. Otherwise, the</span>
+<span class="sd">            return value is a tuple of the that `bool` and a dictionary that</span>
+<span class="sd">            maps the variables in `outputs` to their respective NumPy arrays.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">device</span><span class="p">:</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">DeviceDescriptor</span><span class="o">.</span><span class="n">use_default_device</span><span class="p">()</span>        
+        <span class="n">arguments</span> <span class="o">=</span> <span class="n">sanitize_var_map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">arguments</span><span class="p">(),</span> <span class="n">arguments</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">outputs</span><span class="p">:</span>
+            <span class="n">output_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">}</span>
+            <span class="n">updated</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Trainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">train_minibatch</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span>
+                    <span class="n">output_map</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">output_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">output_map</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_to_seq</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">updated</span><span class="p">,</span> <span class="n">output_map</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">updated</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Trainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">train_minibatch</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">updated</span></div>
+
+
+<div class="viewcode-block" id="Trainer.test_minibatch"><a class="viewcode-back" href="../../cntk.trainer.html#cntk.trainer.Trainer.test_minibatch">[docs]</a>    <span class="k">def</span> <span class="nf">test_minibatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">seq_starts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Test the model on the specified batch of samples using the evaluation</span>
+<span class="sd">        Function specified during construction of the Trainer. </span>
+<span class="sd">        of samples.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            arguments (`dict` or `list` or `tuple`): maps variables to their</span>
+<span class="sd">             input data. The interpretation depends on the input type:</span>
+<span class="sd">               * `dict`: keys are input variable or names and values are the input data. </span>
+<span class="sd">               * `list`: elements are input data in the order their respective variables have been defined in the network. </span>
+<span class="sd">             In both cases, every every sample in the data will be interpreted</span>
+<span class="sd">             as a new sequence. To mark samples as continuations of the</span>
+<span class="sd">             previous sequence, specify `arguments` as `tuple`: the</span>
+<span class="sd">             first element will be used as `arguments`, and the second one will</span>
+<span class="sd">             be used as a list of bools, denoting whether a sequence is a new</span>
+<span class="sd">             one (`True`) or a continuation of the previous one (`False`).</span>
+<span class="sd">             Data should be either NumPy arrays or a</span>
+<span class="sd">             :class:`cntk.io.MinibatchData` instance.</span>
+<span class="sd">            seq_starts (`list` of `bool`s or `None`): if `None`, every sequence is</span>
+<span class="sd">             treated as a new sequence. Otherwise, it is interpreted as a list of</span>
+<span class="sd">             Booleans that tell whether a sequence is a new sequence (`True`) or a</span>
+<span class="sd">             continuation of the previous one (`False`)</span>
+<span class="sd">            device (:class:`cntk.DeviceDescriptor`): the device descriptor that</span>
+<span class="sd">             contains the type and id of the device on which the computation is</span>
+<span class="sd">             to be performed.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            `float`: the average evaluation criterion value per sample for the</span>
+<span class="sd">              tested minibatch.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">device</span><span class="p">:</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">DeviceDescriptor</span><span class="o">.</span><span class="n">use_default_device</span><span class="p">()</span>        
+        <span class="n">arguments</span> <span class="o">=</span> <span class="n">sanitize_var_map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">arguments</span><span class="p">(),</span> <span class="n">arguments</span><span class="p">,</span>
+                <span class="n">seq_starts</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Trainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">test_minibatch</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Trainer.save_checkpoint"><a class="viewcode-back" href="../../cntk.trainer.html#cntk.trainer.Trainer.save_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Saves a checkpoint of the model and other Trainer state at the</span>
+<span class="sd">        specified file location.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (`str`): filename to store the checkpoint</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">Trainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Trainer.restore_from_checkpoint"><a class="viewcode-back" href="../../cntk.trainer.html#cntk.trainer.Trainer.restore_from_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">restore_from_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Saves a checkpoint of the model and other Trainer state at the</span>
+<span class="sd">        specified file location.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (`str`): filename to restore the checkpoint from</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">Trainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">restore_from_checkpoint</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Trainer.model"><a class="viewcode-back" href="../../cntk.trainer.html#cntk.trainer.Trainer.model">[docs]</a>    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the model that the trainer is training.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`cntk.ops.functions.Function`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Trainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">model</span><span class="p">()</span></div>
+        
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Trainer.loss_function"><a class="viewcode-back" href="../../cntk.trainer.html#cntk.trainer.Trainer.loss_function">[docs]</a>    <span class="k">def</span> <span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the loss function that the trainer is using.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`cntk.ops.functions.Function`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Trainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">loss_function</span><span class="p">()</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Trainer.evaluation_function"><a class="viewcode-back" href="../../cntk.trainer.html#cntk.trainer.Trainer.evaluation_function">[docs]</a>    <span class="k">def</span> <span class="nf">evaluation_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the evaluation function that the trainer is using.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`cntk.ops.functions.Function`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Trainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">evaluation_function</span><span class="p">()</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Trainer.parameter_learners"><a class="viewcode-back" href="../../cntk.trainer.html#cntk.trainer.Trainer.parameter_learners">[docs]</a>    <span class="k">def</span> <span class="nf">parameter_learners</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the parameter learners that the trainer is using.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `list` of :class:`cntk.learner.Learner`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Trainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">parameter_learners</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Trainer.previous_minibatch_loss_average"><a class="viewcode-back" href="../../cntk.trainer.html#cntk.trainer.Trainer.previous_minibatch_loss_average">[docs]</a>    <span class="k">def</span> <span class="nf">previous_minibatch_loss_average</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the average training loss per sample for the last minibatch trained</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `double`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Trainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">previous_minibatch_loss_average</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Trainer.previous_minibatch_evaluation_average"><a class="viewcode-back" href="../../cntk.trainer.html#cntk.trainer.Trainer.previous_minibatch_evaluation_average">[docs]</a>    <span class="k">def</span> <span class="nf">previous_minibatch_evaluation_average</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the average evaluation criterion value per sample for the last minibatch trained</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `double`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Trainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">previous_minibatch_evaluation_average</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Trainer.previous_minibatch_sample_count"><a class="viewcode-back" href="../../cntk.trainer.html#cntk.trainer.Trainer.previous_minibatch_sample_count">[docs]</a>    <span class="k">def</span> <span class="nf">previous_minibatch_sample_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the number of samples in the last minibatch trained with</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `int`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Trainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">previous_minibatch_sample_count</span><span class="p">()</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'2.0a4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+Collecting pytest
+  Using cached pytest-3.0.3-py2.py3-none-any.whl
+Collecting colorama; sys_platform == "win32" (from pytest)
+  Downloading colorama-0.3.7-py2.py3-none-any.whl
+Collecting py>=1.4.29 (from pytest)
+  Downloading py-1.4.31-py2.py3-none-any.whl (81kB)
+Installing collected packages: colorama, py, pytest
+Successfully installed colorama-0.3.7 py-1.4.31 pytest-3.0.3

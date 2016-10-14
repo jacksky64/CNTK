@@ -1,0 +1,467 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cntk.trainer package &mdash; Python API for CNTK 2.0a4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Python API for CNTK 2.0a4 documentation" href="index.html"/>
+        <link rel="next" title="cntk.ops package" href="cntk.ops.html"/>
+        <link rel="prev" title="cntk.io package" href="cntk.io.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Python API for CNTK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0a4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Graph components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.io.html">IO</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Trainer &amp; learners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.ops.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Python API for CNTK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>cntk.trainer package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/cntk.trainer.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cntk-trainer-package">
+<h1>cntk.trainer package<a class="headerlink" href="#cntk-trainer-package" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-cntk.trainer"></span><p>A trainer supervises the overall training process and commands one or more
+<a class="reference internal" href="cntk.learner.html"><span class="doc">learner</span></a> that learn the parameters.</p>
+<dl class="class">
+<dt id="cntk.trainer.Trainer">
+<em class="property">class </em><code class="descname">Trainer</code><span class="sig-paren">(</span><em>model</em>, <em>loss_function</em>, <em>eval_function</em>, <em>parameter_learners</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="cntk.html#cntk.cntk_py.Trainer" title="cntk.cntk_py.Trainer"><code class="xref py py-class docutils literal"><span class="pre">cntk.cntk_py.Trainer</span></code></a></p>
+<p>Trainer to train the specified <cite>model</cite> with the specified <cite>training_loss</cite>
+as the training criterion, the specified <cite>evaluation_function</cite> as the
+criterion for evaluating the trained model&#8217;s quality, and using the
+specified set of <cite>parameter_learners</cite> for updating the model&#8217;s parameters
+using computed gradients.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<code class="xref py py-class docutils literal"><span class="pre">cntk.ops.function.Function</span></code>) &#8211; root node of the function to train</li>
+<li><strong>loss_function</strong> (<a class="reference internal" href="graph.html#cntk.ops.functions.Function" title="cntk.ops.functions.Function"><code class="xref py py-class docutils literal"><span class="pre">cntk.ops.functions.Function</span></code></a>) &#8211; loss function</li>
+<li><strong>eval_function</strong> (<a class="reference internal" href="graph.html#cntk.ops.functions.Function" title="cntk.ops.functions.Function"><code class="xref py py-class docutils literal"><span class="pre">cntk.ops.functions.Function</span></code></a>) &#8211; evaluation function</li>
+<li><strong>parameter_learners</strong> (<cite>list</cite>) &#8211; list of learners from <a href="#id1"><span class="problematic" id="id2">:cntk:`cntk.learner`</span></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cntk.trainer.Trainer.evaluation_function">
+<code class="descname">evaluation_function</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.evaluation_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.evaluation_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the evaluation function that the trainer is using.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference internal" href="graph.html#cntk.ops.functions.Function" title="cntk.ops.functions.Function"><code class="xref py py-class docutils literal"><span class="pre">cntk.ops.functions.Function</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.loss_function">
+<code class="descname">loss_function</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.loss_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.loss_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the loss function that the trainer is using.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference internal" href="graph.html#cntk.ops.functions.Function" title="cntk.ops.functions.Function"><code class="xref py py-class docutils literal"><span class="pre">cntk.ops.functions.Function</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.model">
+<code class="descname">model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the model that the trainer is training.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference internal" href="graph.html#cntk.ops.functions.Function" title="cntk.ops.functions.Function"><code class="xref py py-class docutils literal"><span class="pre">cntk.ops.functions.Function</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.parameter_learners">
+<code class="descname">parameter_learners</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.parameter_learners"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.parameter_learners" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the parameter learners that the trainer is using.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>list</cite> of <a class="reference internal" href="cntk.learner.html#cntk.learner.Learner" title="cntk.learner.Learner"><code class="xref py py-class docutils literal"><span class="pre">cntk.learner.Learner</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.previous_minibatch_evaluation_average">
+<code class="descname">previous_minibatch_evaluation_average</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.previous_minibatch_evaluation_average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.previous_minibatch_evaluation_average" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the average evaluation criterion value per sample for the last minibatch trained</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>double</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.previous_minibatch_loss_average">
+<code class="descname">previous_minibatch_loss_average</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.previous_minibatch_loss_average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.previous_minibatch_loss_average" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the average training loss per sample for the last minibatch trained</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>double</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.previous_minibatch_sample_count">
+<code class="descname">previous_minibatch_sample_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.previous_minibatch_sample_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.previous_minibatch_sample_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of samples in the last minibatch trained with</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>int</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.restore_from_checkpoint">
+<code class="descname">restore_from_checkpoint</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.restore_from_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.restore_from_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a checkpoint of the model and other Trainer state at the
+specified file location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<cite>str</cite>) &#8211; filename to restore the checkpoint from</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.save_checkpoint">
+<code class="descname">save_checkpoint</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.save_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a checkpoint of the model and other Trainer state at the
+specified file location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<cite>str</cite>) &#8211; filename to store the checkpoint</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.test_minibatch">
+<code class="descname">test_minibatch</code><span class="sig-paren">(</span><em>arguments</em>, <em>seq_starts=None</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.test_minibatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.test_minibatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the model on the specified batch of samples using the evaluation
+Function specified during construction of the Trainer.
+of samples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>arguments</strong> (<cite>dict</cite> or <cite>list</cite> or <cite>tuple</cite>) &#8211; <p>maps variables to their
+input data. The interpretation depends on the input type:</p>
+<blockquote>
+<div><ul>
+<li><cite>dict</cite>: keys are input variable or names and values are the input data.</li>
+<li><cite>list</cite>: elements are input data in the order their respective variables have been defined in the network.</li>
+</ul>
+</div></blockquote>
+<p>In both cases, every every sample in the data will be interpreted
+as a new sequence. To mark samples as continuations of the
+previous sequence, specify <cite>arguments</cite> as <cite>tuple</cite>: the
+first element will be used as <cite>arguments</cite>, and the second one will
+be used as a list of bools, denoting whether a sequence is a new
+one (<cite>True</cite>) or a continuation of the previous one (<cite>False</cite>).
+Data should be either NumPy arrays or a
+<a class="reference internal" href="cntk.io.html#cntk.io.MinibatchData" title="cntk.io.MinibatchData"><code class="xref py py-class docutils literal"><span class="pre">cntk.io.MinibatchData</span></code></a> instance.</p>
+</li>
+<li><strong>seq_starts</strong> (<cite>list</cite> of <cite>bool`s or `None</cite>) &#8211; if <cite>None</cite>, every sequence is
+treated as a new sequence. Otherwise, it is interpreted as a list of
+Booleans that tell whether a sequence is a new sequence (<cite>True</cite>) or a
+continuation of the previous one (<cite>False</cite>)</li>
+<li><strong>device</strong> (<code class="xref py py-class docutils literal"><span class="pre">cntk.DeviceDescriptor</span></code>) &#8211; the device descriptor that
+contains the type and id of the device on which the computation is
+to be performed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>the average evaluation criterion value per sample for the</dt>
+<dd><p class="first last">tested minibatch.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><cite>float</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.train_minibatch">
+<code class="descname">train_minibatch</code><span class="sig-paren">(</span><em>arguments</em>, <em>outputs=None</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.train_minibatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.train_minibatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimize model parameters using the specified &#8216;arguments&#8217; minibatch of training samples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>arguments</strong> (<cite>dict</cite> or <cite>list</cite> or <cite>tuple</cite>) &#8211; <p>maps variables to their
+input data. The interpretation depends on the input type:</p>
+<blockquote>
+<div><ul>
+<li><cite>dict</cite>: keys are input variable or names and values are the input data.</li>
+<li><cite>list</cite>: elements are input data in the order their respective variables have been defined in the network.</li>
+</ul>
+</div></blockquote>
+<p>In both cases, every every sample in the data will be interpreted
+as a new sequence. To mark samples as continuations of the
+previous sequence, specify <cite>arguments</cite> as <cite>tuple</cite>: the
+first element will be used as <cite>arguments</cite>, and the second one will
+be used as a list of bools, denoting whether a sequence is a new
+one (<cite>True</cite>) or a continuation of the previous one (<cite>False</cite>).
+Data should be either NumPy arrays or a
+<a class="reference internal" href="cntk.io.html#cntk.io.MinibatchData" title="cntk.io.MinibatchData"><code class="xref py py-class docutils literal"><span class="pre">cntk.io.MinibatchData</span></code></a> instance.</p>
+</li>
+<li><strong>outputs</strong> (<em>iterable</em>) &#8211; outputs to fetch values for.</li>
+<li><strong>device</strong> (<code class="xref py py-class docutils literal"><span class="pre">cntk.DeviceDescriptor</span></code>) &#8211; the device descriptor that
+contains the type and id of the device on which the computation is
+to be performed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">If <cite>outputs</cite> have not been provided, the returned value is <cite>True</cite>
+if updates have been performed, <cite>False</cite> if all parameter learners
+indicate end of learning (through their <cite>update</cite>. Otherwise, the
+return value is a tuple of the that <cite>bool</cite> and a dictionary that
+maps the variables in <cite>outputs</cite> to their respective NumPy arrays.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><cite>bool</cite> or <cite>tuple</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cntk.ops.html" class="btn btn-neutral float-right" title="cntk.ops package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="cntk.io.html" class="btn btn-neutral" title="cntk.io package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0a4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

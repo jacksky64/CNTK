@@ -1,0 +1,1922 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cntk.ops &mdash; Python API for CNTK 2.0a4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Python API for CNTK 2.0a4 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Python API for CNTK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0a4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graph.html">Graph components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.io.html">IO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.trainer.html">Trainer &amp; learners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.ops.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">Python API for CNTK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>cntk.ops</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cntk.ops</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c1"># Licensed under the MIT license. See LICENSE.md file in the project root</span>
+<span class="c1"># for full license information.</span>
+<span class="c1"># ==============================================================================</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">sequence</span>
+<span class="kn">from</span> <span class="nn">.functions</span> <span class="k">import</span> <span class="n">Function</span>
+<span class="kn">from</span> <span class="nn">.variables</span> <span class="k">import</span> <span class="n">Variable</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">Constant</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">sanitize_input</span><span class="p">,</span> <span class="n">sanitize_shape</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">,</span> <span class="n">sanitize_axis</span><span class="p">,</span> <span class="n">sanitize_dynamic_axes</span><span class="p">,</span> <span class="n">typemap</span>
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="combine"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.combine">[docs]</a><span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="n">operands</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">     Create a new Function instance which just combines the outputs of the specified list of</span>
+<span class="sd">     &#39;operands&#39; Functions such that the &#39;Outputs&#39; of the new &#39;Function&#39; are union of the</span>
+<span class="sd">     &#39;Outputs&#39; of each of the specified &#39;operands&#39; Functions. E.g. When creating a classification</span>
+<span class="sd">     model, typically the CrossEntropy loss Function and the ClassificationError Function comprise</span>
+<span class="sd">     the two roots of the computation graph which can be combined to create a single Function</span>
+<span class="sd">     with 2 outputs; viz. CrossEntropy loss and ClassificationError output.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        operands (`list`): list of functions or their variables to combine</span>
+<span class="sd">        name (`str`, optional): the name of the Combine Function in the network</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">combine</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">Function</span>
+    <span class="n">converted_operands</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">operands</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">Function</span><span class="p">):</span>
+            <span class="n">converted_operands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">output</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">converted_operands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">combine</span><span class="p">(</span><span class="n">converted_operands</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># evaluation ops</span>
+<span class="c1">##########################################################################</span>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="cross_entropy_with_softmax"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.cross_entropy_with_softmax">[docs]</a><span class="k">def</span> <span class="nf">cross_entropy_with_softmax</span><span class="p">(</span><span class="n">output_vector</span><span class="p">,</span> <span class="n">target_vector</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This operation computes the cross entropy over the softmax of the `output_vector`.</span>
+<span class="sd">    It expects the `output_vector` as unscaled, and it computes softmax over</span>
+<span class="sd">    the `output_vector` internally.  Any `output_vector` input over which softmax is</span>
+<span class="sd">    already computed before passing to this operator will be incorrect.</span>
+
+<span class="sd">    :math:`cross\_entropy\_with\_softmax(o, t) = {-{\sum_{i \in \{1,len(t)\}} t_i \log(softmax(o_i)) }}`</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.cross_entropy_with_softmax([[1., 1., 1., 50.]], [[0., 0., 0., 1.]]).eval()</span>
+<span class="sd">        array([[ 0.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.cross_entropy_with_softmax([[1., 2., 3., 4.]], [[0.35, 0.15, 0.05, 0.45]]).eval()</span>
+<span class="sd">        array([[ 1.84019]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        output_vector: the unscaled computed output values from the network</span>
+<span class="sd">        target_vector: usually it is one-hot vector where the hot bit corresponds to the label index.</span>
+<span class="sd">        But it can be any probability distribution over the labels.</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">cross_entropy_with_softmax</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">output_vector</span><span class="p">,</span> <span class="n">target_vector</span><span class="p">)</span>
+    <span class="n">output_vector</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">output_vector</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">target_vector</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">target_vector</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cross_entropy_with_softmax</span><span class="p">(</span><span class="n">output_vector</span><span class="p">,</span> <span class="n">target_vector</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="squared_error"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.squared_error">[docs]</a><span class="k">def</span> <span class="nf">squared_error</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This operation computes the sum of the squared difference between elements</span>
+<span class="sd">    in the two input matrices. The result is a scalar (i.e., one by one matrix).</span>
+<span class="sd">    This is often used as a training criterion node.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; i1 = C.input_variable((1,2))</span>
+<span class="sd">        &gt;&gt;&gt; i2 = C.input_variable((1,2))</span>
+<span class="sd">        &gt;&gt;&gt; C.squared_error(i1,i2).eval({i1:np.asarray([[[[2., 1.]]]], dtype=np.float32), i2:np.asarray([[[[4., 6.]]]], dtype=np.float32)})</span>
+<span class="sd">        array([[ 29.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.squared_error(i1,i2).eval({i1:np.asarray([[[[1., 2.]]]], dtype=np.float32), i2:np.asarray([[[[1., 2.]]]], dtype=np.float32)})</span>
+<span class="sd">        array([[ 0.]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        output: the output values from the network</span>
+<span class="sd">        target: it is usually a one-hot vector where the hot bit</span>
+<span class="sd">         corresponds to the label index</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">squared_error</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">squared_error</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="classification_error"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.classification_error">[docs]</a><span class="k">def</span> <span class="nf">classification_error</span><span class="p">(</span><span class="n">output_vector</span><span class="p">,</span> <span class="n">target_vector</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This operation computes the classification_error error. It finds the index of the highest</span>
+<span class="sd">    value in the output_vector and compares it to the actual ground truth label</span>
+<span class="sd">    (the index of the hot bit in the target vector). The result is a scalar</span>
+<span class="sd">    (i.e., one by one matrix). This is often used as an evaluation criterion.</span>
+<span class="sd">    It cannot be used as a training criterion though since the gradient is not</span>
+<span class="sd">    defined for it.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.classification_error([[1., 2., 3., 4.]], [[0., 0., 0., 1.]]).eval()</span>
+<span class="sd">        array([[ 0.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.classification_error([[1., 2., 3., 4.]], [[0., 0., 1., 0.]]).eval()</span>
+<span class="sd">        array([[ 1.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; # Note that non-1 values are treated as 0</span>
+<span class="sd">        &gt;&gt;&gt; C.classification_error([[1., 2., 3., 4.]], [[5., 0., 1., 0.]]).eval()</span>
+<span class="sd">        array([[ 1.]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        output_vector: the output values from the network</span>
+<span class="sd">        target_vector: it is one-hot vector where the hot bit corresponds to the label index</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">classification_error</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">output_vector</span><span class="p">,</span> <span class="n">target_vector</span><span class="p">)</span>
+    <span class="n">output_vector</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">output_vector</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">target_vector</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">target_vector</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">classification_error</span><span class="p">(</span><span class="n">output_vector</span><span class="p">,</span> <span class="n">target_vector</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># convolution ops</span>
+<span class="c1">##########################################################################</span>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="convolution"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.convolution">[docs]</a><span class="k">def</span> <span class="nf">convolution</span><span class="p">(</span><span class="n">convolution_map</span><span class="p">,</span> <span class="n">operand</span><span class="p">,</span> <span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">sharing</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
+                <span class="n">auto_padding</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span> <span class="n">lower_pad</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="n">upper_pad</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">max_temp_mem_size_in_samples</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the convolution of a weight matrix with an image or tensor. This operation is used in image-processing applications</span>
+<span class="sd">    and language processing. It supports any dimensions, stride, sharing or padding.</span>
+
+<span class="sd">    This function operates on input tensors of the form [M1 x M2 x ... x Mn x inChannels]. This can be understood as a rank-n</span>
+<span class="sd">    object, where each entry consists of a inChannels-dimensional vector. For example, an RGB image would have dimensions</span>
+<span class="sd">    [W x H x 3], i.e. a [W x H]-sized structure, where each entry (pixel) consists of a 3-tuple (note, however, that the</span>
+<span class="sd">    memory-storage format is the concatenation of 3 planes of size [W x H]).</span>
+
+<span class="sd">    `convolution` convolves the input with n+1-dimensional filters, where the first n dimensions are the spatial extent of the</span>
+<span class="sd">    filter, and the last one must be equal to inChannels. There are outChannels filters. I.e. for each output position, a vector of</span>
+<span class="sd">    dimension outChannels is computed. Hence, the total number of filter parameters is (M1*M2*...*Mn) * inChannels * outChannels.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        convolution_map: convolution filter weights, stored as a matrix of dimensions [outChannels, (M1*M2*...*Mn)],</span>
+<span class="sd">         where (M1*M2*...*Mn) must be the product of the kernel dimensions, e.g. 75 for a [5 x 5]-sized filter on 3</span>
+<span class="sd">         input channels.</span>
+<span class="sd">        operand: convolution input. A tensor with dimensions [M1 x M2 x ... x Mn x inChannels].</span>
+<span class="sd">        strides (optional): stride dimensions. A stride &gt; 1 means that only pixel positions that are multiples of the stride value are computed.</span>
+<span class="sd">         For example, a stride of 2 will lead to a halving of the dimensions. The last stride dimension that lines up with the number</span>
+<span class="sd">         of input channels must be equal to the number of input channels.</span>
+<span class="sd">        sharing (bool): sharing flags for each input dimension</span>
+<span class="sd">        auto_padding (bool): flags for each input dimension whether it should be padded automatically (that is,</span>
+<span class="sd">         symmetrically) or not padded at all. Padding means that the convolution kernel is applied to all pixel positions, where all</span>
+<span class="sd">         pixels outside the area are assumed zero (&quot;padded with zeroes&quot;). Without padding, the kernels are only shifted over</span>
+<span class="sd">         positions where all inputs to the kernel still fall inside the area. In this case, the output dimension will be less than</span>
+<span class="sd">         the input dimension. The last value that lines up with the number of input channels must be false.</span>
+<span class="sd">        lower_pad: precise lower padding for each input dimension.</span>
+<span class="sd">        upper_pad : precise upper padding for each input dimension.</span>
+<span class="sd">        transpose (bool): set to true for deconvolution.</span>
+<span class="sd">        max_temp_mem_size_in_samples (int): maximum amount of auxiliary memory (in samples) that should be reserved to perform convolution</span>
+<span class="sd">         operations. Some convolution engines (e.g. cuDNN and GEMM-based engines) can benefit from using workspace as it may improve</span>
+<span class="sd">         performance. However, sometimes this may lead to higher memory utilization. Default is 0 which means the same as the inpu</span>
+<span class="sd">         samples.</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">convolution</span>
+    <span class="n">operand</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">operand</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">convolution</span><span class="p">(</span><span class="n">convolution_map</span><span class="p">,</span> <span class="n">operand</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">strides</span><span class="p">)),</span> <span class="n">sharing</span><span class="p">,</span> <span class="n">auto_padding</span><span class="p">,</span>
+                       <span class="nb">tuple</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">lower_pad</span><span class="p">)),</span> <span class="nb">tuple</span><span class="p">(</span>
+                           <span class="nb">reversed</span><span class="p">(</span><span class="n">upper_pad</span><span class="p">)),</span> <span class="n">transpose</span><span class="p">,</span>
+                       <span class="n">max_temp_mem_size_in_samples</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">PoolingType_Max</span><span class="p">,</span> <span class="n">PoolingType_Average</span>
+<span class="n">MAX_POOLING</span> <span class="o">=</span> <span class="n">PoolingType_Max</span>
+<span class="n">AVG_POOLING</span> <span class="o">=</span> <span class="n">PoolingType_Average</span>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="pooling"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.pooling">[docs]</a><span class="k">def</span> <span class="nf">pooling</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">pooling_type</span><span class="p">,</span> <span class="n">pooling_window_shape</span><span class="p">,</span> <span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">auto_padding</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">],</span>
+            <span class="n">lower_pad</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="n">upper_pad</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The pooling operations compute a new matrix by selecting the maximum (max pooling) or average value in the pooling input.</span>
+<span class="sd">    In the case of average pooling, count of average does not include padded values.</span>
+
+<span class="sd">    N-dimensional pooling allows to create max or average pooling of any dimensions, stride or padding.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        operand: pooling input</span>
+<span class="sd">        pooling_type(str): &quot;max&quot; or &quot;average&quot;</span>
+<span class="sd">        pooling_window_shape: dimensions of the pooling window</span>
+<span class="sd">        strides (default 1): strides.</span>
+<span class="sd">        auto_padding: automatic padding flags for each input dimension.</span>
+<span class="sd">        lower_pad: precise lower padding for each input dimension</span>
+<span class="sd">        upper_pad: precise upper padding for each input dimension</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">pooling</span>
+    <span class="n">operand</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">operand</span><span class="p">)</span>
+    <span class="n">pooling_window_shape</span> <span class="o">=</span> <span class="n">sanitize_shape</span><span class="p">(</span><span class="n">pooling_window_shape</span><span class="p">)</span>
+    <span class="n">strides</span> <span class="o">=</span> <span class="n">sanitize_shape</span><span class="p">(</span><span class="n">strides</span><span class="p">)</span>
+    <span class="n">lower_pad</span> <span class="o">=</span> <span class="n">sanitize_shape</span><span class="p">(</span><span class="n">lower_pad</span><span class="p">)</span>
+    <span class="n">upper_pad</span> <span class="o">=</span> <span class="n">sanitize_shape</span><span class="p">(</span><span class="n">upper_pad</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pooling</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">pooling_type</span><span class="p">,</span> <span class="n">pooling_window_shape</span><span class="p">,</span> <span class="n">strides</span><span class="p">,</span> <span class="n">auto_padding</span><span class="p">,</span>
+                   <span class="n">lower_pad</span><span class="p">,</span> <span class="n">upper_pad</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="batch_normalization"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.batch_normalization">[docs]</a><span class="k">def</span> <span class="nf">batch_normalization</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">running_mean</span><span class="p">,</span> <span class="n">running_inv_std</span><span class="p">,</span> <span class="n">spatial</span><span class="p">,</span>
+                        <span class="n">normalization_time_constant</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">blend_time_constant</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                        <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span> <span class="n">use_cudnn_engine</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Normalizes layer outputs for every minibatch for each output (feature) independently</span>
+<span class="sd">    and applies affine transformation to preserve representation of the layer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        operand: input of the batch normalization node</span>
+<span class="sd">        scale: parameter tensor that holds the learned componentwise-scaling factors</span>
+<span class="sd">        bias: parameter tensor that holds the learned bias. ``scale`` and ``bias`` must have the same</span>
+<span class="sd">         dimensions which must be equal to the input dimensions in case of ``spatial`` = False or</span>
+<span class="sd">         number of output convolution feature maps in case of ``spatial`` = True</span>
+<span class="sd">        running_mean: running mean which is used during evaluation phase and might be used during</span>
+<span class="sd">         training as well. You must pass a parameter tensor with initial value 0 and the same dimensions</span>
+<span class="sd">         as ``scale`` and ``bias``</span>
+<span class="sd">        running_inv_std: running variance. Represented as ``running_mean``</span>
+<span class="sd">        spatial(`bool`): flag that indicates whether to compute mean/var for each feature in a minibatch</span>
+<span class="sd">         independently or, in case of convolutional layers, per future map</span>
+<span class="sd">        normalization_time_constant(`float`, default 0): time constant for computing running average of</span>
+<span class="sd">         mean and variance as a low-pass filtered version of the batch statistics. Note: the default is not</span>
+<span class="sd">         typically what you want</span>
+<span class="sd">        blend_time_constant(`float`, default 0): constant for smoothing batch estimates with the running</span>
+<span class="sd">         statistics</span>
+<span class="sd">        epsilon: conditioner constant added to the variance when computing the inverse standard deviation</span>
+<span class="sd">        use_cudnn_engine(`bool`, default True):</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">batch_normalization</span>
+    <span class="n">operand</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">operand</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">batch_normalization</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">running_mean</span><span class="p">,</span> <span class="n">running_inv_std</span><span class="p">,</span> <span class="n">spatial</span><span class="p">,</span>
+                               <span class="n">normalization_time_constant</span><span class="p">,</span> <span class="n">blend_time_constant</span><span class="p">,</span>
+                               <span class="n">epsilon</span><span class="p">,</span> <span class="n">use_cudnn_engine</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># comparison ops</span>
+<span class="c1">##########################################################################</span>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="less"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.less">[docs]</a><span class="k">def</span> <span class="nf">less</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Elementwise &#39;less&#39; comparison of two tensors. Result is 1 if left &lt; right else 0.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">       &gt;&gt;&gt; C.less([41., 42., 43.], [42., 42., 42.]).eval()</span>
+<span class="sd">       array([ 1.,  0.,  0.], dtype=float32)</span>
+
+<span class="sd">       &gt;&gt;&gt; C.less([-1,0,1], [0]).eval()</span>
+<span class="sd">       array([ 1.,  0.,  0.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        left: left side tensor</span>
+<span class="sd">        right: right side tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">less</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">less</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="equal"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.equal">[docs]</a><span class="k">def</span> <span class="nf">equal</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Elementwise &#39;equal&#39; comparison of two tensors. Result is 1 if values are equal 0 otherwise.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.equal([41., 42., 43.], [42., 42., 42.]).eval()</span>
+<span class="sd">        array([ 0.,  1.,  0.], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.equal([-1,0,1], [1]).eval()</span>
+<span class="sd">        array([ 0.,  0.,  1.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        left: left side tensor</span>
+<span class="sd">        right: right side tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">equal</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">equal</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="greater"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.greater">[docs]</a><span class="k">def</span> <span class="nf">greater</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Elementwise &#39;greater&#39; comparison of two tensors. Result is 1 if left &gt; right else 0.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.greater([41., 42., 43.], [42., 42., 42.]).eval()</span>
+<span class="sd">        array([ 0.,  0.,  1.], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.greater([-1,0,1], [0]).eval()</span>
+<span class="sd">        array([ 0.,  0.,  1.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        left: left side tensor</span>
+<span class="sd">        right: right side tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">greater</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">greater</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="greater_equal"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.greater_equal">[docs]</a><span class="k">def</span> <span class="nf">greater_equal</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Elementwise &#39;greater equal&#39; comparison of two tensors. Result is 1 if left &gt;= right else 0.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.greater_equal([41., 42., 43.], [42., 42., 42.]).eval()</span>
+<span class="sd">        array([ 0.,  1.,  1.], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.greater_equal([-1,0,1], [0]).eval()</span>
+<span class="sd">        array([ 0.,  1.,  1.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        left: left side tensor</span>
+<span class="sd">        right: right side tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">greater_equal</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">greater_equal</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="not_equal"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.not_equal">[docs]</a><span class="k">def</span> <span class="nf">not_equal</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Elementwise &#39;not equal&#39; comparison of two tensors. Result is 1 if left != right else 0.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.not_equal([41., 42., 43.], [42., 42., 42.]).eval()</span>
+<span class="sd">        array([ 1.,  0.,  1.], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.not_equal([-1,0,1], [0]).eval()</span>
+<span class="sd">        array([ 1.,  0.,  1.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        left: left side tensor</span>
+<span class="sd">        right: right side tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">not_equal</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">not_equal</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="less_equal"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.less_equal">[docs]</a><span class="k">def</span> <span class="nf">less_equal</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Elementwise &#39;less equal&#39; comparison of two tensors. Result is 1 if left &lt;= right else 0.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.less_equal([41., 42., 43.], [42., 42., 42.]).eval()</span>
+<span class="sd">        array([ 1.,  1.,  0.], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.less_equal([-1,0,1], [0]).eval()</span>
+<span class="sd">        array([ 1.,  1.,  0.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        left: left side tensor</span>
+<span class="sd">        right: right side tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">less_equal</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">less_equal</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># linear ops</span>
+<span class="c1">##########################################################################</span>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="plus"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.plus">[docs]</a><span class="k">def</span> <span class="nf">plus</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The output of this operation is the sum of the two input tensors. It supports broadcasting.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.plus([1, 2, 3], [4, 5, 6]).eval()</span>
+<span class="sd">        array([ 5.,  7.,  9.], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.plus([-5, -4, -3, -2, -1], [10]).eval()</span>
+<span class="sd">        array([ 5.,  6.,  7.,  8.,  9.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        left: left side tensor</span>
+<span class="sd">        right: right side tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">plus</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">plus</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="minus"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.minus">[docs]</a><span class="k">def</span> <span class="nf">minus</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The output of this operation is left minus right tensor. It supports broadcasting.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.minus([1, 2, 3], [4, 5, 6]).eval()</span>
+<span class="sd">        array([-3., -3., -3.], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.minus([[1,2],[3,4]], 1).eval()</span>
+<span class="sd">        array([[ 0.,  1.],</span>
+<span class="sd">               [ 2.,  3.]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        left: left side tensor</span>
+<span class="sd">        right: right side tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">minus</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">minus</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="element_times"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.element_times">[docs]</a><span class="k">def</span> <span class="nf">element_times</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The output of this operation is the element-wise product of the two input</span>
+<span class="sd">    tensors. It supports broadcasting. </span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.element_times([1., 1., 1., 1.], [0.5, 0.25, 0.125, 0.]).eval()</span>
+<span class="sd">        array([ 0.5  ,  0.25 ,  0.125,  0.   ], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.element_times([5., 10., 15., 30.], [2.]).eval()</span>
+<span class="sd">        array([ 10.,  20.,  30.,  60.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        left: left side tensor</span>
+<span class="sd">        right: right side tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">element_times</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">element_times</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="element_divide"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.element_divide">[docs]</a><span class="k">def</span> <span class="nf">element_divide</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The output of this operation is the element-wise division of the two input</span>
+<span class="sd">    tensors. It supports broadcasting. </span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.element_divide([1., 1., 1., 1.], [0.5, 0.25, 0.125, 0.]).eval()</span>
+<span class="sd">        array([ 2.,  4.,  8.,  0.], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.element_divide([5., 10., 15., 30.], [2.]).eval()</span>
+<span class="sd">        array([  2.5,   5. ,   7.5,  15. ], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        left: left side tensor</span>
+<span class="sd">        right: right side tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">element_divide</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">element_divide</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="times"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.times">[docs]</a><span class="k">def</span> <span class="nf">times</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">output_rank</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The output of this operation is the matrix product of the two input matrices.</span>
+<span class="sd">    It supports broadcasting. Sparse is supported in the right operand, if it is a matrix.</span>
+<span class="sd">    The operator &#39;@&#39; has been overloaded such that in Python 3.5 and later X @ W equals times(X, W).</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.times([[1,2],[3,4]], [[5],[6]]).eval()</span>
+<span class="sd">        array([[ 17.],</span>
+<span class="sd">               [ 39.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.times(1.*np.reshape(np.arange(8), (2.,2.,2.)),1.*np.reshape(np.arange(8), (2.,2.,2.)), output_rank=1).eval()</span>
+<span class="sd">        array([[ 28.,  34.],</span>
+<span class="sd">               [ 76.,  98.]])</span>
+
+<span class="sd">        &gt;&gt;&gt; C.times(1.*np.reshape(np.arange(8), (2,2,2)),1.*np.reshape(np.arange(8), (2,2,2)), output_rank=2).eval()</span>
+<span class="sd">        array([[[[  4.,   5.],</span>
+<span class="sd">                 [  6.,   7.]],</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">                [[ 12.,  17.],</span>
+<span class="sd">                 [ 22.,  27.]]],</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">               [[[ 20.,  29.],</span>
+<span class="sd">                 [ 38.,  47.]],</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">                [[ 28.,  41.],</span>
+<span class="sd">                 [ 54.,  67.]]]])</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        left: left side matrix or tensor</span>
+<span class="sd">        right: right side matrix or tensor</span>
+<span class="sd">        output_rank (`int`): in case we have tensors as arguemnts, output_rank represents</span>
+<span class="sd">            the number of axes to be collapsed in order to transform the tensors</span>
+<span class="sd">            into matrices, perform the operation and then reshape back (explode the axes)</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">times</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">times</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">output_rank</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># non_diff ops</span>
+<span class="c1">##########################################################################</span>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="floor"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.floor">[docs]</a><span class="k">def</span> <span class="nf">floor</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The output of this operation is the element wise value rounded to the largest</span>
+<span class="sd">    integer less than or equal to the input.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.floor([0.2, 1.3, 4., 5.5, 0.0]).eval()</span>
+<span class="sd">        array([ 0.,  1.,  4.,  5.,  0.], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.floor([[0.6, 3.3], [1.9, 5.6]]).eval()</span>
+<span class="sd">        array([[ 0.,  3.],</span>
+<span class="sd">               [ 1.,  5.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.floor([-5.5, -4.2, -3., -0.7, 0]).eval()</span>
+<span class="sd">        array([-6., -5., -3., -1.,  0.], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.floor([[-0.6, -4.3], [1.9, -3.2]]).eval()</span>
+<span class="sd">        array([[-1., -5.],</span>
+<span class="sd">               [ 1., -4.]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        arg: input tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network (optional)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">floor</span>
+    <span class="n">arg</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">floor</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="ceil"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.ceil">[docs]</a><span class="k">def</span> <span class="nf">ceil</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The output of this operation is the element wise value rounded to the smallest</span>
+<span class="sd">    integer greater than or equal to the input.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.ceil([0.2, 1.3, 4., 5.5, 0.0]).eval()</span>
+<span class="sd">        array([ 1.,  2.,  4.,  6.,  0.], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.ceil([[0.6, 3.3], [1.9, 5.6]]).eval()</span>
+<span class="sd">        array([[ 1.,  4.],</span>
+<span class="sd">               [ 2.,  6.]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        arg: input tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network (optional)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">ceil</span>
+    <span class="n">arg</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ceil</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="round"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.round">[docs]</a><span class="k">def</span> <span class="nf">round</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The output of this operation is the element wise value rounded to the nearest integer.</span>
+<span class="sd">    In case of tie, where element can have exact fractional part of 0.5</span>
+<span class="sd">    this operation follows &quot;round half-up&quot; tie breaking strategy.</span>
+<span class="sd">    This is different from the round operation of numpy which follows</span>
+<span class="sd">    round half to even.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.round([0.2, 1.3, 4., 5.5, 0.0]).eval()</span>
+<span class="sd">        array([ 0.,  1.,  4.,  6.,  0.], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.round([[0.6, 3.3], [1.9, 5.6]]).eval()</span>
+<span class="sd">        array([[ 1.,  3.],</span>
+<span class="sd">               [ 2.,  6.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.round([-5.5, -4.2, -3., -0.7, 0]).eval()</span>
+<span class="sd">        array([-5., -4., -3., -1.,  0.], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.round([[-0.6, -4.3], [1.9, -3.2]]).eval()</span>
+<span class="sd">        array([[-1., -4.],</span>
+<span class="sd">               [ 2., -3.]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        arg: input tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network (optional)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="nb">round</span>
+    <span class="n">arg</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># non_linear and nn ops</span>
+<span class="c1">##########################################################################</span>
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="clip"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.clip">[docs]</a><span class="k">def</span> <span class="nf">clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes a tensor with all of its values clipped to fall</span>
+<span class="sd">    between `min_value` and `max_value`, i.e.</span>
+<span class="sd">    ``min(max(x, min_value), max_value)``.</span>
+
+<span class="sd">    The output tensor has the same shape as `x`.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.clip([1., 2.1, 3.0, 4.1], 2., 4.).eval()</span>
+<span class="sd">        array([ 2. ,  2.1,  3. ,  4. ], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.clip([-10., -5., 0., 5., 10.], [-5., -4., 0., 3., 5.], [5., 4., 1., 4., 9.]).eval()</span>
+<span class="sd">        array([-5., -4.,  0.,  4.,  9.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: tensor to be clipped</span>
+<span class="sd">        min_value (`float`): a scalar or a tensor which represents the minimum value to clip element</span>
+<span class="sd">         values to</span>
+<span class="sd">        max_value (`float`): a scalar or a tensor which represents the maximum value to clip element</span>
+<span class="sd">         values to</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">clip</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">min_value</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">min_value</span><span class="p">))</span>
+    <span class="n">max_value</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">max_value</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">max_value</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="relu"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.relu">[docs]</a><span class="k">def</span> <span class="nf">relu</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Rectified linear operation. Computes the element-wise rectified linear</span>
+<span class="sd">    of `x`: ``max(x, 0)``</span>
+
+<span class="sd">    The output tensor has the same shape as `x`.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.relu([[-1, -0.5, 0, 1, 2]]).eval()</span>
+<span class="sd">        array([[ 0.,  0.,  0.,  1.,  2.]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: numpy array or any :class:`cntk.ops.functions.Function` that outputs a tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">re_lu</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">re_lu</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="sigmoid"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.sigmoid">[docs]</a><span class="k">def</span> <span class="nf">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the element-wise sigmoid of `x`:</span>
+
+<span class="sd">    :math:`sigmoid(x) = {1 \over {1+\exp(-x)}}`</span>
+
+<span class="sd">    The output tensor has the same shape as `x`.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.sigmoid([-2, -1., 0., 1., 2.]).eval()</span>
+<span class="sd">        array([ 0.119203,  0.268941,  0.5     ,  0.731059,  0.880797], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: numpy array or any :class:`cntk.ops.functions.Function` that outputs a tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">sigmoid</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="tanh"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.tanh">[docs]</a><span class="k">def</span> <span class="nf">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the element-wise tanh of `x`:</span>
+
+<span class="sd">    The output tensor has the same shape as `x`.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.tanh([[1,2],[3,4]]).eval()</span>
+<span class="sd">        array([[ 0.761594,  0.964028],</span>
+<span class="sd">               [ 0.995055,  0.999329]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: numpy array or any :class:`cntk.ops.functions.Function` that outputs a tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">tanh</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="softmax"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.softmax">[docs]</a><span class="k">def</span> <span class="nf">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Squashes the input values `x` such that they add up to 1:</span>
+
+<span class="sd">    :math:`softmax(x) = {\exp(x_i) - \max_{x_i \in x}(\exp(x_i)) \over {\sum_{x_i \in x} \exp(x_i)- \max_{x_i \in x}(\exp(x_i)) }}`</span>
+
+<span class="sd">    The term :math:`\max_{x_i \in x}(\exp(x_i))` is subtracted for numerical</span>
+<span class="sd">    stability.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.softmax([[1, 1, 2, 3]]).eval()</span>
+<span class="sd">        array([[ 0.082595,  0.082595,  0.224515,  0.610296]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.softmax([1, 1]).eval()</span>
+<span class="sd">        array([ 0.5,  0.5], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: numpy array or any :class:`cntk.ops.functions.Function` that outputs a tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">softmax</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="hardmax"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.hardmax">[docs]</a><span class="k">def</span> <span class="nf">hardmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Creates a tensor with the same shape as the input tensor, with zeros everywhere and a 1.0 where the</span>
+<span class="sd">    maximum value of the input tensor is located. If the maximum value is repeated, 1.0 is placed in the first location found.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.hardmax([1., 1., 2., 3.]).eval()</span>
+<span class="sd">        array([ 0.,  0.,  0.,  1.], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.hardmax([1., 3., 2., 3.]).eval()</span>
+<span class="sd">        array([ 0.,  1.,  0.,  0.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: numpy array or any :class:`cntk.ops.functions.Function` that outputs a tensor</span>
+<span class="sd">        name (`str`): the name of the node in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">hardmax</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hardmax</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="exp"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.exp">[docs]</a><span class="k">def</span> <span class="nf">exp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the element-wise exponential of `x`:</span>
+
+<span class="sd">    :math:`exp(x) = {e^x}`</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.exp([0., 1.]).eval()</span>
+<span class="sd">        array([ 1.      ,  2.718282], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: numpy array or any :class:`cntk.ops.functions.Function` that outputs a tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">exp</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="log"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.log">[docs]</a><span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the element-wise the natural logarithm of `x`:</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.log([1., 2.]).eval()</span>
+<span class="sd">        array([ 0.      ,  0.693147], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: numpy array or any :class:`cntk.ops.functions.Function` that outputs a tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        CNTK returns -85.1 for log(x) if `x` is negative or zero. The reason is that</span>
+<span class="sd">        it uses 1e-37 (whose natural logarithm is -85.1) as the smallest float</span>
+<span class="sd">        number for `log`, because this is the only guaranteed precision across</span>
+<span class="sd">        platforms. This will be changed to return `NaN` and `-inf`.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">log</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="sqrt"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.sqrt">[docs]</a><span class="k">def</span> <span class="nf">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the element-wise square-root of `x`:</span>
+
+<span class="sd">    :math:`sqrt(x) = {\sqrt[2]{x}}`</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.sqrt([0., 4.]).eval()</span>
+<span class="sd">        array([ 0.,  2.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: numpy array or any :class:`cntk.ops.functions.Function` that outputs a tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        CNTK returns zero for sqrt of negative nubmers, this will be changed to</span>
+<span class="sd">        retrun NaN</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">sqrt</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="square"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.square">[docs]</a><span class="k">def</span> <span class="nf">square</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the element-wise square of `x`:</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.square([1., 10.]).eval()</span>
+<span class="sd">        array([   1.,  100.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: numpy array or any :class:`cntk.ops.functions.Function` that outputs a tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">square</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">square</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="abs"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.abs">[docs]</a><span class="k">def</span> <span class="nf">abs</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the element-wise absolute of `x`:</span>
+
+<span class="sd">    :math:`abs(x) = |x|`</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.abs([-1, 1, -2, 3]).eval()</span>
+<span class="sd">        array([ 1.,  1.,  2.,  3.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: numpy array or any :class:`cntk.ops.functions.Function` that outputs a tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="nb">abs</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="negate"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.negate">[docs]</a><span class="k">def</span> <span class="nf">negate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the element-wise negation of `x`:</span>
+
+<span class="sd">    :math:`negate(x) = -x`</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.negate([-1, 1, -2, 3]).eval()</span>
+<span class="sd">        array([ 1., -1.,  2., -3.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: numpy array or any :class:`cntk.ops.functions.Function` that outputs a tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">negate</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">negate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="reciprocal"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.reciprocal">[docs]</a><span class="k">def</span> <span class="nf">reciprocal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the element-wise reciprocal of `x`:</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.reciprocal([-1/3, 1/5, -2, 3]).eval()</span>
+<span class="sd">        array([-3.      ,  5.      , -0.5     ,  0.333333], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: numpy array or any :class:`cntk.ops.functions.Function` that outputs a tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">reciprocal</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reciprocal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="element_select"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.element_select">[docs]</a><span class="k">def</span> <span class="nf">element_select</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">value_if_true</span><span class="p">,</span> <span class="n">value_if_false</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    return either value_if_true or value_if_false based on the value of flag.</span>
+<span class="sd">    If flag != 0 value_if_true is returned, otherwise value_if_false.</span>
+<span class="sd">    Behaves analogously to numpy.where(...).</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; C.element_select([-10, -1, 0, 0.3, 100], [1, 10, 100, 1000, 10000], [ 2, 20, 200, 2000, 20000]).eval()</span>
+<span class="sd">        array([     1.,     10.,    200.,   1000.,  10000.], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        flag: tensor</span>
+<span class="sd">        value_if_true: tensor</span>
+<span class="sd">        value_if_false: tensor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">element_select</span>
+    <span class="n">flag</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+    <span class="n">value_if_true</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">value_if_true</span><span class="p">)</span>
+    <span class="n">value_if_false</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">value_if_false</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">element_select</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">value_if_true</span><span class="p">,</span> <span class="n">value_if_false</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># recurrent ops</span>
+<span class="c1">##########################################################################</span>
+
+<span class="c1"># TODO: add default value for initial_state. It should be a constant scalar</span>
+<span class="c1"># (0.0), using the default device</span>
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="future_value"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.future_value">[docs]</a><span class="k">def</span> <span class="nf">future_value</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">initial_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function returns the future value w.r.t. `x`. It is most often used when</span>
+<span class="sd">    creating RNNs. The resulting tensor has the same shape as the input but is</span>
+<span class="sd">    the next logical sample. The `time_step` parameter is the number of steps</span>
+<span class="sd">    to look into the future and is 1 by default. If there is no future value (i.e.</span>
+<span class="sd">    the current sample is the last one in the tensor) then the `initial_state`</span>
+<span class="sd">    value is returned.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        TBA</span>
+<span class="sd">    Args:</span>
+<span class="sd">        x: the tensor (or its name) from which the future value is obtained.</span>
+<span class="sd">        initial_state: tensor or scalar representing the initial value to be</span>
+<span class="sd">        used when the input tensor is shifted in time.</span>
+<span class="sd">        time_step (`int`): the number of time steps to look into the future (default 1)</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">sanitize_dtype_cntk</span>
+    <span class="kn">from</span> <span class="nn">..cntk_py</span> <span class="k">import</span> <span class="n">Constant</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">future_value</span>
+
+    <span class="k">if</span> <span class="n">initial_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">initial_state</span> <span class="o">=</span> <span class="n">Constant</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span><span class="n">sanitize_dtype_cntk</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">future_value</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="past_value"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.past_value">[docs]</a><span class="k">def</span> <span class="nf">past_value</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">initial_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function returns the past value w.r.t. `x`. It is most often used when</span>
+<span class="sd">    creating RNNs. The resulting tensor has the same shape as the input but is</span>
+<span class="sd">    the previous logical sample. The `time_step` parameter is the number of steps</span>
+<span class="sd">    to look into the past and is 1 by default. If there is no past value (i.e.</span>
+<span class="sd">    the current sample is the first one in the tensor)  then the `initial_state`</span>
+<span class="sd">    value is returned.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        TBA</span>
+<span class="sd">    Args:</span>
+<span class="sd">        x: the tensor (or its name) from which the past value is obtained</span>
+<span class="sd">        initial_state: tensor or scalar representing the initial value to be</span>
+<span class="sd">        used when the input tensor is shifted in time.</span>
+<span class="sd">        time_step (`int`): the number of time steps to look into the past (default 1)</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">sanitize_dtype_cntk</span>
+    <span class="kn">from</span> <span class="nn">..cntk_py</span> <span class="k">import</span> <span class="n">Constant</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">past_value</span>
+
+    <span class="k">if</span> <span class="n">initial_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">initial_state</span> <span class="o">=</span> <span class="n">Constant</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span><span class="n">sanitize_dtype_cntk</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">past_value</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># reshaping ops</span>
+<span class="c1">##########################################################################</span>
+
+<span class="c1"># TODO: enable when it is exposed in c++</span>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="reshape"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.reshape">[docs]</a><span class="k">def</span> <span class="nf">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Reinterpret input samples as having different tensor dimensions</span>
+<span class="sd">    One dimension may be specified as 0 and will be inferred</span>
+
+<span class="sd">    The output tensor has the shape specified by &#39;shape&#39;.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; i1 = C.input_variable(shape=(3,2))</span>
+<span class="sd">        &gt;&gt;&gt; C.reshape(i1, (2,3)).eval({i1:np.asarray([[[[0., 1.],[2., 3.],[4., 5.]]]], dtype=np.float32)})</span>
+<span class="sd">        array([[[[ 0.,  1.,  2.],</span>
+<span class="sd">                 [ 3.,  4.,  5.]]]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: tensor to be reshaped</span>
+<span class="sd">        shape (`tuple`): a tuple defining the resulting shape</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="c1"># TODO decide on whether -1 instead of 0 should be used to infer the</span>
+        <span class="c1"># dimension</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;shape dimensions cannot be negative&#39;</span><span class="p">)</span>
+
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">reshape</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">sanitize_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="transpose"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.transpose">[docs]</a><span class="k">def</span> <span class="nf">transpose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Reverses two axes of the tensor. The output tensor has the same data but with</span>
+<span class="sd">    `axis1` and `axis2` swapped.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; C.transpose([[[0,1],[2,3],[4,5]]], 1, 2).eval()</span>
+<span class="sd">        array([[[ 0.,  2.,  4.],</span>
+<span class="sd">                [ 1.,  3.,  5.]]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: tensor to be transposed</span>
+<span class="sd">        axis1 (`int` or :class:`cntk.Axis`): the axis to swap with `axis2`</span>
+<span class="sd">        axis2 (`int` or :class:`cntk.Axis`): the axis to swap with `axis1`</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">transpose_axes</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">rank</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">()</span><span class="o">.</span><span class="n">rank</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">axis1</span> <span class="o">=</span> <span class="n">sanitize_axis</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">axis1</span><span class="p">)</span>
+    <span class="n">axis2</span> <span class="o">=</span> <span class="n">sanitize_axis</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">axis2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">transpose_axes</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis1</span><span class="p">,</span> <span class="n">axis2</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="slice"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.slice">[docs]</a><span class="k">def</span> <span class="nf">slice</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">begin_index</span><span class="p">,</span> <span class="n">end_index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Slice the input along an axis.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; # Slice using input variable</span>
+<span class="sd">        &gt;&gt;&gt; # create 2x3 matrix</span>
+<span class="sd">        &gt;&gt;&gt; x1 = C.input_variable((2,3))</span>
+<span class="sd">        &gt;&gt;&gt; # slice index 1 (second) at first axis</span>
+<span class="sd">        &gt;&gt;&gt; C.slice(x1, 0, 1, 2).eval({x1: np.asarray([[[[1,2,-3],</span>
+<span class="sd">        ...                                              [4, 5, 6]]]],dtype=np.float32)})</span>
+<span class="sd">        array([[[[ 4.,  5.,  6.]]]], dtype=float32)</span>
+<span class="sd">        &gt;&gt;&gt; # slice index 0 (first) at second axis</span>
+<span class="sd">        &gt;&gt;&gt; C.slice(x1, 1, 0, 1).eval({x1: np.asarray([[[[1,2,-3],</span>
+<span class="sd">        ...                                              [4, 5, 6]]]],dtype=np.float32)})</span>
+<span class="sd">        array([[[[ 1.],</span>
+<span class="sd">                 [ 4.]]]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; #slice using constant</span>
+<span class="sd">        &gt;&gt;&gt; data = np.asarray([[1, 2, -3],</span>
+<span class="sd">        ...                     [4, 5,  6]], dtype=np.float32)</span>
+<span class="sd">        &gt;&gt;&gt; x = C.constant(value=data)</span>
+<span class="sd">        &gt;&gt;&gt; C.slice(x, 0, 1, 2).eval()</span>
+<span class="sd">        array([[ 4.,  5.,  6.]], dtype=float32)</span>
+<span class="sd">        &gt;&gt;&gt; C.slice(x, 1, 0, 1).eval()</span>
+<span class="sd">        array([[ 1.],</span>
+<span class="sd">               [ 4.]], dtype=float32)</span>
+
+<span class="sd">    NumPy&#39;s way of slicing works, too:</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        TODO: Make following lines work. Uncomment when done</span>
+<span class="sd">        #&gt;&gt;&gt; x1[1].eval()</span>
+<span class="sd">        #array([[ 4.,  5.,  6.]], dtype=float32)</span>
+<span class="sd">        #&gt;&gt;&gt; x1[:,:2,:].eval()</span>
+<span class="sd">        #array([[ 1.,  2.],</span>
+<span class="sd">        #         [ 4.,  5.]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: input tensor</span>
+<span class="sd">        axis (`int` or :class:`cntk.Axis`): axis along which `begin_index` and `end_index`</span>
+<span class="sd">         will be used. If it is of type `int` it will be used as a static axis.</span>
+<span class="sd">        begin_index (`int`): the index along axis where the slicing starts</span>
+<span class="sd">        end_index (`int`): the index along axis where the slicing ends</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+
+<span class="sd">    See also:</span>
+<span class="sd">        Indexing in NumPy: http://docs.scipy.org/doc/numpy/reference/arrays.indexing.html</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="nb">slice</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="n">sanitize_axis</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">()</span><span class="o">.</span><span class="n">rank</span><span class="p">(),</span> <span class="n">axis</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">slice</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">begin_index</span><span class="p">,</span> <span class="n">end_index</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<span class="c1"># TODO: enable when it is exposed in c++</span>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="splice"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.splice">[docs]</a><span class="k">def</span> <span class="nf">splice</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Concatenate the input tensors along an axis.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; # create 2x2 matrix in a sequence of length 1 in a batch of one sample</span>
+<span class="sd">        &gt;&gt;&gt; data1 = np.asarray([[[1, 2],</span>
+<span class="sd">        ...                      [4, 5]]], dtype=np.float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; x = C.constant(value=data1)</span>
+<span class="sd">        &gt;&gt;&gt; # create 3x2 matrix in a sequence of length 1 in a batch of one sample</span>
+<span class="sd">        &gt;&gt;&gt; data2 = np.asarray([[[10, 20],</span>
+<span class="sd">        ...                       [30, 40],</span>
+<span class="sd">        ...                       [50, 60]]],dtype=np.float32)</span>
+<span class="sd">        &gt;&gt;&gt; y = C.constant(value=data2)</span>
+<span class="sd">        &gt;&gt;&gt; # splice both inputs on axis=0 returns a 5x2 matrix</span>
+<span class="sd">        &gt;&gt;&gt; C.splice((x,y), 1).eval()</span>
+<span class="sd">        array([[[  1.,   2.],</span>
+<span class="sd">                [  4.,   5.],</span>
+<span class="sd">                [ 10.,  20.],</span>
+<span class="sd">                [ 30.,  40.],</span>
+<span class="sd">                [ 50.,  60.]]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        inputs (`list`): tuple of input tensors</span>
+<span class="sd">        axis (:class:`cntk.Axis`): axis along which the concatenation will be performed</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">splice</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;inputs has to be an iterable&#39;</span><span class="p">)</span>
+
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">]</span>
+
+    <span class="n">rank</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">()</span><span class="o">.</span><span class="n">rank</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">])</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="n">sanitize_axis</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">splice</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># reduction ops</span>
+<span class="c1">##########################################################################</span>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="reduce_sum"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.reduce_sum">[docs]</a><span class="k">def</span> <span class="nf">reduce_sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the sum of the input tensor&#39;s elements across one axis. If the axis parameter</span>
+<span class="sd">    is not specified then the sum will be computed over all axes, that is, the output is a scalar,</span>
+<span class="sd">    which is the sum of tensor&#39;s elements.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; # create 3x2 matrix in a sequence of length 1 in a batch of one sample</span>
+<span class="sd">        &gt;&gt;&gt; data = [[10, 20],[30, 40],[50, 60]]</span>
+
+<span class="sd">        &gt;&gt;&gt; # reduce over the first axis</span>
+<span class="sd">        &gt;&gt;&gt; C.reduce_sum(data, 0).eval()</span>
+<span class="sd">        array([[  90.,  120.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; # reduce over the second axis</span>
+<span class="sd">        &gt;&gt;&gt; C.reduce_sum(data, 1).eval()</span>
+<span class="sd">        array([[  30.],</span>
+<span class="sd">               [  70.],</span>
+<span class="sd">               [ 110.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; # Negative axis is counted from last to first. So -1 retrieves same</span>
+<span class="sd">        &gt;&gt;&gt; # result as 1 on a matrix of rank 2.</span>
+<span class="sd">        &gt;&gt;&gt; C.reduce_sum(data, -1).eval()</span>
+<span class="sd">        array([[  30.],</span>
+<span class="sd">               [  70.],</span>
+<span class="sd">               [ 110.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; # And -2 retrieves the same result as 0 on a matrix of rank 2.</span>
+<span class="sd">        &gt;&gt;&gt; C.reduce_sum(data, -2).eval()</span>
+<span class="sd">        array([[  90.,  120.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; # reduce over the all axes</span>
+<span class="sd">        &gt;&gt;&gt; C.reduce_sum(data).eval()</span>
+<span class="sd">        array(210.0, dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: input tensor</span>
+<span class="sd">        axis (`int` or :class:`cntk.Axis`): axis along which the reduction will be performed</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">reduce_sum</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="n">sanitize_axis</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">()</span><span class="o">.</span><span class="n">rank</span><span class="p">(),</span> <span class="n">axis</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reduce_sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="reduce_log_sum"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.reduce_log_sum">[docs]</a><span class="k">def</span> <span class="nf">reduce_log_sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the log sum of the input tensor&#39;s elements across the specified axis.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        TBA</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: input tensor</span>
+<span class="sd">        axis (`int` or :class:`cntk.Axis`): axis along which the reduction will be performed</span>
+<span class="sd">        name (`str`): the name of the Function instance in the network</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">reduce_log_sum</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="n">sanitize_axis</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">()</span><span class="o">.</span><span class="n">rank</span><span class="p">(),</span> <span class="n">axis</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reduce_log_sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="reduce_mean"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.reduce_mean">[docs]</a><span class="k">def</span> <span class="nf">reduce_mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the mean of the input tensor&#39;s elements across the specified axis.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; # create 3x2 matrix in a sequence of length 1 in a batch of one sample</span>
+<span class="sd">        &gt;&gt;&gt; data = [[10, 20],[30, 40],[50, 60]]</span>
+
+<span class="sd">        &gt;&gt;&gt; C.reduce_mean(data, 0).eval()</span>
+<span class="sd">        array([[ 30.,  40.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.reduce_mean(data, 1).eval()</span>
+<span class="sd">        array([[ 15.],</span>
+<span class="sd">               [ 35.],</span>
+<span class="sd">               [ 55.]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: input tensor</span>
+<span class="sd">        axis (`int` or :class:`cntk.Axis`): axis along which the reduction will be performed</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">reduce_mean</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="n">sanitize_axis</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">()</span><span class="o">.</span><span class="n">rank</span><span class="p">(),</span> <span class="n">axis</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reduce_mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="reduce_max"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.reduce_max">[docs]</a><span class="k">def</span> <span class="nf">reduce_max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the max of the input tensor&#39;s elements across the specified axis.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; # create 3x2 matrix in a sequence of length 1 in a batch of one sample</span>
+<span class="sd">        &gt;&gt;&gt; data = [[10, 20],[30, 40],[50, 60]]</span>
+
+<span class="sd">        &gt;&gt;&gt; C.reduce_max(data, 0).eval()</span>
+<span class="sd">        array([[ 50.,  60.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.reduce_max(data, 1).eval()</span>
+<span class="sd">        array([[ 20.],</span>
+<span class="sd">               [ 40.],</span>
+<span class="sd">               [ 60.]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: input tensor</span>
+<span class="sd">        axis (`int` or :class:`cntk.Axis`): axis along which the reduction will be performed</span>
+<span class="sd">        name (`str`): the name of the Function instance in the network</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">reduce_max</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="n">sanitize_axis</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">()</span><span class="o">.</span><span class="n">rank</span><span class="p">(),</span> <span class="n">axis</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reduce_max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="reduce_min"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.reduce_min">[docs]</a><span class="k">def</span> <span class="nf">reduce_min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the min of the input tensor&#39;s elements across the specified axis.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; # create 3x2 matrix in a sequence of length 1 in a batch of one sample</span>
+<span class="sd">        &gt;&gt;&gt; data = [[10, 20],[30, 40],[50, 60]]</span>
+
+<span class="sd">        &gt;&gt;&gt; C.reduce_min(data, 0).eval()</span>
+<span class="sd">        array([[ 10.,  20.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.reduce_min(data, 1).eval()</span>
+<span class="sd">        array([[ 10.],</span>
+<span class="sd">               [ 30.],</span>
+<span class="sd">               [ 50.]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: input tensor</span>
+<span class="sd">        axis (`int` or :class:`cntk.Axis`): axis along which the reduction will be performed</span>
+<span class="sd">        name (`str`): the name of the Function instance in the network</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">reduce_min</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="n">sanitize_axis</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">()</span><span class="o">.</span><span class="n">rank</span><span class="p">(),</span> <span class="n">axis</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reduce_min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># training ops</span>
+<span class="c1">##########################################################################</span>
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="random_sample"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.random_sample">[docs]</a><span class="k">def</span> <span class="nf">random_sample</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">allow_duplicates</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Estimates inclusion frequencies for random sampling with or without replacement.</span>
+
+<span class="sd">    The node&#39;s value is a set of num_samples random samples represented by a (sparse) matrix of shape [num_samples x len(weights)],</span>
+<span class="sd">    where len(weights) is the number of classes (categories) to choose from. The output has no dynamic axis.</span>
+<span class="sd">    The samples are drawn according to the weight vector p(i) = weights[i] / sum(weights)</span>
+<span class="sd">    We get one set of samples per minibatch.</span>
+<span class="sd">    Intended use cases are e.g. sampled softmax, noise contrastive estimation etc.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        weights: input vector of sampling weights which should be nonzero positive numbers.</span>
+<span class="sd">        num_samples (`int`): number of expected samples</span>
+<span class="sd">        allow_duplicates (`bool`): If sampling is done with replacement (true) or without (false).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        FIXME also in all of the other cases :class:`cntk.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">num_samples</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;num_samples must be greater that zero&#39;</span><span class="p">)</span>
+
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">random_sample</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">random_sample</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">allow_duplicates</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="random_sample_inclusion_frequency"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.random_sample_inclusion_frequency">[docs]</a><span class="k">def</span> <span class="nf">random_sample_inclusion_frequency</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">allow_duplicates</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    For weighted sampling with the specifed sample size (num_samples) this node computes the expected number of occurences of each class in</span>
+<span class="sd">    the the sampled set. In case of sampling without replacement the result only an estimate which might be quite rough in the case of small sample sizes.</span>
+<span class="sd">    Intended uses are e.g. sampled softmax, noise contrastive estimation etc.</span>
+<span class="sd">    This operation will be typically used together with &#39;random_sample&#39;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        weights: input vector of sampling weights which should be nonzero positive numbers.</span>
+<span class="sd">        num_samples (&#39;int&#39;): number of expected samples</span>
+<span class="sd">        allow_duplicates (&#39;bool&#39;): If sampling is done with replacement (true) or without (false).</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; from cntk import *</span>
+<span class="sd">        &gt;&gt;&gt; # weight vector with 100 &#39;1000&#39;-values followed by 100 &#39;1&#39; values</span>
+<span class="sd">        &gt;&gt;&gt; weights = np.concatenate((np.full((100),1000), np.full((100),1)))</span>
+<span class="sd">        &gt;&gt;&gt; inclusion_frequencies = random_sample_inclusion_frequency(weights, 150, True).eval()</span>
+<span class="sd">        &gt;&gt;&gt; inclusion_frequencies[0]</span>
+<span class="sd">        1.4985014985014986</span>
+<span class="sd">        &gt;&gt;&gt; inclusion_frequencies[1]</span>
+<span class="sd">        1.4985014985014986</span>
+<span class="sd">        &gt;&gt;&gt; inclusion_frequencies[110]</span>
+<span class="sd">        0.0014985014985014985</span>
+<span class="sd">        &gt;&gt;&gt; # when switching to sampling without duplicates samples are forst to pick the low weight classes too</span>
+<span class="sd">        &gt;&gt;&gt; inclusion_frequencies = random_sample_inclusion_frequency(weights, 150, False).eval()</span>
+<span class="sd">        &gt;&gt;&gt; inclusion_frequencies[0]</span>
+<span class="sd">        1.0</span>
+<span class="sd">        &gt;&gt;&gt; inclusion_frequencies[110]</span>
+<span class="sd">        0.48722463883004796</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        FIXME also in all of the other cases :class:`cntk.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">num_samples</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;num_samples must be greater that zero&#39;</span><span class="p">)</span>
+
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">random_sample_inclusion_frequency</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">random_sample_inclusion_frequency</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">allow_duplicates</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="dropout"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.dropout">[docs]</a><span class="k">def</span> <span class="nf">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Randomly selects elements of the input with a given probability called the `dropout_rate`, and sets</span>
+<span class="sd">    them to 0. This has been shown to improve generalizability of models.</span>
+
+<span class="sd">    In CNTK&#39;s implementation, the remaining values that are not set to 0 will instead be multiplied</span>
+<span class="sd">    with (1 / (1 - `dropout_rate`)). This way, the model parameters learned with dropout are directly</span>
+<span class="sd">    applicable in inference. (If this was not done, the user would have to manually scale them before</span>
+<span class="sd">    inference.)</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; data = [[10, 20],[30, 40],[50, 60]]</span>
+<span class="sd">        &gt;&gt;&gt; C.dropout(data, 0.5).eval() # doctest: +SKIP</span>
+<span class="sd">        array([[  0.,  40.],</span>
+<span class="sd">               [  0.,  80.],</span>
+<span class="sd">               [  0.,   0.]], dtype=float32)</span>
+
+<span class="sd">        &gt;&gt;&gt; C.dropout(reduce_data, 0.75).eval() # doctest: +SKIP</span>
+<span class="sd">        array([[   0.,    0.],</span>
+<span class="sd">               [   0.,  160.],</span>
+<span class="sd">               [   0.,  240.]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x: input tensor</span>
+<span class="sd">        dropout_rate (float, [0,1)): fraction of nodes to be set to zero</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">dropout_rate</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">dropout_rate</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;dropout_rate must be in the interval [0,1)&#39;</span><span class="p">)</span>
+
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">dropout</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># variables_and_parameters ops</span>
+<span class="c1">##########################################################################</span>
+
+<span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">Axis</span><span class="p">,</span> <span class="n">DeviceDescriptor</span>
+
+<span class="c1"># TODO: expose output_variable as well ?</span>
+
+<span class="c1"># TODO: if we end up using only factory methods, we should get rid of the</span>
+<span class="c1"># class Variable in variables.py</span>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="input_variable"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.input_variable">[docs]</a><span class="k">def</span> <span class="nf">input_variable</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">needs_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                   <span class="n">dynamic_axes</span><span class="o">=</span><span class="n">Axis</span><span class="o">.</span><span class="n">default_input_variable_dynamic_axes</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    It creates an input node.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        shape (`tuple` or `int`): the shape of the input tensor</span>
+<span class="sd">        data_type (`type`, optional): np.float32 (default) or np.float64</span>
+<span class="sd">        needs_gradients (`bool`, optional): whether to back-propagates to it or not. True by default.</span>
+<span class="sd">        is_sparse (`bool`, optional): whether the variable is sparse (`False` by default)</span>
+<span class="sd">        dynamic_axes (`list` or `tuple`, default): a list of dynamic axis (e.g., batch axis, time axis)</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">input_variable</span>
+    <span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">sanitize_shape</span><span class="p">,</span> <span class="n">sanitize_dtype_cntk</span>
+
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">sanitize_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">data_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">sanitize_dtype_cntk</span><span class="p">(</span><span class="n">data_type</span><span class="p">)</span>
+    <span class="n">dynamic_axes</span> <span class="o">=</span> <span class="n">sanitize_dynamic_axes</span><span class="p">(</span><span class="n">dynamic_axes</span><span class="p">)</span>
+
+    <span class="c1"># TODO dynamic axis for numpy arrays</span>
+    <span class="c1"># TODO sparse for numpy arrays</span>
+
+    <span class="k">return</span> <span class="n">input_variable</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">is_sparse</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">needs_gradient</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dynamic_axes</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="placeholder_variable"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.placeholder_variable">[docs]</a><span class="k">def</span> <span class="nf">placeholder_variable</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">dynamic_axes</span><span class="o">=</span><span class="n">Axis</span><span class="o">.</span><span class="n">default_input_variable_dynamic_axes</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    It creates a variable place holder for recurrence networks, when the network&#39;s dynamic axes</span>
+<span class="sd">    are unfolded, the place holder will get assigned a variable along the correspondent dynamic axis.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        shape (`tuple` or `int`): the shape of the variable tensor</span>
+<span class="sd">        dynamic_axes (`list`): the list of dynamic axes that the actual variable uses</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">placeholder_variable</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">sanitize_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">dynamic_axes</span> <span class="o">=</span> <span class="n">sanitize_dynamic_axes</span><span class="p">(</span><span class="n">dynamic_axes</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">placeholder_variable</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dynamic_axes</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="parameter"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.parameter">[docs]</a><span class="k">def</span> <span class="nf">parameter</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    It creates a parameter tensor.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; init_parameter = C.parameter(shape=(3,4), init=2)</span>
+<span class="sd">        &gt;&gt;&gt; np.asarray(init_parameter) # doctest: +SKIP</span>
+<span class="sd">        array([[ 2.,  2.,  2.,  2.],</span>
+<span class="sd">               [ 2.,  2.,  2.,  2.],</span>
+<span class="sd">               [ 2.,  2.,  2.,  2.]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        shape (`tuple` or `int`, optional): the shape of the input tensor. If not provided, it</span>
+<span class="sd">         will be inferred from ``value``.</span>
+<span class="sd">        init (scalar or NumPy array or initializer): if init is a scalar</span>
+<span class="sd">         it will be replicated for every element in the tensor or</span>
+<span class="sd">         NumPy array. If it is the output of an initializer form</span>
+<span class="sd">         `:module:cntk.initializer` it will be used to initialize the tensor at</span>
+<span class="sd">         the first forward pass. If `None`, the tensor will be initialized</span>
+<span class="sd">         with 0.</span>
+<span class="sd">        device (:class:`cntk.DeviceDescriptor`): instance of DeviceDescriptor</span>
+<span class="sd">        name (`str`, optional): the name of the Parameter instance in the network</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.variables.Parameter`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="kn">from</span> <span class="nn">.variables</span> <span class="k">import</span> <span class="n">Parameter</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">device</span><span class="p">:</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">DeviceDescriptor</span><span class="o">.</span><span class="n">use_default_device</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">init</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">shape</span><span class="p">:</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">data_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">init</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_type</span> <span class="o">=</span> <span class="s1">&#39;float32&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data_type</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="constant"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.constant">[docs]</a><span class="k">def</span> <span class="nf">constant</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    It creates a constant tensor initialized from a numpy array</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">        &gt;&gt;&gt; constant_data = C.constant(value=[[1., 2.], [3., 4.], [5., 6.]])</span>
+<span class="sd">        &gt;&gt;&gt; np.asarray(constant_data) # doctest: +SKIP</span>
+<span class="sd">        array([[ 1.,  2.],</span>
+<span class="sd">               [ 3.,  4.],</span>
+<span class="sd">               [ 5.,  6.]], dtype=float32)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        shape (`tuple` or `int`, optional): the shape of the input tensor. If not provided, it will</span>
+<span class="sd">         be inferred from ``value``.</span>
+<span class="sd">        value (scalar or NumPy array, optional): a scalar initial value that would be replicated for</span>
+<span class="sd">         every element in the tensor or NumPy array.</span>
+<span class="sd">         If ``None``, the tensor will be initialized uniformly random.</span>
+<span class="sd">        device (:class:`cntk.DeviceDescriptor`): instance of DeviceDescriptor</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.variables.Constant`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">.variables</span> <span class="k">import</span> <span class="n">Constant</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">device</span><span class="p">:</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">DeviceDescriptor</span><span class="o">.</span><span class="n">use_default_device</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">shape</span><span class="p">:</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">data_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_type</span> <span class="o">=</span> <span class="s1">&#39;float32&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data_type</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">Constant</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># normalization ops</span>
+<span class="c1">##########################################################################</span>
+
+<span class="c1"># TODO: ComputeInputPerDimMeansAndInvStdDevs</span>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="per_dim_mean_variance_normalize"><a class="viewcode-back" href="../../cntk.ops.html#cntk.ops.per_dim_mean_variance_normalize">[docs]</a><span class="k">def</span> <span class="nf">per_dim_mean_variance_normalize</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">inv_stddev</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes per dimension mean-variance normalization of the specified input operand.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        operand: the variable to be normalized</span>
+<span class="sd">        mean (NumPy array): per dimension mean to use for the normalization</span>
+<span class="sd">        inv_stddev (NumPy array): per dimension standard deviation to use for the normalization</span>
+<span class="sd">        name (`str`, optional): the name of the Function instance in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.ops.functions.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">per_dim_mean_variance_normalize</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">mean</span><span class="p">))</span>
+    <span class="n">inv_stddev</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">inv_stddev</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">inv_stddev</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">per_dim_mean_variance_normalize</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">inv_stddev</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'2.0a4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,542 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cntk.io &mdash; Python API for CNTK 2.0a4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Python API for CNTK 2.0a4 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Python API for CNTK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0a4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graph.html">Graph components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.io.html">IO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.trainer.html">Trainer &amp; learners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.ops.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">Python API for CNTK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>cntk.io</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cntk.io</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Microsoft. All rights reserved.</span>
+
+<span class="c1"># Licensed under the MIT license. See LICENSE.md file in the project root</span>
+<span class="c1"># for full license information.</span>
+<span class="c1"># ==============================================================================</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">cntk_py</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">typemap</span>
+
+<span class="n">MAX_UI64</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="s1">&#39;0xffffffffffffffff&#39;</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MinibatchData"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.MinibatchData">[docs]</a><span class="k">class</span> <span class="nc">MinibatchData</span><span class="p">(</span><span class="n">cntk_py</span><span class="o">.</span><span class="n">MinibatchData</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Holds the minibatch data of an input. </span>
+
+<span class="sd">    This is never directly created, but only returned by</span>
+<span class="sd">    `:class:MinibatchSource` instances.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="MinibatchData.num_sequences"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.MinibatchData.num_sequences">[docs]</a>    <span class="k">def</span> <span class="nf">num_sequences</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the number of sequences in this minibatch</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_num_sequences</span></div>
+
+<div class="viewcode-block" id="MinibatchData.num_samples"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.MinibatchData.num_samples">[docs]</a>    <span class="k">def</span> <span class="nf">num_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the number of samples in this minibatch</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_num_samples</span></div>
+
+<div class="viewcode-block" id="MinibatchData.data"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.MinibatchData.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the Value object of the minibatch. </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_data</span></div>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_sequences</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MinibatchSource"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.MinibatchSource">[docs]</a><span class="k">class</span> <span class="nc">MinibatchSource</span><span class="p">(</span><span class="n">cntk_py</span><span class="o">.</span><span class="n">MinibatchSource</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Parent class of all minibatch sources. For most cases you will need the</span>
+<span class="sd">    helper functions `:func:cntk.io.text_format_minibatch_source` or</span>
+<span class="sd">    `:func:cntk.io.create_minibatch_source`.</span>
+<span class="sd">    A `MinibatchSource` can be indexed by a `StreamInfo`, which will return a</span>
+<span class="sd">    `MinibatchData` object that can be passed e.g. to the</span>
+<span class="sd">    `:func:Trainer.train_minibatch()` function.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="MinibatchSource.stream_infos"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.MinibatchSource.stream_infos">[docs]</a>    <span class="k">def</span> <span class="nf">stream_infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Describes the stream that this source produces.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `dict` mapping input names to the stream information</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">MinibatchSource</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">stream_infos</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MinibatchSource.stream_info"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.MinibatchSource.stream_info">[docs]</a>    <span class="k">def</span> <span class="nf">stream_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Gets the description of the stream with given name. </span>
+<span class="sd">        Throws an exception of there are none or multiple streams with this</span>
+<span class="sd">        same name.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">MinibatchSource</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">stream_info</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the `:class:StreamInfo` for the given stream name</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (`str`): stream name to fetch `:class:StreamInfo` for</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_info</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="MinibatchSource.get_next_minibatch"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.MinibatchSource.get_next_minibatch">[docs]</a>    <span class="k">def</span> <span class="nf">get_next_minibatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minibatch_size_in_samples</span><span class="p">,</span>
+            <span class="n">minibatch_size_in_sequences</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Reads a minibatch that contains data for all input streams.</span>
+<span class="sd">        The minibatch size is specified terms of #samples and/or #sequences for the primary input stream; value of 0 for #samples/#sequences means unspecified.</span>
+<span class="sd">        In case the size is specified in terms of both #sequences and #samples, the smaller of the 2 is taken.</span>
+<span class="sd">        An empty map is returned when the MinibatchSource has no more data to return.&#39;&#39;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            minibatch_size_in_samples (`int`): number of samples to retrieve for</span>
+<span class="sd">             the next minibatch. Must be &gt; 0.</span>
+<span class="sd">            minibatch_size_in_sequences (`int`, defaults to `None`): number of</span>
+<span class="sd">             samples to retrieve for the next minibatch. Must be &gt; 0. </span>
+<span class="sd">            device (`DeviceDescriptor`, defaults to `None`): CNTK DeviceDescriptor</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `:class:MinibatchData`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DeviceDescriptor</span><span class="o">.</span><span class="n">use_default_device</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">minibatch_size_in_sequences</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">MinibatchSource</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_next_minibatch</span><span class="p">(</span>
+                <span class="n">minibatch_size_in_samples</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">MinibatchSource</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_next_minibatch</span><span class="p">(</span>
+                <span class="n">minibatch_size_in_samples</span><span class="p">,</span>
+                <span class="n">minibatch_size_in_sequences</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_py_dict_to_cntk_dict</span><span class="p">(</span><span class="n">py_dict</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Converts a Python dictionary into a CNTK Dictionary whose values are CNTK DictionaryValue instances.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        py_dict (`dict`): a dictionary to be converted.</span>
+<span class="sd">    Returns: </span>
+<span class="sd">        :class:`cntk_py.Dictionary`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Dictionary</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">py_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DictionaryValueFromDict</span><span class="p">(</span><span class="n">_py_dict_to_cntk_dict</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="c1"># TODO: add support to list of lists ?</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cntk_py</span><span class="o">.</span><span class="n">DictionaryValueFromDict</span><span class="p">(</span>
+                        <span class="n">_py_dict_to_cntk_dict</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cntk_py</span><span class="o">.</span><span class="n">DictionaryValue</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DictionaryValue</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DictionaryValue</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="minibatch_source"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.minibatch_source">[docs]</a><span class="k">def</span> <span class="nf">minibatch_source</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Instantiate the CNTK built-in composite minibatch source which is used to stream data into the network.    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        config (`dict`): a dictionary containing all the key-value configuration entries.</span>
+<span class="sd">    Returns: </span>
+<span class="sd">        :class:`cntk.io.MinibatchSource`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">cntk_dict</span> <span class="o">=</span> <span class="n">_py_dict_to_cntk_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">create_composite_minibatch_source</span><span class="p">(</span><span class="n">cntk_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ReaderConfig"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.ReaderConfig">[docs]</a><span class="k">class</span> <span class="nc">ReaderConfig</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Reader configuration.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        deserializers (&#39;list&#39;, default is empty): list of deserializers</span>
+<span class="sd">         (`:class:cntk.io.ImageDeserializer` for now).</span>
+<span class="sd">        randomize (`bool`, default True): randomize images before every epoch</span>
+<span class="sd">        epoch_size (`int`): epoch size </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deserializers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">randomize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">epoch_size</span><span class="o">=</span><span class="n">MAX_UI64</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;epochSize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">epoch_size</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deserializers</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">deserializers</span> <span class="o">=</span> <span class="p">[</span><span class="n">deserializers</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;deserializers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deserializers</span> <span class="o">=</span> <span class="n">deserializers</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;randomize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">randomize</span>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="ReaderConfig.minibatch_source"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.ReaderConfig.minibatch_source">[docs]</a>    <span class="k">def</span> <span class="nf">minibatch_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Creates an instance of `:class:cntk.io.MinibatchSource` from this</span>
+<span class="sd">        instance, which can be used to feed data into the `eval()` methods of</span>
+<span class="sd">        the graph nodes or the `train_minibatch()` of `:class:cntk.Trainer`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            instance of `:class:cntk.io.MinibatchSource` </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">minibatch_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Deserializer"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.Deserializer">[docs]</a><span class="k">class</span> <span class="nc">Deserializer</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Base deserializer class that can be used in the `:class:ReaderConfig`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        type (`str`): type of the deserializer</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span></div>
+
+
+<div class="viewcode-block" id="ImageDeserializer"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.ImageDeserializer">[docs]</a><span class="k">class</span> <span class="nc">ImageDeserializer</span><span class="p">(</span><span class="n">Deserializer</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This class configures the image reader that reads images and corresponding</span>
+<span class="sd">    labels from a file of the form</span>
+
+<span class="sd">    ```</span>
+<span class="sd">         &lt;full path to image&gt;&lt;tab&gt;&lt;numerical label (0-based class id)&gt;</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (`str`): file name of the map file that associates images to</span>
+<span class="sd">         classes</span>
+
+<span class="sd">    See also:</span>
+<span class="sd">        https://github.com/microsoft/cntk/wiki/Understanding-and-Extending-Readers</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ImageDeserializer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s1">&#39;ImageDeserializer&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="ImageDeserializer.map_features"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.ImageDeserializer.map_features">[docs]</a>    <span class="k">def</span> <span class="nf">map_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">transforms</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Maps feature node (either node instance or node name) to the transforms</span>
+<span class="sd">        that will be applied to the images.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            node (`str` or input node): node or its name</span>
+<span class="sd">            transforms (`list` of transforms): the transforms can be created by</span>
+<span class="sd">             the static methods `crop`, `scale`, or `mean`.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transforms</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">transforms</span> <span class="o">=</span> <span class="p">[</span><span class="n">transforms</span><span class="p">]</span> <span class="k">if</span> <span class="n">transforms</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ImageDeserializer.map_labels"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.ImageDeserializer.map_labels">[docs]</a>    <span class="k">def</span> <span class="nf">map_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Maps label node (either node instance or node name) </span>
+<span class="sd">        that will be applied to the images.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            node (`str` or input node): node or its name</span>
+<span class="sd">            num_classes (`int`): number of classes</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">labelDim</span><span class="o">=</span><span class="n">num_classes</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="ImageDeserializer.crop"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.ImageDeserializer.crop">[docs]</a>    <span class="k">def</span> <span class="nf">crop</span><span class="p">(</span><span class="n">crop_type</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">jitter_type</span><span class="o">=</span><span class="s1">&#39;uniRatio&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Crop transform that can be used to pass to `map_features`</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            crop_type (`str`, default &#39;center&#39;): &#39;center&#39; or &#39;random&#39;</span>
+<span class="sd">            ratio (`float`, default 1.0): crop ratio</span>
+<span class="sd">            jitter_type (`str`, default &#39;uniRatio&#39;): possible values are</span>
+<span class="sd">             &#39;None&#39;, &#39;UniRatio&#39;, &#39;UniLength&#39;, and &#39;UniArea&#39;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `dict` describing the crop transform</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Crop&#39;</span><span class="p">,</span> <span class="n">cropType</span><span class="o">=</span><span class="n">crop_type</span><span class="p">,</span> <span class="n">cropRatio</span><span class="o">=</span><span class="n">ratio</span><span class="p">,</span>
+                <span class="n">jitterType</span><span class="o">=</span><span class="n">jitter_type</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="ImageDeserializer.scale"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.ImageDeserializer.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">interpolations</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Scale transform that can be used to pass to `map_features`</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            width (`int`): width of the image in pixels</span>
+<span class="sd">            height (`int`): height of the image in pixels</span>
+<span class="sd">            channels (`int`): channels of the image</span>
+<span class="sd">            interpolations (`str`, default &#39;linear&#39;): possible values are</span>
+<span class="sd">             &#39;nearest&#39;, &#39;linear&#39;, &#39;cubic&#39;, and &#39;lanczos&#39;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `dict` describing the scale transform</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Scale&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">,</span>
+                <span class="n">interpolations</span><span class="o">=</span><span class="n">interpolations</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="ImageDeserializer.mean"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.ImageDeserializer.mean">[docs]</a>    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Mean transform that can be used to pass to `map_features`</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (`str`): file that stores the mean values for each pixel</span>
+<span class="sd">             in OpenCV matrix XML format</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `dict` describing the mean transform</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Mean&#39;</span><span class="p">,</span> <span class="n">meanFile</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span></div></div>
+
+    <span class="c1"># TODO color transpose</span>
+
+<span class="c1">#</span>
+<span class="c1"># CNTKTextFormatReader</span>
+<span class="c1"># TODO get away from cntk_py.text_format_minibatch_source and set it up</span>
+<span class="c1"># similarly to ImageDeserializer</span>
+<span class="c1">#</span>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="text_format_minibatch_source"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.text_format_minibatch_source">[docs]</a><span class="k">def</span> <span class="nf">text_format_minibatch_source</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">stream_configs</span><span class="p">,</span> <span class="n">epoch_size</span><span class="o">=</span><span class="n">MAX_UI64</span><span class="p">,</span> <span class="n">randomize</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Creates a minibatch source from a CNTKTextFormatReader file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path (&#39;file&#39;): filename of the data file</span>
+<span class="sd">        stream_configs (`list` of `:class:StreamConfiguration` instances): list</span>
+<span class="sd">         of stream configurations, each of which describes one stream in the</span>
+<span class="sd">         file</span>
+<span class="sd">        epoch_size (`int`, optional): size of an epoch. In case of 0 the size</span>
+<span class="sd">         of the training set will be taken. Default is max of 64bit.</span>
+<span class="sd">        randomize (`bool`, optional): whether to randomize the contents of data file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `:class:cntk.io.MinibatchSource&#39;</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">text_format_minibatch_source</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">stream_configs</span><span class="p">,</span>
+                                                <span class="n">epoch_size</span><span class="p">,</span> <span class="n">randomize</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StreamConfiguration"><a class="viewcode-back" href="../../cntk.io.html#cntk.io.StreamConfiguration">[docs]</a><span class="k">class</span> <span class="nc">StreamConfiguration</span><span class="p">(</span><span class="n">cntk_py</span><span class="o">.</span><span class="n">StreamConfiguration</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Configuration of a stream in a text format reader. This can be used</span>
+<span class="sd">    `:func:cntk.io.text_format_minibatch_source`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (`str`): name of this stream</span>
+<span class="sd">        dim (`int`): dimensions of this stream. A text format reader reads data</span>
+<span class="sd">        as flat arrays. If you need different shapes you can</span>
+<span class="sd">        `:func:cntk.ops.reshape` it later.</span>
+<span class="sd">        is_sparse (`bool`, default `False`): whether the provided data is sparse</span>
+<span class="sd">         (`False` by default)</span>
+<span class="sd">        stream_alias (`str`, default &#39;&#39;): name of the stream in the file that is fed to the</span>
+<span class="sd">         `:func:cntk.io.text_format_minibatch_source`       </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">is_sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">stream_alias</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">StreamConfiguration</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">is_sparse</span><span class="p">,</span> <span class="n">stream_alias</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'2.0a4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

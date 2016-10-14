@@ -1,0 +1,934 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cntk.utils &mdash; Python API for CNTK 2.0a4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Python API for CNTK 2.0a4 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Python API for CNTK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0a4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graph.html">Graph components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.io.html">IO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.trainer.html">Trainer &amp; learners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.ops.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">Python API for CNTK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>cntk.utils</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cntk.utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c1"># Licensed under the MIT license. See LICENSE.md file in the project root</span>
+<span class="c1"># for full license information.</span>
+<span class="c1"># ==============================================================================</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numbers</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.sparse</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">cntk_py</span>
+<span class="kn">from</span> <span class="nn">.persist</span> <span class="k">import</span> <span class="n">load_model</span><span class="p">,</span> <span class="n">save_model</span>
+<span class="kn">from</span> <span class="nn">.swig_helper</span> <span class="k">import</span> <span class="n">typemap</span>
+
+
+<div class="viewcode-block" id="sanitize_precision"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.sanitize_precision">[docs]</a><span class="k">def</span> <span class="nf">sanitize_precision</span><span class="p">(</span><span class="n">precision</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Converts precision to NumPy precision</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        precision (`str` or `np.float32` or `np.float64`): precision, if string</span>
+<span class="sd">         it can be one of &#39;float&#39; &#39;float32, &#39;double&#39;, or &#39;float64&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        NumPy precision</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">precision</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;float&#39;</span><span class="p">,</span> <span class="s1">&#39;float32&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+    <span class="k">elif</span> <span class="n">precision</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;double&#39;</span><span class="p">,</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;precision value: &quot;</span><span class="si">%s</span><span class="s1">&quot; is not supported&#39;</span> <span class="o">%</span> <span class="n">precision</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cntk_device"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.cntk_device">[docs]</a><span class="k">def</span> <span class="nf">cntk_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Converts the legacy device ID as it was used in CNTK 1 to CNTK</span>
+<span class="sd">    DeviceDescriptor instance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        device_id (int): device id, -1 for CPU, 0 or higher for GPU</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        CNTK DeviceDescriptor</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">device_id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DeviceDescriptor</span><span class="o">.</span><span class="n">cpu_device</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DeviceDescriptor</span><span class="o">.</span><span class="n">gpu_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_string"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.is_string">[docs]</a><span class="k">def</span> <span class="nf">is_string</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="o">.</span><span class="n">major</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">basestring</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="dense_to_str"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.dense_to_str">[docs]</a><span class="k">def</span> <span class="nf">dense_to_str</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">str</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="sparse_to_str"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.sparse_to_str">[docs]</a><span class="k">def</span> <span class="nf">sparse_to_str</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span></div>
+
+
+<div class="viewcode-block" id="tensors_to_text_format"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.tensors_to_text_format">[docs]</a><span class="k">def</span> <span class="nf">tensors_to_text_format</span><span class="p">(</span><span class="n">sample_idx</span><span class="p">,</span> <span class="n">alias_tensor_map</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Converts a list of NumPy arrays representing tensors of inputs into a</span>
+<span class="sd">    format that is readable by `CNTKTextReader`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sample_idx (int): number of current sample</span>
+<span class="sd">        alias_tensor_map (dict): maps alias (str) to tensor (ndarray). Tensors</span>
+<span class="sd">          are assumed to have dynamic axis.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        String representation in CNTKTextReader format</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">max_seq_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">alias_tensor_map</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">max_seq_length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">seq_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_seq_length</span><span class="p">):</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">alias</span><span class="p">,</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">alias_tensor_map</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">seq_idx</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
+                <span class="c1"># for this alias there no more sequence elements</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">is_tensor</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                    <span class="n">tensor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
+                <span class="n">to_str</span> <span class="o">=</span> <span class="n">dense_to_str</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tensor</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">to_str</span> <span class="o">=</span> <span class="n">sparse_to_str</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;expected a tensor (dense) or list of dicts (sparse), but got &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">tensor</span><span class="p">))</span>
+
+            <span class="n">line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">to_str</span><span class="p">(</span><span class="n">tensor</span><span class="p">[</span><span class="n">seq_idx</span><span class="p">])))</span>
+
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%i</span><span class="se">\t</span><span class="s1">|&#39;</span> <span class="o">%</span> <span class="n">sample_idx</span> <span class="o">+</span> <span class="s1">&#39; |&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_tensor"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.is_tensor">[docs]</a><span class="k">def</span> <span class="nf">is_tensor</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Checks whether the data is a tensor, i.e. whether it is a NumPy array or a</span>
+<span class="sd">    list of NumPy arrays.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: data to check</span>
+
+<span class="sd">    Returns: True, if it is a tensor.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># All but the innermost dimension&#39;s values have to be lists</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="c1"># We reached the innermost dimension</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">0</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="c1"># Innermost type is not a number</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="is_tensor_list"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.is_tensor_list">[docs]</a><span class="k">def</span> <span class="nf">is_tensor_list</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Checks whether the data is a CNTK sequence, which is expressed in Python as</span>
+<span class="sd">    a list of varying sized NumPy objects.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">is_list</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">is_list</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_temp_filename"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.get_temp_filename">[docs]</a><span class="k">def</span> <span class="nf">get_temp_filename</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Create and return a temporary filename.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        directory (str): optional directory, in which the temporary file will</span>
+<span class="sd">        be created</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Filename of the temporary file</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">import</span> <span class="nn">tempfile</span>
+
+    <span class="c1"># We have to use NamedTemporaryFile and close it, because the obvious first</span>
+    <span class="c1"># choice, mkstemp(), would later fail in cntk.exe because the file would</span>
+    <span class="c1"># still be locked.</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;_input_&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.txt&#39;</span><span class="p">,</span>
+                                     <span class="nb">dir</span><span class="o">=</span><span class="n">directory</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">tf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">name</span></div>
+
+
+<div class="viewcode-block" id="sanitize_shape"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.sanitize_shape">[docs]</a><span class="k">def</span> <span class="nf">sanitize_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If shape is scalar, it creates a tuple out of it and reverse it as cntk uses</span>
+<span class="sd">    column major.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">shape</span><span class="p">):</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">shape</span><span class="p">,)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">shape</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="sanitize_input"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.sanitize_input">[docs]</a><span class="k">def</span> <span class="nf">sanitize_input</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">fallback_dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert to Variable or Constant so that it can be passed as Variable to the</span>
+<span class="sd">    CNTK operators.</span>
+<span class="sd">     * If `arg` is a NumPy array and its type is neither `np.float32` nor</span>
+<span class="sd">      `np.float64`, it sets it to `np.float32`.</span>
+<span class="sd">     * If `arg` is an op, it is assumed that it has only one output, which will</span>
+<span class="sd">       be returned.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        arg (number, NumPy array, `Variable`, or `Function`): input</span>
+<span class="sd">        fallback_dtype (numpy dtype): fallback dtype in case `arg` is a list</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Constant, if `arg` was a number or NumPy array. Variable otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">cntk.ops.variables</span> <span class="k">import</span> <span class="n">Constant</span><span class="p">,</span> <span class="n">Variable</span>
+    <span class="kn">from</span> <span class="nn">cntk.ops</span> <span class="k">import</span> <span class="n">constant</span>
+
+    <span class="c1"># is it a Variable?</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span>
+                  <span class="p">(</span><span class="n">Constant</span><span class="p">,</span> <span class="n">Variable</span><span class="p">,</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Constant</span><span class="p">,</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Variable</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">arg</span>
+
+    <span class="c1"># or a Function?</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">arg</span><span class="o">.</span><span class="n">output</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;the argument has more than one output, please provide the one you want&#39;</span><span class="p">)</span>
+
+    <span class="c1"># maybe a Python list that we can interpret as a NumPy array?</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">arg</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;input is empty&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">arg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">fallback_dtype</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">constant</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">arg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_data_type"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.get_data_type">[docs]</a><span class="k">def</span> <span class="nf">get_data_type</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the highest precision numpy datatype of the provided parameters.</span>
+<span class="sd">    If the parameter is a Function instance, it calculates it based on its</span>
+<span class="sd">    inputs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        args (number, `list`, NumPy array, `Variable`, or `Function`): input</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        `np.float32` or `np.float64`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dtypes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span>
+                      <span class="p">(</span><span class="n">cntk_py</span><span class="o">.</span><span class="n">Variable</span><span class="p">,</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Value</span><span class="p">,</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">NDArrayView</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DataType_Double</span> <span class="o">==</span> <span class="n">arg</span><span class="o">.</span><span class="n">get_data_type</span><span class="p">():</span>
+                <span class="n">dtypes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dtypes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;NumPy type &quot;</span><span class="si">%s</span><span class="s1">&quot; is not supported&#39;</span> <span class="o">%</span> <span class="n">arg</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">dtypes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+            <span class="n">var_outputs</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">outputs</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_outputs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;expected single output, but got </span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_outputs</span><span class="p">))</span>
+
+            <span class="n">var_type</span> <span class="o">=</span> <span class="n">var_outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_data_type</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DataType_Double</span> <span class="o">==</span> <span class="n">var_type</span><span class="p">:</span>
+                <span class="n">dtypes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DataType_Float</span> <span class="o">==</span> <span class="n">var_type</span><span class="p">:</span>
+                <span class="n">dtypes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;type </span><span class="si">%s</span><span class="s1"> is not supported&#39;</span><span class="o">%</span><span class="n">var_type</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># We don&#39;t know anything so we convert everything to float32. If it</span>
+            <span class="c1"># works, we know the type.</span>
+            <span class="c1"># TODO figure out a better/faster way.</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="n">dtypes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span> <span class="ow">in</span> <span class="n">dtypes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+    <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span> <span class="ow">in</span> <span class="n">dtypes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;could not determine data type&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="pad_to_dense"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.pad_to_dense">[docs]</a><span class="k">def</span> <span class="nf">pad_to_dense</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Appends the minimal required amount of zeroes at the end of each sample</span>
+<span class="sd">    in the batch so that it becomes rectangular. `batch` is assumed to be</span>
+<span class="sd">    row-major: first index is batch item, second is sequence item, then comes</span>
+<span class="sd">    that actual sample. The sequence length is assumed to be the only varying</span>
+<span class="sd">    dimension.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        batch (list of NumPy arrays): list of arrays that differ only in their</span>
+<span class="sd">        first dimension (different sequence lengths)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Padded NumPy array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">max_seq_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">)</span>
+
+    <span class="c1"># Assuming all sequences elements in all samples have the same shape</span>
+    <span class="n">data_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># FIXME</span>
+    <span class="c1"># This is not the most efficient way of dealing with variable length</span>
+    <span class="c1"># sequences, but so far the only one supported. Once, ragged arrays are</span>
+    <span class="c1"># natively supported in CNTK, this will change.</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span> <span class="n">max_seq_len</span><span class="p">)</span> <span class="o">+</span>
+                 <span class="p">(</span><span class="n">data_point</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">data_point</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">seq</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">seq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">data_point</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;shape mismatch: expected </span><span class="si">%s</span><span class="s1"> but got </span><span class="si">%s</span><span class="s1">&#39;</span>
+                             <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">data_point</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)))</span>
+        <span class="n">Z</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)]</span> <span class="o">+=</span> <span class="n">seq</span>
+    <span class="k">return</span> <span class="n">Z</span></div>
+
+
+<div class="viewcode-block" id="sanitize_batch"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.sanitize_batch">[docs]</a><span class="k">def</span> <span class="nf">sanitize_batch</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">seq_starts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert to :cntk:`Value` with `data_type`. If the samples in `batch` have</span>
+<span class="sd">    different sequence lengths, pad them to max sequence length and create a</span>
+<span class="sd">    mask.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        var (`:class:Variable`): variable node for which the `batch` is</span>
+<span class="sd">         meant</span>
+<span class="sd">        batch (`list` of NumPy arrays): input</span>
+<span class="sd">        seq_starts (`list` of `bool`s or `None`): if `None`, every sequence is</span>
+<span class="sd">         treated as a new sequence. Otherwise, it is interpreted as a list of</span>
+<span class="sd">         Booleans that tell whether a sequence is a new sequence (`True`) or a</span>
+<span class="sd">         continuation of the previous one (`False`)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `:class:Value`: converted batch</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">..cntk_py</span> <span class="k">import</span> <span class="n">Value</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">batch</span>
+
+    <span class="n">use_mask</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">batch</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">:</span>
+            <span class="n">batch</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">batch</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;only float32 and float64 are supported&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_tensor_list</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+            <span class="n">use_mask</span> <span class="o">=</span>  <span class="nb">len</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">dynamic_axes</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DeviceDescriptor</span><span class="o">.</span><span class="n">use_default_device</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">use_mask</span> <span class="ow">and</span> <span class="n">seq_starts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;specification of individual sequence begins does not&#39;</span>
+                <span class="s1">&#39; make sense when not using the sequence axis&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Use the mask, if we have additional dynamic axes besides the batch axis</span>
+    
+    <span class="k">if</span> <span class="n">use_mask</span><span class="p">:</span>
+        <span class="n">seq_lens</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">num_seq</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;expected an object of type Value or a NumPy &#39;</span> <span class="o">+</span>
+                             <span class="s1">&#39;array and not &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">batch</span><span class="p">))</span>
+
+        <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">NDMask</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">NDMask</span><span class="p">((</span><span class="nb">max</span><span class="p">(</span><span class="n">seq_lens</span><span class="p">),</span> <span class="n">num_seq</span><span class="p">),</span> <span class="n">device</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">seq_len</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">seq_lens</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">seq_starts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">mask</span><span class="o">.</span><span class="n">mark_sequence_begin</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">seq_starts</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
+                <span class="n">mask</span><span class="o">.</span><span class="n">mark_sequence_begin</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">))</span>
+            <span class="n">mask</span><span class="o">.</span><span class="n">invalidate_section</span><span class="p">((</span><span class="n">seq_len</span><span class="p">,</span> <span class="n">idx</span><span class="p">),</span>
+                                    <span class="p">(</span><span class="n">cntk_py</span><span class="o">.</span><span class="n">InferredDimension</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="c1"># Then we pad the batch to rectangular shape</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;batch is empty&#39;</span><span class="p">)</span>
+
+            <span class="n">batch</span> <span class="o">=</span> <span class="n">pad_to_dense</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+
+    <span class="c1"># If it still is not an NumPy array, try brute force...</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">data_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data_type</span> <span class="o">=</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span>
+
+    <span class="c1"># Maybe a NumPy dtype was given, but with lower accuracy than float32, then</span>
+    <span class="c1"># convert it to float32</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="n">ndav</span> <span class="o">=</span> <span class="n">create_NDArrayView_from_NumPy</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">use_mask</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">Value</span><span class="p">(</span><span class="n">ndav</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">Value</span><span class="p">(</span><span class="n">ndav</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="sanitize_function"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.sanitize_function">[docs]</a><span class="k">def</span> <span class="nf">sanitize_function</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Tries to retrieve a Function from the argument or throws an exception if</span>
+<span class="sd">    that&#39;s not possible.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Variable</span><span class="p">):</span>
+        <span class="n">arg</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">owner</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="s2">&quot;Object of type </span><span class="si">%s</span><span class="s2"> cannot be cast to Variable&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">arg</span></div>
+
+
+<div class="viewcode-block" id="sanitize_var_map"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.sanitize_var_map">[docs]</a><span class="k">def</span> <span class="nf">sanitize_var_map</span><span class="p">(</span><span class="n">op_arguments</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Sanitizes a dictionary of `Variable`s to input data such that it can be</span>
+<span class="sd">    handed off to the `Forward` method.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        op_arguments (:class:`cntk.ops.functions.Function`): arguments of the root function. In</span>
+<span class="sd">         forward pass it is typically `op.arguments()`, in backward mode it is</span>
+<span class="sd">         `op.outputs()`</span>
+<span class="sd">        arguments (`dict` or `list` or `tuple`): maps variables to their</span>
+<span class="sd">         input data. The interpretation depends on the input type:</span>
+<span class="sd">           * `dict`: keys are input variable or names and values are the input data. </span>
+<span class="sd">           * `list`: elements are input data in the order their respective variables have been defined in the network. </span>
+<span class="sd">         In both cases, every every sample in the data will be interpreted</span>
+<span class="sd">         as a new sequence. To mark samples as continuations of the</span>
+<span class="sd">         previous sequence, specify `arguments` as `tuple`: the</span>
+<span class="sd">         first element will be used as `arguments`, and the second one will</span>
+<span class="sd">         be used as a list of bools, denoting whether a sequence is a new</span>
+<span class="sd">         one (`True`) or a continuation of the previous one (`False`).</span>
+<span class="sd">         Data should be either NumPy arrays or a</span>
+<span class="sd">         :class:`cntk.io.MinibatchData` instance.</span>
+<span class="sd">        precision (`str` or `np.float32` or `np.float64`): if string it can be</span>
+<span class="sd">         one of &#39;float&#39; &#39;float32, &#39;double&#39;, &#39;float64&#39;, or `None`</span>
+<span class="sd">        device (`DeviceDescriptor` or `None`): CNTK DeviceDescriptor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `dict` that maps variables to sanitized batches</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">..cntk_py</span> <span class="k">import</span> <span class="n">Value</span>
+    <span class="kn">from</span> <span class="nn">..io</span> <span class="k">import</span> <span class="n">MinibatchData</span>
+
+    <span class="k">if</span> <span class="n">arguments</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">op_arguments</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;function expects </span><span class="si">%i</span><span class="s1"> arguments&#39;</span> <span class="o">%</span>
+                             <span class="nb">len</span><span class="p">(</span><span class="n">op_arguments</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">op_arguments</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;your graph has </span><span class="si">%i</span><span class="s1"> inputs, but you specified </span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span>
+                         <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">op_arguments</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">arguments</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">arguments</span><span class="p">,</span> <span class="n">seq_starts</span> <span class="o">=</span> <span class="n">arguments</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">seq_starts</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">arguments</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">op_arguments</span><span class="p">,</span> <span class="n">arguments</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">arg_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">op_arguments</span><span class="p">]</span>
+        <span class="n">name_counter</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">arg_names</span><span class="p">)</span>
+
+        <span class="n">var_name_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">var</span><span class="p">)</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">op_arguments</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;type &quot;</span><span class="si">%s</span><span class="s1">&quot; is not supported&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">arguments</span><span class="p">))</span>
+
+    <span class="n">sample_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">arguments</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">sample_sizes</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;not all inputs have the same number of samples: &#39;</span> <span class="o">+</span>
+                         <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sample_sizes</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="n">seq_starts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seq_starts</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;if you specify seq_starts, it needs to be a list&#39;</span><span class="p">)</span>
+
+        <span class="n">sample_size</span> <span class="o">=</span> <span class="n">sample_sizes</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq_starts</span><span class="p">)</span> <span class="o">!=</span> <span class="n">sample_size</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;you have </span><span class="si">%i</span><span class="s1"> samples, but seq_starts has only </span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">+</span>
+                             <span class="s1">&#39;elements&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sample_sizes</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq_starts</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="n">precision</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">precision</span> <span class="o">=</span> <span class="n">sanitize_precision</span><span class="p">(</span><span class="n">precision</span><span class="p">)</span>
+
+    <span class="n">var_map</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">arguments</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">name_counter</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;variable with name &quot;</span><span class="si">%s</span><span class="s1">&quot; does not exist in the network. Available variable names: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="n">var</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">var_name_map</span><span class="p">)))</span>
+            <span class="k">elif</span> <span class="n">name_counter</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;node name &quot;</span><span class="si">%s</span><span class="s1">&quot; is not unique&#39;</span> <span class="o">%</span> <span class="n">var</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">var</span> <span class="o">=</span> <span class="n">var_name_map</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;no input with the name &#39;</span><span class="si">%s</span><span class="s2">&#39; was found.  Available: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="n">var</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">var_name_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">MinibatchData</span><span class="p">):</span>
+            <span class="n">batch</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
+            <span class="n">batch</span> <span class="o">=</span> <span class="n">sanitize_batch</span><span class="p">(</span>
+                <span class="n">var</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">seq_starts</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+
+        <span class="n">var_map</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch</span>
+
+    <span class="k">return</span> <span class="n">var_map</span></div>
+
+
+<div class="viewcode-block" id="ones_like"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.ones_like">[docs]</a><span class="k">def</span> <span class="nf">ones_like</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">precision</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns a new batch, which has the same format as `batch` but all values</span>
+<span class="sd">    set to 1.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        batch (list of NumPy arrays): a list of sequences, which are NumPy arrays</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">sanitize_precision</span><span class="p">(</span><span class="n">precision</span><span class="p">))</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="create_NDArrayView"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.create_NDArrayView">[docs]</a><span class="k">def</span> <span class="nf">create_NDArrayView</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">cntk_py</span><span class="o">.</span><span class="n">DataType_Float</span><span class="p">,</span> <span class="n">dev</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">sanitize_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dev</span><span class="p">:</span>
+        <span class="n">dev</span> <span class="o">=</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DeviceDescriptor</span><span class="o">.</span><span class="n">use_default_device</span><span class="p">()</span>
+    <span class="c1"># FIXME only dense supported so far</span>
+    <span class="n">view</span> <span class="o">=</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">NDArrayView</span><span class="p">(</span>
+        <span class="n">data_type</span><span class="p">,</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">StorageFormat_Dense</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dev</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">view</span></div>
+
+
+<div class="viewcode-block" id="create_NDArrayView_from_NumPy"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.create_NDArrayView_from_NumPy">[docs]</a><span class="k">def</span> <span class="nf">create_NDArrayView_from_NumPy</span><span class="p">(</span><span class="n">nd</span><span class="p">,</span> <span class="n">dev</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dev</span><span class="p">:</span>
+        <span class="n">dev</span> <span class="o">=</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DeviceDescriptor</span><span class="o">.</span><span class="n">use_default_device</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">NDArrayView</span><span class="p">(</span><span class="n">nd</span><span class="p">,</span> <span class="n">dev</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_Value"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.create_Value">[docs]</a><span class="k">def</span> <span class="nf">create_Value</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">dev</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">create_NDArrayView</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">dev</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="create_Value_from_NumPy"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.create_Value_from_NumPy">[docs]</a><span class="k">def</span> <span class="nf">create_Value_from_NumPy</span><span class="p">(</span><span class="n">nd</span><span class="p">,</span> <span class="n">dev</span><span class="p">):</span>
+    <span class="n">view</span> <span class="o">=</span> <span class="n">create_NDArrayView_from_NumPy</span><span class="p">(</span><span class="n">nd</span><span class="p">,</span> <span class="n">dev</span><span class="p">)</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="sanitize_dtype_numpy"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.sanitize_dtype_numpy">[docs]</a><span class="k">def</span> <span class="nf">sanitize_dtype_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">,</span> <span class="s1">&#39;float32&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+    <span class="k">elif</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;double&#39;</span><span class="p">,</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;data type &quot;</span><span class="si">%s</span><span class="s1">&quot; is not supported&#39;</span> <span class="o">%</span> <span class="n">dtype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="sanitize_dtype_cntk"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.sanitize_dtype_cntk">[docs]</a><span class="k">def</span> <span class="nf">sanitize_dtype_cntk</span><span class="p">(</span><span class="n">dtype</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="n">cntk_py</span><span class="o">.</span><span class="n">DataType_Float</span><span class="p">,</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DataType_Double</span><span class="p">,</span>
+                 <span class="n">cntk_py</span><span class="o">.</span><span class="n">DataType_Unknown</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dtype</span>
+    <span class="k">if</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">,</span> <span class="s1">&#39;float32&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DataType_Float</span>
+    <span class="k">elif</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;double&#39;</span><span class="p">,</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DataType_Double</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">dtype</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">DataType_Unknown</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;data type &quot;</span><span class="si">%s</span><span class="s1">&quot; is not supported&#39;</span> <span class="o">%</span> <span class="n">dtype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="sanitize_axis"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.sanitize_axis">[docs]</a><span class="k">def</span> <span class="nf">sanitize_axis</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Sanitizes the axis.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rank (`int`): rank of the tensor on which `axis` is to be used</span>
+<span class="sd">        axis (`:class:Axis` or `int` or `None`): the axis to be used.</span>
+<span class="sd">          * `:class:Axis`: use axis instance directly (will convert row- to</span>
+<span class="sd">             col-major in case of static axis.</span>
+<span class="sd">          * `int`: if positive, use it as static axis. If negative, count from</span>
+<span class="sd">            last to first axis</span>
+<span class="sd">          * `None`: denote all available axes</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">axis</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Axis</span><span class="o">.</span><span class="n">all_static_axes</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Integral</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">axis</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Axis</span><span class="p">(</span><span class="o">-</span><span class="n">axis</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Axis</span><span class="p">(</span><span class="n">rank</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">axis</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">axis</span><span class="o">.</span><span class="n">is_static_axis</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Axis</span><span class="p">(</span><span class="n">rank</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">axis</span><span class="o">.</span><span class="n">static_axis_index</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">axis</span></div>
+
+
+<div class="viewcode-block" id="sanitize_dynamic_axes"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.sanitize_dynamic_axes">[docs]</a><span class="k">def</span> <span class="nf">sanitize_dynamic_axes</span><span class="p">(</span><span class="n">axes</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">axes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">Axis</span><span class="o">.</span><span class="n">default_input_variable_dynamic_axes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">axes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">axes</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">axes</span></div>
+
+
+<div class="viewcode-block" id="get_train_loss"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.get_train_loss">[docs]</a><span class="k">def</span> <span class="nf">get_train_loss</span><span class="p">(</span><span class="n">trainer</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Fetch the train loss from the last minibatch and copy it to the CPU in case it is on the GPU.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        trainer (:class:`Trainer`): the trainer used.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        the loss value</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">import</span> <span class="nn">copy</span>
+    <span class="c1"># we copy the value so swig does not destroy it when we leave the scope</span>
+    <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">previous_minibatch_loss_average</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="get_train_eval_criterion"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.get_train_eval_criterion">[docs]</a><span class="k">def</span> <span class="nf">get_train_eval_criterion</span><span class="p">(</span><span class="n">trainer</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Fetch the train evaluation criterion (e.g., classification error) from the last minibatch and copy it to the CPU in case it is on the GPU.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        trainer (:class:`Trainer`): the trainer used.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        the criterion value</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">import</span> <span class="nn">copy</span>
+    <span class="c1"># we copy the value so swig does not destroy it when we leave the scope</span>
+    <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">previous_minibatch_evaluation_average</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="ensure_dev"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.ensure_dev">[docs]</a><span class="k">def</span> <span class="nf">ensure_dev</span><span class="p">(</span><span class="n">ndav</span><span class="p">,</span> <span class="n">dev</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">ndav</span><span class="o">.</span><span class="n">device</span><span class="p">()</span> <span class="o">!=</span> <span class="n">dev</span><span class="p">:</span>
+
+        <span class="n">ndav_on_target</span> <span class="o">=</span> <span class="n">create_NDArrayView</span><span class="p">(</span>
+            <span class="n">ndav</span><span class="o">.</span><span class="n">shape</span><span class="p">()</span><span class="o">.</span><span class="n">dimensions</span><span class="p">(),</span> <span class="n">data_type</span><span class="o">=</span><span class="n">ndav</span><span class="o">.</span><span class="n">get_data_type</span><span class="p">(),</span> <span class="n">dev</span><span class="o">=</span><span class="n">dev</span><span class="p">)</span>
+        <span class="n">ndav_on_target</span><span class="o">.</span><span class="n">copy_from</span><span class="p">(</span><span class="n">ndav</span><span class="p">)</span>
+        <span class="n">ndav</span> <span class="o">=</span> <span class="n">ndav_on_target</span>
+
+    <span class="k">return</span> <span class="n">ndav</span></div>
+
+
+<div class="viewcode-block" id="value_to_seq"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.value_to_seq">[docs]</a><span class="k">def</span> <span class="nf">value_to_seq</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert a Value to a sequence of NumPy arrays that have their masked</span>
+<span class="sd">    entries removed.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value (`Value`): Value as it is returned by Swig</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a list of NumPy arrays</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">np_data</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">mask</span><span class="p">():</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">mask</span><span class="p">()</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">np_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">seq</span><span class="p">[</span><span class="n">mask</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">!=</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">MaskKind_Invalid</span><span class="p">]</span>
+                   <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">seq</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np_data</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">np_data</span></div>
+
+
+<div class="viewcode-block" id="eval"><a class="viewcode-back" href="../../cntk.utils.html#cntk.utils.eval">[docs]</a><span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backward_pass</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    It evaluates `op` on the data provided by the reader. This is useful</span>
+<span class="sd">    mainly to explore the operators and for convenient unit testing.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        op (:class:`Function`): operation to evaluate</span>
+<span class="sd">        arguments (`dict` or `list` or `tuple`): maps variables to their</span>
+<span class="sd">         input data. The interpretation depends on the input type:</span>
+<span class="sd">           * `dict`: keys are input variable or names and values are the input data. </span>
+<span class="sd">           * `list`: elements are input data in the order their respective variables have been defined in the network. </span>
+<span class="sd">         In both cases, every every sample in the data will be interpreted</span>
+<span class="sd">         as a new sequence. To mark samples as continuations of the</span>
+<span class="sd">         previous sequence, specify `arguments` as `tuple`: the</span>
+<span class="sd">         first element will be used as `arguments`, and the second one will</span>
+<span class="sd">         be used as a list of bools, denoting whether a sequence is a new</span>
+<span class="sd">         one (`True`) or a continuation of the previous one (`False`).</span>
+<span class="sd">         Data should be either NumPy arrays or a</span>
+<span class="sd">         :class:`cntk.io.MinibatchData` instance.</span>
+<span class="sd">        seq_starts (`list` of `bool`s or `None`): if `None`, every sequence is</span>
+<span class="sd">         treated as a new sequence. Otherwise, it is interpreted as a list of</span>
+<span class="sd">         Booleans that tell whether a sequence is a new sequence (`True`) or a</span>
+<span class="sd">         continuation of the previous one (`False`)</span>
+<span class="sd">        precision (`str` or `None`): precision being &#39;float32&#39;, &#39;float64&#39;, or</span>
+<span class="sd">         `None`, in which case it will be determined by inspecting the operator</span>
+<span class="sd">         (costly)</span>
+<span class="sd">        device (:class:`cntk.DeviceDescriptor`): the device the descriptor,</span>
+<span class="sd">         whether it is CPU or GPU (and which one)</span>
+<span class="sd">        backward_pass (`bool`, optional): whether a backward pass is performed</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        mapping of output variables to their values.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">state</span><span class="p">,</span> <span class="n">forward_output</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs</span><span class="p">(),</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs</span><span class="p">(),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">backward_pass</span><span class="p">:</span>
+        <span class="n">root_gradients</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">ones_like</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">o</span> <span class="ow">in</span>
+                          <span class="n">forward_output</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="n">backward_output</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">root_gradients</span><span class="p">,</span> <span class="n">arguments</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">forward_output</span><span class="p">,</span> <span class="n">backward_output</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">forward_output</span><span class="p">,</span> <span class="kc">None</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'2.0a4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

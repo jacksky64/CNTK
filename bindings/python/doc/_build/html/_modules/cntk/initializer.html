@@ -1,0 +1,327 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cntk.initializer &mdash; Python API for CNTK 2.0a4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Python API for CNTK 2.0a4 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Python API for CNTK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0a4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graph.html">Graph components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.io.html">IO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.trainer.html">Trainer &amp; learners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.ops.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">Python API for CNTK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>cntk.initializer</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cntk.initializer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c1"># Licensed under the MIT license. See LICENSE.md file in the project root</span>
+<span class="c1"># for full license information.</span>
+<span class="c1"># ==============================================================================</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">cntk_py</span>
+<span class="kn">from</span> <span class="nn">.cntk_py</span> <span class="k">import</span> <span class="n">default_param_init_scale</span> <span class="k">as</span> <span class="n">DefaultParamInitScale</span><span class="p">,</span>\
+        <span class="n">default_param_init_output_rank</span> <span class="k">as</span> <span class="n">DefaultParamInitOutputRank</span><span class="p">,</span>\
+        <span class="n">default_param_init_filter_rank</span> <span class="k">as</span> <span class="n">DefaultParamInitFilterRank</span><span class="p">,</span>\
+        <span class="n">default_random_seed</span> <span class="k">as</span> <span class="n">DefaultRandomSeed</span>
+
+
+<div class="viewcode-block" id="uniform"><a class="viewcode-back" href="../../cntk.html#cntk.initializer.uniform">[docs]</a><span class="k">def</span> <span class="nf">uniform</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">DefaultParamInitScale</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">DefaultRandomSeed</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Uniform initializer</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        scale (`float`): scale</span>
+<span class="sd">        seed (`int`): random seed</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        initializer for `:class:cntk.variables.Parameter`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">uniform_initializer</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="gaussian"><a class="viewcode-back" href="../../cntk.html#cntk.initializer.gaussian">[docs]</a><span class="k">def</span> <span class="nf">gaussian</span><span class="p">(</span><span class="n">output_rank</span><span class="o">=</span><span class="n">DefaultParamInitOutputRank</span><span class="p">,</span> <span class="n">filter_rank</span><span class="o">=</span><span class="n">DefaultParamInitFilterRank</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">DefaultParamInitScale</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">DefaultRandomSeed</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Gaussian initializer</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        output_rank (`int`): output rank</span>
+<span class="sd">        filter_rank (`int`): filter rank</span>
+<span class="sd">        scale (`float`): scale</span>
+<span class="sd">        seed (`int`): random seed</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        initializer for `:class:cntk.variables.Parameter`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">gaussian_initializer</span><span class="p">(</span><span class="n">output_rank</span><span class="p">,</span> <span class="n">filter_rank</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="xavier"><a class="viewcode-back" href="../../cntk.html#cntk.initializer.xavier">[docs]</a><span class="k">def</span> <span class="nf">xavier</span><span class="p">(</span><span class="n">output_rank</span><span class="o">=</span><span class="n">DefaultParamInitOutputRank</span><span class="p">,</span> <span class="n">filter_rank</span><span class="o">=</span><span class="n">DefaultParamInitFilterRank</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">DefaultParamInitScale</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">DefaultRandomSeed</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Xavier initializer</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        output_rank (`int`): output rank</span>
+<span class="sd">        filter_rank (`int`): filter rank</span>
+<span class="sd">        scale (`float`): scale</span>
+<span class="sd">        seed (`int`): random seed</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        initializer for `:class:cntk.variables.Parameter`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">xavier_initializer</span><span class="p">(</span><span class="n">output_rank</span><span class="p">,</span> <span class="n">filter_rank</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="glorot_uniform"><a class="viewcode-back" href="../../cntk.html#cntk.initializer.glorot_uniform">[docs]</a><span class="k">def</span> <span class="nf">glorot_uniform</span><span class="p">(</span><span class="n">output_rank</span><span class="o">=</span><span class="n">DefaultParamInitOutputRank</span><span class="p">,</span> <span class="n">filter_rank</span><span class="o">=</span><span class="n">DefaultParamInitFilterRank</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">DefaultParamInitScale</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">DefaultRandomSeed</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Glorot initializer</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        output_rank (`int`): output rank</span>
+<span class="sd">        filter_rank (`int`): filter rank</span>
+<span class="sd">        scale (`float`): scale</span>
+<span class="sd">        seed (`int`): random seed</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        initializer for `:class:cntk.variables.Parameter`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">glorot_uniform_initializer</span><span class="p">(</span><span class="n">output_rank</span><span class="p">,</span> <span class="n">filter_rank</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="glorot_normal"><a class="viewcode-back" href="../../cntk.html#cntk.initializer.glorot_normal">[docs]</a><span class="k">def</span> <span class="nf">glorot_normal</span><span class="p">(</span><span class="n">output_rank</span><span class="o">=</span><span class="n">DefaultParamInitOutputRank</span><span class="p">,</span> <span class="n">filter_rank</span><span class="o">=</span><span class="n">DefaultParamInitFilterRank</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">DefaultParamInitScale</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">DefaultRandomSeed</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    initializer</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        output_rank (`int`): output rank</span>
+<span class="sd">        filter_rank (`int`): filter rank</span>
+<span class="sd">        scale (`float`): scale</span>
+<span class="sd">        seed (`int`): random seed</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        initializer for `:class:cntk.variables.Parameter`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">glorot_normal_initializer</span><span class="p">(</span><span class="n">output_rank</span><span class="p">,</span> <span class="n">filter_rank</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="he_uniform"><a class="viewcode-back" href="../../cntk.html#cntk.initializer.he_uniform">[docs]</a><span class="k">def</span> <span class="nf">he_uniform</span><span class="p">(</span><span class="n">output_rank</span><span class="o">=</span><span class="n">DefaultParamInitOutputRank</span><span class="p">,</span> <span class="n">filter_rank</span><span class="o">=</span><span class="n">DefaultParamInitFilterRank</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">DefaultParamInitScale</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">DefaultRandomSeed</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    initializer</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        output_rank (`int`): output rank</span>
+<span class="sd">        filter_rank (`int`): filter rank</span>
+<span class="sd">        scale (`float`): scale</span>
+<span class="sd">        seed (`int`): random seed</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        initializer for `:class:cntk.variables.Parameter`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">he_uniform_initializer</span><span class="p">(</span><span class="n">output_rank</span><span class="p">,</span> <span class="n">filter_rank</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="he_normal"><a class="viewcode-back" href="../../cntk.html#cntk.initializer.he_normal">[docs]</a><span class="k">def</span> <span class="nf">he_normal</span><span class="p">(</span><span class="n">output_rank</span><span class="o">=</span><span class="n">DefaultParamInitOutputRank</span><span class="p">,</span> <span class="n">filter_rank</span><span class="o">=</span><span class="n">DefaultParamInitFilterRank</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">DefaultParamInitScale</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">DefaultRandomSeed</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    initializer</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        output_rank (`int`): output rank</span>
+<span class="sd">        filter_rank (`int`): filter rank</span>
+<span class="sd">        scale (`float`): scale</span>
+<span class="sd">        seed (`int`): random seed</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        initializer for `:class:cntk.variables.Parameter`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">he_normal_initializer</span><span class="p">(</span><span class="n">output_rank</span><span class="p">,</span> <span class="n">filter_rank</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="bilinear"><a class="viewcode-back" href="../../cntk.html#cntk.initializer.bilinear">[docs]</a><span class="k">def</span> <span class="nf">bilinear</span><span class="p">(</span><span class="n">kernel_width</span><span class="p">,</span> <span class="n">kernel_height</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    initializer</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        kernel_width (`int`): kernel width</span>
+<span class="sd">        kernel_height (`int`): kernel height</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        initializer for `:class:cntk.variables.Parameter`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">cntk_py</span><span class="o">.</span><span class="n">bilinear_initializer</span><span class="p">(</span><span class="n">kernel_width</span><span class="p">,</span> <span class="n">kernel_height</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'2.0a4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

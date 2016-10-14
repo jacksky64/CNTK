@@ -1,0 +1,555 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cntk.ops.functions &mdash; Python API for CNTK 2.0a4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="Python API for CNTK 2.0a4 documentation" href="../../../index.html"/>
+        <link rel="up" title="cntk.ops" href="../ops.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Python API for CNTK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0a4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graph.html">Graph components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cntk.io.html">IO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cntk.trainer.html">Trainer &amp; learners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cntk.ops.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cntk.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Module reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">Python API for CNTK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../ops.html">cntk.ops</a> &raquo;</li>
+      
+    <li>cntk.ops.functions</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cntk.ops.functions</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">cntk</span> <span class="k">import</span> <span class="n">cntk_py</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">typemap</span><span class="p">,</span> <span class="n">sanitize_var_map</span><span class="p">,</span> <span class="n">value_to_seq</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="k">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">unique</span>
+
+<span class="nd">@unique</span>
+<div class="viewcode-block" id="CloneMethod"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.CloneMethod">[docs]</a><span class="k">class</span> <span class="nc">CloneMethod</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">clone</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">share</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">freeze</span> <span class="o">=</span><span class="mi">3</span></div>
+
+<div class="viewcode-block" id="Function"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function">[docs]</a><span class="k">class</span> <span class="nc">Function</span><span class="p">(</span><span class="n">cntk_py</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Base class of all operators.</span>
+
+<span class="sd">    If it has only one output, one can invoke Variable methods on it, which it</span>
+<span class="sd">    will relay to its only output.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(),</span> <span class="n">name</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; object has no attribute &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span>
+                             <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">name</span><span class="p">))</span>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.arguments"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.arguments">[docs]</a>    <span class="k">def</span> <span class="nf">arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns a list of all input variables of the Function that are not of type Parameter or Constant</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `list`: list of input variables</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">arguments</span><span class="p">()</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.attributes"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.attributes">[docs]</a>    <span class="k">def</span> <span class="nf">attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Get the attributes of the function</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `dict`: dictionary of string, value pairs</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">attributes</span><span class="p">()</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.clone"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.clone">[docs]</a>    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">CloneMethod</span><span class="o">.</span><span class="n">freeze</span><span class="p">,</span> <span class="n">replacements</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Clones the function. The parameters of the Function are either cloned,</span>
+<span class="sd">        shared or frozen as specified by the method argument and any variable</span>
+<span class="sd">        replacements requested are applied in the cloned Function instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method (:class:`cntk.ops.function.CloneMethod`): one of</span>
+<span class="sd">             * &#39;clone&#39;: the returned function gets its own copy of parameters (default)</span>
+<span class="sd">             * &#39;share&#39;: the returned function shares its parameters with this function</span>
+<span class="sd">             * &#39;freeze&#39;: parameters are cloned and made immutable (constant).</span>
+<span class="sd">            replacements (`dict`): a dictionary mapping variables in this</span>
+<span class="sd">             function to variables in the cloned function </span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `Function`: the cloned Function</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">CloneMethod</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;clone method &quot;</span><span class="si">%s</span><span class="s1">&quot; is not supported&#39;</span> <span class="o">%</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
+
+        <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cntk_py</span><span class="p">,</span> 
+                <span class="s1">&#39;ParameterCloningMethod_&#39;</span> <span class="o">+</span> <span class="n">method</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">replacements</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">replacements</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">replacements</span><span class="p">)</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.constants"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.constants">[docs]</a>    <span class="k">def</span> <span class="nf">constants</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns a list of all `Constant` variables of this `Function`</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `list`: all `Constant` variables of this `Function`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">constants</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Function.eval"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Evaluate the node using the specified `arguments` as input.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            arguments (`dict` or `list` or `tuple`): maps variables to their</span>
+<span class="sd">             input data. The interpretation depends on the input type:</span>
+<span class="sd">               * `dict`: keys are input variable or names and values are the input data. </span>
+<span class="sd">               * `list`: elements are input data in the order their respective variables have been defined in the network. </span>
+<span class="sd">             In both cases, every every sample in the data will be interpreted</span>
+<span class="sd">             as a new sequence. To mark samples as continuations of the</span>
+<span class="sd">             previous sequence, specify `arguments` as `tuple`: the</span>
+<span class="sd">             first element will be used as `arguments`, and the second one will</span>
+<span class="sd">             be used as a list of bools, denoting whether a sequence is a new</span>
+<span class="sd">             one (`True`) or a continuation of the previous one (`False`).</span>
+<span class="sd">             Data should be either NumPy arrays or a</span>
+<span class="sd">             :class:`cntk.io.MinibatchData` instance.</span>
+<span class="sd">            device (:class:`cntk.DeviceDescriptor`): the device descriptor that</span>
+<span class="sd">             contains the type and id of the device on which the computation is</span>
+<span class="sd">             to be performed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `bool`: `True` if updates have been performed</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">output_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">arguments</span> <span class="ow">or</span> <span class="p">{},</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">(),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_map</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">output_map</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">output_map</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.forward"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">keep_for_backward</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Computes and stores the values of speficied variables in `outputs`,</span>
+<span class="sd">        using provided `arguments` values corresponding to each leaf `Variable`</span>
+<span class="sd">        of the function whose is_input() is true. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            arguments (`dict` or `list` or `tuple`): maps variables to their</span>
+<span class="sd">             input data. The interpretation depends on the input type:</span>
+<span class="sd">               * `dict`: keys are input variable or names and values are the input data. </span>
+<span class="sd">               * `list`: elements are input data in the order their respective variables have been defined in the network. </span>
+<span class="sd">             In both cases, every every sample in the data will be interpreted</span>
+<span class="sd">             as a new sequence. To mark samples as continuations of the</span>
+<span class="sd">             previous sequence, specify `arguments` as `tuple`: the</span>
+<span class="sd">             first element will be used as `arguments`, and the second one will</span>
+<span class="sd">             be used as a list of bools, denoting whether a sequence is a new</span>
+<span class="sd">             one (`True`) or a continuation of the previous one (`False`).</span>
+<span class="sd">             Data should be either NumPy arrays or a</span>
+<span class="sd">             :class:`cntk.io.MinibatchData` instance.</span>
+<span class="sd">            outputs (iterable): outputs to fetch values for.</span>
+<span class="sd">            keep_for_backward (`set`, default `None): the subset of the</span>
+<span class="sd">             Function&#39;s output variables for which gradients shall be calculated</span>
+<span class="sd">             in a subsequent backward call. If `None`, the returned state will</span>
+<span class="sd">             be `None` and a subsequent call to `backward` will not be</span>
+<span class="sd">             possible.</span>
+<span class="sd">             for backpropagation.</span>
+<span class="sd">            device (:class:`cntk.DeviceDescriptor`, default `None): the device</span>
+<span class="sd">             descriptor that contains the type and id of the device on which the</span>
+<span class="sd">             computation is. If `None`, the default device is used.</span>
+
+<span class="sd">        Returns: </span>
+<span class="sd">             A tuple (`BackpropState`, `map` of outputs to NumPy arrays). The</span>
+<span class="sd">             BackpropState is a handle taken by :func:`backward`.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">cntk</span> <span class="k">import</span> <span class="n">DeviceDescriptor</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="n">DeviceDescriptor</span><span class="o">.</span><span class="n">use_default_device</span><span class="p">()</span>
+
+        <span class="n">in_var_map</span> <span class="o">=</span> <span class="n">sanitize_var_map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">(),</span> <span class="n">arguments</span><span class="p">,</span>
+                                      <span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+        <span class="n">output_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">}</span>
+        <span class="n">keep_for_backward</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">keep_for_backward</span> <span class="ow">or</span> <span class="p">{})</span>
+
+        <span class="n">state</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_forward</span><span class="p">(</span><span class="n">in_var_map</span><span class="p">,</span> <span class="n">output_map</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span>
+                                             <span class="n">keep_for_backward</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">output_map</span><span class="p">:</span>
+            <span class="n">output_map</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_to_seq</span><span class="p">(</span><span class="n">output_map</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">output_map</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.backward"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.backward">[docs]</a>    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">root_gradients</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Backpropagates supplied `root_gradients` for one or more of the output</span>
+<span class="sd">        variables of the Function, to calculate gradients with respect to</span>
+<span class="sd">        `variables`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state (`BackPropState`): state obtained from a previous call to the</span>
+<span class="sd">             func:`cntk.ops.Function.forward` method on this Function for the</span>
+<span class="sd">             computation that this gradient backpropagation corresponds to. </span>
+<span class="sd">            root_gradients (`dict`): the gradients that will be backpropagated</span>
+<span class="sd">            variables (`set`): a list of input variables with respect to which</span>
+<span class="sd">             the gradients have to be computed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `dict`: mapping of `variables` to NumPy arrays</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">root_gradients</span> <span class="o">=</span> <span class="n">sanitize_var_map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">(),</span> <span class="n">root_gradients</span><span class="p">)</span>
+
+        <span class="n">var_gradients</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">var</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backward</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">root_gradients</span><span class="p">,</span> <span class="n">var_gradients</span><span class="p">)</span>
+
+        <span class="n">backward_output</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">var_gradients</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">var_gradients</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_to_seq</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">var_gradients</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.inputs"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.inputs">[docs]</a>    <span class="k">def</span> <span class="nf">inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns all input variables of this function.</span>
+
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `list`: all input variables of this function.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">inputs</span><span class="p">()</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.name"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.name">[docs]</a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the name of &#39;this&#39; function.</span>
+
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `str`: the name of &#39;this&#39; function.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">()</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.op_name"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.op_name">[docs]</a>    <span class="k">def</span> <span class="nf">op_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the name of the operation that this Function denotes</span>
+
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `str`: the name of the operation that this Function denotes</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">op_name</span><span class="p">()</span></div>
+
+    <span class="c1"># @typemap</span>
+    <span class="c1"># Function.output = lambda self:get_output_and_keep_reference(self)</span>
+        <span class="c1"># &#39;&#39;&#39;</span>
+        <span class="c1"># output</span>
+
+        <span class="c1"># Args:</span>
+        <span class="c1"># self.replace_placeholders_internal(ph_map (`ph_map:`): text</span>
+
+        <span class="c1"># Returns:</span>
+        <span class="c1"># `None`: text</span>
+        <span class="c1"># &#39;&#39;&#39;</span>
+        <span class="c1"># kwargs=dict(locals()); del kwargs[&#39;self&#39;]; return super(Function,</span>
+        <span class="c1"># self).output(**kwargs)</span>
+
+    <span class="c1"># @typemap</span>
+    <span class="c1"># def output_internal(self):</span>
+        <span class="c1"># &#39;&#39;&#39;</span>
+
+        <span class="c1"># Returns:</span>
+        <span class="c1"># `Variable`: text</span>
+        <span class="c1"># &#39;&#39;&#39;</span>
+        <span class="c1"># return super(Function, self).output_internal()</span>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.outputs"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.outputs">[docs]</a>    <span class="k">def</span> <span class="nf">outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns a list consisting of all output variables of this function.</span>
+
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `list`: all output variables of this function</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">outputs</span><span class="p">()</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.parameters"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.parameters">[docs]</a>    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns a list of all parameter variables of this function.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `list`: all parameter variables of this function.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.placeholders"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.placeholders">[docs]</a>    <span class="k">def</span> <span class="nf">placeholders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns a list of all placeholders variables of this function.</span>
+
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `list`: all placeholders variables of this function</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">placeholders</span><span class="p">()</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.replace_placeholder"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.replace_placeholder">[docs]</a>    <span class="k">def</span> <span class="nf">replace_placeholder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">placeholderReplacement</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        In-place replace the only placeholder in the function graph with the specified replacement</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            placeholderReplacement (`Variable`): the variable that will replace the placeholder</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `Function`: itself</span>
+
+<span class="sd">        :raises ExceptionType: when the function has multiple placeholders.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span>
+        <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;self&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">replace_placeholder</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="c1"># @typemap</span>
+    <span class="c1"># Function.replace_placeholders = lambda self, ph_map: self.replace_placeholders_internal(ph_map)</span>
+        <span class="c1"># &#39;&#39;&#39;</span>
+        <span class="c1"># replace_placeholders</span>
+
+        <span class="c1"># Returns:</span>
+        <span class="c1"># `None`: text</span>
+        <span class="c1"># &#39;&#39;&#39;</span>
+        <span class="c1"># kwargs=dict(locals()); del kwargs[&#39;self&#39;]; return super(Function,</span>
+        <span class="c1"># self).replace_placeholders(**kwargs)</span>
+
+    <span class="c1"># @typemap</span>
+    <span class="c1"># def replace_placeholders_internal(self, placeholderReplacements):</span>
+        <span class="c1"># &#39;&#39;&#39;</span>
+        <span class="c1"># replace_placeholders_internal</span>
+
+        <span class="c1"># Args:</span>
+        <span class="c1"># placeholderReplacements (`dict`): text</span>
+
+        <span class="c1"># Returns:</span>
+        <span class="c1"># `FunctionPtr`: text</span>
+        <span class="c1"># &#39;&#39;&#39;</span>
+        <span class="c1"># kwargs=dict(locals()); del kwargs[&#39;self&#39;]; return super(Function,</span>
+        <span class="c1"># self).replace_placeholders_internal(**kwargs)</span>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.restore_from_legacy_model"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.restore_from_legacy_model">[docs]</a>    <span class="k">def</span> <span class="nf">restore_from_legacy_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelFilePath</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Restore the models parameters from a saved model file</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            modelFilePath (`str`): saved model path </span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `None`: this method only has the side-effect of loading the model parameters from the file</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span>
+        <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;self&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">restore_from_legacy_model</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="nd">@typemap</span>
+<div class="viewcode-block" id="Function.root_function"><a class="viewcode-back" href="../../../graph.html#cntk.ops.functions.Function.root_function">[docs]</a>    <span class="k">def</span> <span class="nf">root_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the primitive function at the root of the graph of functions underlying this function.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `Function`: the primitive function at the root of the graph of functions underlying this function</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">root_function</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'2.0a4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

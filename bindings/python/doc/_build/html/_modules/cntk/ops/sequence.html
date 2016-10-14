@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cntk.ops.sequence &mdash; Python API for CNTK 2.0a4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="Python API for CNTK 2.0a4 documentation" href="../../../index.html"/>
+        <link rel="up" title="cntk.ops" href="../ops.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Python API for CNTK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0a4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graph.html">Graph components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cntk.io.html">IO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cntk.trainer.html">Trainer &amp; learners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cntk.ops.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cntk.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Module reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">Python API for CNTK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../ops.html">cntk.ops</a> &raquo;</li>
+      
+    <li>cntk.ops.sequence</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cntk.ops.sequence</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c1"># Licensed under the MIT license. See LICENSE.md file in the project root</span>
+<span class="c1"># for full license information.</span>
+<span class="c1"># ==============================================================================</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">...utils</span> <span class="k">import</span> <span class="n">sanitize_input</span><span class="p">,</span> <span class="n">sanitize_shape</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">,</span> <span class="n">typemap</span>
+
+<span class="c1">##########################################################################</span>
+<span class="c1"># sequence ops</span>
+<span class="c1">##########################################################################</span>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="is_first"><a class="viewcode-back" href="../../../cntk.ops.sequence.html#cntk.ops.sequence.is_first">[docs]</a><span class="k">def</span> <span class="nf">is_first</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    TBA</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        TBA</span>
+<span class="sd">    Args:        </span>
+<span class="sd">        operand: the symbolic tensor operand denoting a sequence</span>
+<span class="sd">        name (str): the name of the node in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">is_first</span>
+    <span class="n">operand</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">operand</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">is_first</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="is_last"><a class="viewcode-back" href="../../../cntk.ops.sequence.html#cntk.ops.sequence.is_last">[docs]</a><span class="k">def</span> <span class="nf">is_last</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    TBA</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        TBA</span>
+<span class="sd">    Args:        </span>
+<span class="sd">        operand: the symbolic tensor operand denoting a sequence</span>
+<span class="sd">        name (str): the name of the node in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">is_last</span>
+    <span class="n">operand</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">operand</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">is_last</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="first"><a class="viewcode-back" href="../../../cntk.ops.sequence.html#cntk.ops.sequence.first">[docs]</a><span class="k">def</span> <span class="nf">first</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    TBA</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        TBA</span>
+<span class="sd">    Args:        </span>
+<span class="sd">        operand: the symbolic tensor operand denoting a sequence</span>
+<span class="sd">        name (str): the name of the node in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">first</span>
+    <span class="n">operand</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">operand</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">first</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="last"><a class="viewcode-back" href="../../../cntk.ops.sequence.html#cntk.ops.sequence.last">[docs]</a><span class="k">def</span> <span class="nf">last</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    TBA</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        TBA</span>
+<span class="sd">    Args:        </span>
+<span class="sd">        operand: the symbolic tensor operand denoting a sequence</span>
+<span class="sd">        name (str): the name of the node in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">last</span>
+    <span class="n">operand</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">operand</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">last</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="where"><a class="viewcode-back" href="../../../cntk.ops.sequence.html#cntk.ops.sequence.where">[docs]</a><span class="k">def</span> <span class="nf">where</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    TBA</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        TBA</span>
+<span class="sd">    Args:        </span>
+<span class="sd">        condition: the symbolic tensor operand denoting a boolean condition flag for each step of a sequence</span>
+<span class="sd">        name (str): the name of the node in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">where</span>
+    <span class="n">condition</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">condition</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">where</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="gather"><a class="viewcode-back" href="../../../cntk.ops.sequence.html#cntk.ops.sequence.gather">[docs]</a><span class="k">def</span> <span class="nf">gather</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    TBA</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        TBA</span>
+<span class="sd">    Args:        </span>
+<span class="sd">        operand: the symbolic tensor operand denoting a sequence</span>
+<span class="sd">        condition: the symbolic tensor operand denoting a boolean condition flag for each step of a sequence</span>
+<span class="sd">        name (str): the name of the node in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">gather</span>
+    <span class="n">operand</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">operand</span><span class="p">))</span>
+    <span class="n">condition</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">condition</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">gather</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="scatter"><a class="viewcode-back" href="../../../cntk.ops.sequence.html#cntk.ops.sequence.scatter">[docs]</a><span class="k">def</span> <span class="nf">scatter</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    TBA</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        TBA</span>
+<span class="sd">    Args:        </span>
+<span class="sd">        operand: the symbolic tensor operand denoting a sequence</span>
+<span class="sd">        condition: the symbolic tensor operand denoting a boolean condition flag for each step of a sequence</span>
+<span class="sd">        name (str): the name of the node in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">scatter</span>
+    <span class="n">operand</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">operand</span><span class="p">))</span>
+    <span class="n">condition</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">condition</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">scatter</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<span class="nd">@typemap</span>
+<div class="viewcode-block" id="broadcast_as"><a class="viewcode-back" href="../../../cntk.ops.sequence.html#cntk.ops.sequence.broadcast_as">[docs]</a><span class="k">def</span> <span class="nf">broadcast_as</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">broadcast_as_operand</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    TBA</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        TBA</span>
+<span class="sd">    Args:        </span>
+<span class="sd">        operand: the symbolic tensor operand denoting a tensor</span>
+<span class="sd">        broadcast_as_operand: the symbolic tensor operand denoting a sequence per whose layout the main operand id to be broadcast</span>
+<span class="sd">        name (str): the name of the node in the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`cntk.Function`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">cntk.cntk_py</span> <span class="k">import</span> <span class="n">broadcast_as</span>
+    <span class="n">operand</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">operand</span><span class="p">))</span>
+    <span class="n">broadcast_as_operand</span> <span class="o">=</span> <span class="n">sanitize_input</span><span class="p">(</span>
+        <span class="n">broadcast_as_operand</span><span class="p">,</span> <span class="n">get_data_type</span><span class="p">(</span><span class="n">broadcast_as_operand</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">broadcast_as</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="n">broadcast_as_operand</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'2.0a4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

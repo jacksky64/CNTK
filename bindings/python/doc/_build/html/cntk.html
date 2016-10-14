@@ -1,0 +1,2224 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cntk package &mdash; Python API for CNTK 2.0a4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Python API for CNTK 2.0a4 documentation" href="index.html"/>
+        <link rel="up" title="cntk" href="modules.html"/>
+        <link rel="prev" title="cntk" href="modules.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Python API for CNTK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0a4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Graph components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.io.html">IO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.trainer.html">Trainer &amp; learners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.ops.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.utils.html">Utils</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Module reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cntk package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cntk.io.html">cntk.io package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cntk.ops.html">cntk.ops package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cntk.utils.html">cntk.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cntk.cntk_py">cntk.cntk_py module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cntk.conftest">cntk.conftest module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cntk.initializer">cntk.initializer module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cntk.learner">cntk.learner module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cntk.tensor">cntk.tensor module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cntk.trainer">cntk.trainer module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cntk">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Python API for CNTK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="modules.html">cntk</a> &raquo;</li>
+      
+    <li>cntk package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/cntk.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cntk-package">
+<h1>cntk package<a class="headerlink" href="#cntk-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cntk.io.html">cntk.io package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cntk.io.html#module-cntk.io">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.ops.html">cntk.ops package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cntk.ops.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cntk.ops.sequence.html">cntk.ops.sequence package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cntk.ops.sequence.html#module-cntk.ops.sequence">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cntk.ops.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cntk.ops.html#module-cntk.ops.functions">cntk.ops.functions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cntk.ops.html#module-cntk.ops.variables">cntk.ops.variables module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cntk.ops.html#module-cntk.ops">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.utils.html">cntk.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cntk.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cntk.utils.html#module-cntk.utils.persist">cntk.utils.persist module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cntk.utils.html#module-cntk.utils.swig_helper">cntk.utils.swig_helper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cntk.utils.html#module-cntk.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-cntk.cntk_py">
+<span id="cntk-cntk-py-module"></span><h2>cntk.cntk_py module<a class="headerlink" href="#module-cntk.cntk_py" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cntk.cntk_py.AdditionalLearningOptions">
+<em class="property">class </em><code class="descname">AdditionalLearningOptions</code><a class="reference internal" href="_modules/cntk/cntk_py.html#AdditionalLearningOptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.AdditionalLearningOptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="cntk.cntk_py.AdditionalLearningOptions.gaussian_noise_injection_std_dev">
+<code class="descname">gaussian_noise_injection_std_dev</code><a class="headerlink" href="#cntk.cntk_py.AdditionalLearningOptions.gaussian_noise_injection_std_dev" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.AdditionalLearningOptions.gradient_clipping_threshold_per_sample">
+<code class="descname">gradient_clipping_threshold_per_sample</code><a class="headerlink" href="#cntk.cntk_py.AdditionalLearningOptions.gradient_clipping_threshold_per_sample" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.AdditionalLearningOptions.gradient_clipping_with_truncation">
+<code class="descname">gradient_clipping_with_truncation</code><a class="headerlink" href="#cntk.cntk_py.AdditionalLearningOptions.gradient_clipping_with_truncation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.AdditionalLearningOptions.l_1regularization_weight">
+<code class="descname">l_1regularization_weight</code><a class="headerlink" href="#cntk.cntk_py.AdditionalLearningOptions.l_1regularization_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.AdditionalLearningOptions.l_2regularization_weight">
+<code class="descname">l_2regularization_weight</code><a class="headerlink" href="#cntk.cntk_py.AdditionalLearningOptions.l_2regularization_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.Axis">
+<em class="property">class </em><code class="descname">Axis</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Axis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.Axis.all_static_axes">
+<em class="property">static </em><code class="descname">all_static_axes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.Axis.all_static_axes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.Axis.default_batch_axis">
+<em class="property">static </em><code class="descname">default_batch_axis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.Axis.default_batch_axis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.Axis.default_dynamic_axis">
+<em class="property">static </em><code class="descname">default_dynamic_axis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.Axis.default_dynamic_axis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.Axis.default_input_variable_dynamic_axes">
+<code class="descname">default_input_variable_dynamic_axes</code><em class="property"> = (&lt;cntk.cntk_py.Axis; proxy of &lt;Swig Object of type 'CNTK::Axis *' at 0x0000000006549CF0&gt; &gt;, &lt;cntk.cntk_py.Axis; proxy of &lt;Swig Object of type 'CNTK::Axis *' at 0x00000000065F98A0&gt; &gt;)</em><a class="headerlink" href="#cntk.cntk_py.Axis.default_input_variable_dynamic_axes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Axis.is_ordered">
+<code class="descname">is_ordered</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Axis.is_ordered"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Axis.is_ordered" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Axis.is_static_axis">
+<code class="descname">is_static_axis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Axis.is_static_axis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Axis.is_static_axis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Axis.name">
+<code class="descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Axis.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Axis.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.Axis.new_unique_dynamic_axis">
+<em class="property">static </em><code class="descname">new_unique_dynamic_axis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.Axis.new_unique_dynamic_axis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Axis.static_axis_index">
+<code class="descname">static_axis_index</code><span class="sig-paren">(</span><em>checked=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Axis.static_axis_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Axis.static_axis_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.Axis.unknown_dynamic_axes">
+<code class="descname">unknown_dynamic_axes</code><em class="property"> = (&lt;cntk.cntk_py.Axis; proxy of &lt;Swig Object of type 'CNTK::Axis *' at 0x00000000065F98D0&gt; &gt;,)</em><a class="headerlink" href="#cntk.cntk_py.Axis.unknown_dynamic_axes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.BackPropState">
+<em class="property">class </em><code class="descname">BackPropState</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#BackPropState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.BackPropState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.cntk_py.BackPropState.function">
+<code class="descname">function</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#BackPropState.function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.BackPropState.function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.Callback">
+<em class="property">class </em><code class="descname">Callback</code><a class="reference internal" href="_modules/cntk/cntk_py.html#Callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.cntk_py.Callback.backward">
+<code class="descname">backward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Callback.backward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Callback.backward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Callback.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Callback.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Callback.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.Constant">
+<em class="property">class </em><code class="descname">Constant</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Constant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Constant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cntk.cntk_py.Variable" title="cntk.cntk_py.Variable"><code class="xref py py-class docutils literal"><span class="pre">cntk.cntk_py.Variable</span></code></a></p>
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.Constant.scalar">
+<em class="property">static </em><code class="descname">scalar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.Constant.scalar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Constant.value">
+<code class="descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Constant.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Constant.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.cntk_py.ConstantDouble">
+<code class="descname">ConstantDouble</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#ConstantDouble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.ConstantDouble" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.cntk_py.ConstantFloat">
+<code class="descname">ConstantFloat</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#ConstantFloat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.ConstantFloat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.DeviceDescriptor">
+<em class="property">class </em><code class="descname">DeviceDescriptor</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#DeviceDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.DeviceDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.DeviceDescriptor.all_devices">
+<em class="property">static </em><code class="descname">all_devices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.DeviceDescriptor.all_devices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.DeviceDescriptor.best_device">
+<em class="property">static </em><code class="descname">best_device</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.DeviceDescriptor.best_device" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.DeviceDescriptor.cpu_device">
+<em class="property">static </em><code class="descname">cpu_device</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.DeviceDescriptor.cpu_device" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.DeviceDescriptor.default_device">
+<em class="property">static </em><code class="descname">default_device</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.DeviceDescriptor.default_device" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.DeviceDescriptor.gpu_device">
+<em class="property">static </em><code class="descname">gpu_device</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.DeviceDescriptor.gpu_device" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.DeviceDescriptor.id">
+<code class="descname">id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#DeviceDescriptor.id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.DeviceDescriptor.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.DeviceDescriptor.set_default_device">
+<em class="property">static </em><code class="descname">set_default_device</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.DeviceDescriptor.set_default_device" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.DeviceDescriptor.type">
+<code class="descname">type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#DeviceDescriptor.type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.DeviceDescriptor.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.DeviceDescriptor.use_default_device">
+<em class="property">static </em><code class="descname">use_default_device</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.DeviceDescriptor.use_default_device" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.Dictionary">
+<em class="property">class </em><code class="descname">Dictionary</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Dictionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Dictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.cntk_py.Dictionary.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Dictionary.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Dictionary.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Dictionary.contains">
+<code class="descname">contains</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Dictionary.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Dictionary.contains" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.DictionaryValue">
+<em class="property">class </em><code class="descname">DictionaryValue</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#DictionaryValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.DictionaryValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="cntk.cntk_py.DictionaryValue.Type_Axis">
+<code class="descname">Type_Axis</code><em class="property"> = 7</em><a class="headerlink" href="#cntk.cntk_py.DictionaryValue.Type_Axis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.DictionaryValue.Type_Bool">
+<code class="descname">Type_Bool</code><em class="property"> = 1</em><a class="headerlink" href="#cntk.cntk_py.DictionaryValue.Type_Bool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.DictionaryValue.Type_Dictionary">
+<code class="descname">Type_Dictionary</code><em class="property"> = 9</em><a class="headerlink" href="#cntk.cntk_py.DictionaryValue.Type_Dictionary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.DictionaryValue.Type_Double">
+<code class="descname">Type_Double</code><em class="property"> = 4</em><a class="headerlink" href="#cntk.cntk_py.DictionaryValue.Type_Double" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.DictionaryValue.Type_Float">
+<code class="descname">Type_Float</code><em class="property"> = 3</em><a class="headerlink" href="#cntk.cntk_py.DictionaryValue.Type_Float" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.DictionaryValue.Type_NDArrayView">
+<code class="descname">Type_NDArrayView</code><em class="property"> = 10</em><a class="headerlink" href="#cntk.cntk_py.DictionaryValue.Type_NDArrayView" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.DictionaryValue.Type_NDShape">
+<code class="descname">Type_NDShape</code><em class="property"> = 6</em><a class="headerlink" href="#cntk.cntk_py.DictionaryValue.Type_NDShape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.DictionaryValue.Type_SizeT">
+<code class="descname">Type_SizeT</code><em class="property"> = 2</em><a class="headerlink" href="#cntk.cntk_py.DictionaryValue.Type_SizeT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.DictionaryValue.Type_String">
+<code class="descname">Type_String</code><em class="property"> = 5</em><a class="headerlink" href="#cntk.cntk_py.DictionaryValue.Type_String" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.DictionaryValue.Type_Vector">
+<code class="descname">Type_Vector</code><em class="property"> = 8</em><a class="headerlink" href="#cntk.cntk_py.DictionaryValue.Type_Vector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.DictionaryValue.Type__None">
+<code class="descname">Type__None</code><em class="property"> = 0</em><a class="headerlink" href="#cntk.cntk_py.DictionaryValue.Type__None" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.DictionaryValue.has_value">
+<code class="descname">has_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#DictionaryValue.has_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.DictionaryValue.has_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.DictionaryValue.type_name">
+<em class="property">static </em><code class="descname">type_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.DictionaryValue.type_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.DictionaryValue.value_type">
+<code class="descname">value_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#DictionaryValue.value_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.DictionaryValue.value_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.cntk_py.DictionaryValueFromDict">
+<code class="descname">DictionaryValueFromDict</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#DictionaryValueFromDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.DictionaryValueFromDict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.Function">
+<em class="property">class </em><code class="descname">Function</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.cntk_py.Function.arguments">
+<code class="descname">arguments</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function.arguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function.arguments" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.attributes">
+<code class="descname">attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function.attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function.attributes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.clone">
+<code class="descname">clone</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function.clone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function.clone" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.constants">
+<code class="descname">constants</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function.constants"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function.constants" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.eval">
+<code class="descname">eval</code><span class="sig-paren">(</span><em>arguments=None</em>, <em>seq_starts=None</em>, <em>precision='float'</em>, <em>device=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.Function.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the node using the specified <cite>arguments</cite> as input.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>arguments</strong> (<cite>dict</cite> or <cite>list</cite>) &#8211; <ul>
+<li>map from input variables to the data</li>
+<li>list of inputs in the order that the function expects or</li>
+</ul>
+<p>Data should be either NumPy arrays or a <cite>:class:cntk.io.MinibatchData</cite> instance</p>
+</li>
+<li><strong>seq_starts</strong> (<cite>list</cite> of <cite>bool`s or `None</cite>) &#8211; if <cite>None</cite>, every sequence is
+treated as a new sequence. Otherwise, it is interpreted as a list of
+Booleans that tell whether a sequence is a new sequence (<cite>True</cite>) or a
+continuation of the previous one (<cite>False</cite>)</li>
+<li><strong>precision</strong> (<cite>str</cite> or <cite>np.float32</cite> or <cite>np.float64</cite>) &#8211; precision, if string
+it can be one of &#8216;float&#8217;, &#8216;float32&#8217;, &#8216;double&#8217;, &#8216;float64&#8217;, or <cite>None</cite></li>
+<li><strong>device</strong> (<code class="xref py py-class docutils literal"><span class="pre">cntk.DeviceDescriptor</span></code>) &#8211; the device descriptor that
+contains the type and id of the device on which the computation is
+to be performed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><cite>True</cite> if updates have been performed</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><cite>bool</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.inputs">
+<code class="descname">inputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function.inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function.inputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.name">
+<code class="descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.op_name">
+<code class="descname">op_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function.op_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function.op_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.output">
+<code class="descname">output</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.Function.output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.outputs">
+<code class="descname">outputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function.outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function.outputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.parameters">
+<code class="descname">parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function.parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function.parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.placeholders">
+<code class="descname">placeholders</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function.placeholders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function.placeholders" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.replace_placeholder">
+<code class="descname">replace_placeholder</code><span class="sig-paren">(</span><em>placeholderReplacement</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function.replace_placeholder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function.replace_placeholder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.replace_placeholders">
+<code class="descname">replace_placeholders</code><span class="sig-paren">(</span><em>placeholderReplacements</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function.replace_placeholders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function.replace_placeholders" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.restore_from_legacy_model">
+<code class="descname">restore_from_legacy_model</code><span class="sig-paren">(</span><em>modelFilePath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function.restore_from_legacy_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function.restore_from_legacy_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Function.root_function">
+<code class="descname">root_function</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Function.root_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Function.root_function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.FunctionInCNTK">
+<em class="property">class </em><code class="descname">FunctionInCNTK</code><a class="reference internal" href="_modules/cntk/cntk_py.html#FunctionInCNTK"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.FunctionInCNTK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.cntk_py.FunctionInCNTK.backward">
+<code class="descname">backward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#FunctionInCNTK.backward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.FunctionInCNTK.backward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.FunctionInCNTK.del_callback">
+<code class="descname">del_callback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#FunctionInCNTK.del_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.FunctionInCNTK.del_callback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.FunctionInCNTK.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#FunctionInCNTK.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.FunctionInCNTK.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.FunctionInCNTK.set_callback">
+<code class="descname">set_callback</code><span class="sig-paren">(</span><em>cb</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#FunctionInCNTK.set_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.FunctionInCNTK.set_callback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.Learner">
+<em class="property">class </em><code class="descname">Learner</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Learner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Learner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.cntk_py.Learner.get_checkpoint_state">
+<code class="descname">get_checkpoint_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Learner.get_checkpoint_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Learner.get_checkpoint_state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Learner.learning_rate">
+<code class="descname">learning_rate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Learner.learning_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Learner.learning_rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Learner.parameters">
+<code class="descname">parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Learner.parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Learner.parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Learner.reset_learning_rate">
+<code class="descname">reset_learning_rate</code><span class="sig-paren">(</span><em>learningRate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Learner.reset_learning_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Learner.reset_learning_rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Learner.restore_from_checkpoint">
+<code class="descname">restore_from_checkpoint</code><span class="sig-paren">(</span><em>checkpoint</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Learner.restore_from_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Learner.restore_from_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Learner.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>gradientValues</em>, <em>trainingSampleCount</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Learner.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Learner.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.MinibatchData">
+<em class="property">class </em><code class="descname">MinibatchData</code><a class="reference internal" href="_modules/cntk/cntk_py.html#MinibatchData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.MinibatchData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="cntk.cntk_py.MinibatchData.m_data">
+<code class="descname">m_data</code><a class="headerlink" href="#cntk.cntk_py.MinibatchData.m_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.MinibatchData.m_num_samples">
+<code class="descname">m_num_samples</code><a class="headerlink" href="#cntk.cntk_py.MinibatchData.m_num_samples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.MinibatchData.m_num_sequences">
+<code class="descname">m_num_sequences</code><a class="headerlink" href="#cntk.cntk_py.MinibatchData.m_num_sequences" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.MinibatchSource">
+<em class="property">class </em><code class="descname">MinibatchSource</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#MinibatchSource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.MinibatchSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.cntk_py.MinibatchSource.get_next_minibatch">
+<code class="descname">get_next_minibatch</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#MinibatchSource.get_next_minibatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.MinibatchSource.get_next_minibatch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.MinibatchSource.stream_info">
+<code class="descname">stream_info</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#MinibatchSource.stream_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.MinibatchSource.stream_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.MinibatchSource.stream_infos">
+<code class="descname">stream_infos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#MinibatchSource.stream_infos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.MinibatchSource.stream_infos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.MomentumValuesAsTimeConstants">
+<em class="property">class </em><code class="descname">MomentumValuesAsTimeConstants</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#MomentumValuesAsTimeConstants"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.MomentumValuesAsTimeConstants" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.NDArrayView">
+<em class="property">class </em><code class="descname">NDArrayView</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDArrayView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDArrayView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.cntk_py.NDArrayView.alias">
+<code class="descname">alias</code><span class="sig-paren">(</span><em>readOnly=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDArrayView.alias"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDArrayView.alias" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDArrayView.copy_from">
+<code class="descname">copy_from</code><span class="sig-paren">(</span><em>source</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDArrayView.copy_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDArrayView.copy_from" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDArrayView.deep_clone">
+<code class="descname">deep_clone</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDArrayView.deep_clone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDArrayView.deep_clone" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDArrayView.device">
+<code class="descname">device</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDArrayView.device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDArrayView.device" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDArrayView.get_data_type">
+<code class="descname">get_data_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDArrayView.get_data_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDArrayView.get_data_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDArrayView.get_storage_format">
+<code class="descname">get_storage_format</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDArrayView.get_storage_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDArrayView.get_storage_format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDArrayView.is_read_only">
+<code class="descname">is_read_only</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDArrayView.is_read_only"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDArrayView.is_read_only" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDArrayView.is_sparse">
+<code class="descname">is_sparse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDArrayView.is_sparse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDArrayView.is_sparse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.NDArrayView.random_uniform_double">
+<em class="property">static </em><code class="descname">random_uniform_double</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.NDArrayView.random_uniform_double" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="cntk.cntk_py.NDArrayView.random_uniform_float">
+<em class="property">static </em><code class="descname">random_uniform_float</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cntk.cntk_py.NDArrayView.random_uniform_float" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDArrayView.set_value">
+<code class="descname">set_value</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDArrayView.set_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDArrayView.set_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDArrayView.shape">
+<code class="descname">shape</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDArrayView.shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDArrayView.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDArrayView.to_numpy">
+<code class="descname">to_numpy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDArrayView.to_numpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDArrayView.to_numpy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.cntk_py.NDArrayViewDouble">
+<code class="descname">NDArrayViewDouble</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDArrayViewDouble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDArrayViewDouble" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.cntk_py.NDArrayViewFloat">
+<code class="descname">NDArrayViewFloat</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDArrayViewFloat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDArrayViewFloat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.NDMask">
+<em class="property">class </em><code class="descname">NDMask</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDMask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDMask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.cntk_py.NDMask.alias">
+<code class="descname">alias</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDMask.alias"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDMask.alias" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDMask.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDMask.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDMask.clear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDMask.copy_from">
+<code class="descname">copy_from</code><span class="sig-paren">(</span><em>source</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDMask.copy_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDMask.copy_from" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDMask.data_buffer">
+<code class="descname">data_buffer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDMask.data_buffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDMask.data_buffer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDMask.deep_clone">
+<code class="descname">deep_clone</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDMask.deep_clone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDMask.deep_clone" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDMask.device">
+<code class="descname">device</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDMask.device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDMask.device" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDMask.invalidate_section">
+<code class="descname">invalidate_section</code><span class="sig-paren">(</span><em>sectionOffset</em>, <em>sectionShape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDMask.invalidate_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDMask.invalidate_section" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDMask.mark_sequence_begin">
+<code class="descname">mark_sequence_begin</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDMask.mark_sequence_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDMask.mark_sequence_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDMask.masked_count">
+<code class="descname">masked_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDMask.masked_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDMask.masked_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDMask.shape">
+<code class="descname">shape</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDMask.shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDMask.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDMask.to_numpy">
+<code class="descname">to_numpy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDMask.to_numpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDMask.to_numpy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.NDShape">
+<em class="property">class </em><code class="descname">NDShape</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDShape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDShape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.cntk_py.NDShape.as_string">
+<code class="descname">as_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDShape.as_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDShape.as_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDShape.dimensions">
+<code class="descname">dimensions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDShape.dimensions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDShape.dimensions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDShape.has_inferred_dimension">
+<code class="descname">has_inferred_dimension</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDShape.has_inferred_dimension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDShape.has_inferred_dimension" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDShape.is_unknown">
+<code class="descname">is_unknown</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDShape.is_unknown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDShape.is_unknown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDShape.rank">
+<code class="descname">rank</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDShape.rank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDShape.rank" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDShape.sub_shape">
+<code class="descname">sub_shape</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDShape.sub_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDShape.sub_shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.NDShape.total_size">
+<code class="descname">total_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#NDShape.total_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.NDShape.total_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.NDShape.unknown">
+<code class="descname">unknown</code><em class="property"> = &lt;cntk.cntk_py.NDShape; proxy of &lt;Swig Object of type 'CNTK::NDShape *' at 0x0000000006549CC0&gt; &gt;</em><a class="headerlink" href="#cntk.cntk_py.NDShape.unknown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.Parameter">
+<em class="property">class </em><code class="descname">Parameter</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cntk.cntk_py.Variable" title="cntk.cntk_py.Variable"><code class="xref py py-class docutils literal"><span class="pre">cntk.cntk_py.Variable</span></code></a></p>
+<dl class="method">
+<dt id="cntk.cntk_py.Parameter.value">
+<code class="descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Parameter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Parameter.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.cntk_py.ParameterDouble">
+<code class="descname">ParameterDouble</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#ParameterDouble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.ParameterDouble" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.cntk_py.ParameterFloat">
+<code class="descname">ParameterFloat</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#ParameterFloat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.ParameterFloat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.StreamConfiguration">
+<em class="property">class </em><code class="descname">StreamConfiguration</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#StreamConfiguration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.StreamConfiguration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="cntk.cntk_py.StreamConfiguration.m_dim">
+<code class="descname">m_dim</code><a class="headerlink" href="#cntk.cntk_py.StreamConfiguration.m_dim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.StreamConfiguration.m_is_sparse">
+<code class="descname">m_is_sparse</code><a class="headerlink" href="#cntk.cntk_py.StreamConfiguration.m_is_sparse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.StreamConfiguration.m_stream_alias">
+<code class="descname">m_stream_alias</code><a class="headerlink" href="#cntk.cntk_py.StreamConfiguration.m_stream_alias" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.StreamConfiguration.m_stream_name">
+<code class="descname">m_stream_name</code><a class="headerlink" href="#cntk.cntk_py.StreamConfiguration.m_stream_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.StreamInformation">
+<em class="property">class </em><code class="descname">StreamInformation</code><a class="reference internal" href="_modules/cntk/cntk_py.html#StreamInformation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.StreamInformation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="cntk.cntk_py.StreamInformation.m_element_type">
+<code class="descname">m_element_type</code><a class="headerlink" href="#cntk.cntk_py.StreamInformation.m_element_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.StreamInformation.m_id">
+<code class="descname">m_id</code><a class="headerlink" href="#cntk.cntk_py.StreamInformation.m_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.StreamInformation.m_name">
+<code class="descname">m_name</code><a class="headerlink" href="#cntk.cntk_py.StreamInformation.m_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.StreamInformation.m_sample_layout">
+<code class="descname">m_sample_layout</code><a class="headerlink" href="#cntk.cntk_py.StreamInformation.m_sample_layout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.StreamInformation.m_storage_format">
+<code class="descname">m_storage_format</code><a class="headerlink" href="#cntk.cntk_py.StreamInformation.m_storage_format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.SwigPyIterator">
+<em class="property">class </em><code class="descname">SwigPyIterator</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#SwigPyIterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.SwigPyIterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.cntk_py.SwigPyIterator.advance">
+<code class="descname">advance</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#SwigPyIterator.advance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.SwigPyIterator.advance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.SwigPyIterator.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#SwigPyIterator.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.SwigPyIterator.copy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.SwigPyIterator.decr">
+<code class="descname">decr</code><span class="sig-paren">(</span><em>n=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#SwigPyIterator.decr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.SwigPyIterator.decr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.SwigPyIterator.distance">
+<code class="descname">distance</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#SwigPyIterator.distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.SwigPyIterator.distance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.SwigPyIterator.equal">
+<code class="descname">equal</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#SwigPyIterator.equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.SwigPyIterator.equal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.SwigPyIterator.incr">
+<code class="descname">incr</code><span class="sig-paren">(</span><em>n=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#SwigPyIterator.incr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.SwigPyIterator.incr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.SwigPyIterator.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#SwigPyIterator.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.SwigPyIterator.next" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.SwigPyIterator.previous">
+<code class="descname">previous</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#SwigPyIterator.previous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.SwigPyIterator.previous" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.SwigPyIterator.value">
+<code class="descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#SwigPyIterator.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.SwigPyIterator.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.Trainer">
+<em class="property">class </em><code class="descname">Trainer</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Trainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.cntk_py.Trainer.evaluation_function">
+<code class="descname">evaluation_function</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Trainer.evaluation_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Trainer.evaluation_function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Trainer.loss_function">
+<code class="descname">loss_function</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Trainer.loss_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Trainer.loss_function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Trainer.model">
+<code class="descname">model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Trainer.model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Trainer.model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Trainer.parameter_learners">
+<code class="descname">parameter_learners</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Trainer.parameter_learners"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Trainer.parameter_learners" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Trainer.previous_minibatch_evaluation_average">
+<code class="descname">previous_minibatch_evaluation_average</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Trainer.previous_minibatch_evaluation_average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Trainer.previous_minibatch_evaluation_average" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Trainer.previous_minibatch_loss_average">
+<code class="descname">previous_minibatch_loss_average</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Trainer.previous_minibatch_loss_average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Trainer.previous_minibatch_loss_average" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Trainer.previous_minibatch_sample_count">
+<code class="descname">previous_minibatch_sample_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Trainer.previous_minibatch_sample_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Trainer.previous_minibatch_sample_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Trainer.restore_from_checkpoint">
+<code class="descname">restore_from_checkpoint</code><span class="sig-paren">(</span><em>modelFilePath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Trainer.restore_from_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Trainer.restore_from_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Trainer.save_checkpoint">
+<code class="descname">save_checkpoint</code><span class="sig-paren">(</span><em>modelFilePath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Trainer.save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Trainer.save_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Trainer.test_minibatch">
+<code class="descname">test_minibatch</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Trainer.test_minibatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Trainer.test_minibatch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Trainer.train_minibatch">
+<code class="descname">train_minibatch</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Trainer.train_minibatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Trainer.train_minibatch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.Value">
+<em class="property">class </em><code class="descname">Value</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.cntk_py.Value.alias">
+<code class="descname">alias</code><span class="sig-paren">(</span><em>readOnly=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Value.alias"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Value.alias" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Value.copy_from">
+<code class="descname">copy_from</code><span class="sig-paren">(</span><em>source</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Value.copy_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Value.copy_from" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Value.data">
+<code class="descname">data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Value.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Value.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Value.deep_clone">
+<code class="descname">deep_clone</code><span class="sig-paren">(</span><em>readOnly=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Value.deep_clone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Value.deep_clone" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Value.device">
+<code class="descname">device</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Value.device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Value.device" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Value.get_data_type">
+<code class="descname">get_data_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Value.get_data_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Value.get_data_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Value.get_storage_format">
+<code class="descname">get_storage_format</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Value.get_storage_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Value.get_storage_format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Value.is_read_only">
+<code class="descname">is_read_only</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Value.is_read_only"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Value.is_read_only" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Value.is_sparse">
+<code class="descname">is_sparse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Value.is_sparse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Value.is_sparse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Value.mask">
+<code class="descname">mask</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Value.mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Value.mask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Value.masked_count">
+<code class="descname">masked_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Value.masked_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Value.masked_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Value.shape">
+<code class="descname">shape</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Value.shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Value.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.Variable">
+<em class="property">class </em><code class="descname">Variable</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.cntk_py.Variable.dynamic_axes">
+<code class="descname">dynamic_axes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable.dynamic_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable.dynamic_axes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Variable.get_data_type">
+<code class="descname">get_data_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable.get_data_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable.get_data_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Variable.is_constant">
+<code class="descname">is_constant</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable.is_constant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable.is_constant" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Variable.is_input">
+<code class="descname">is_input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable.is_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable.is_input" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Variable.is_output">
+<code class="descname">is_output</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable.is_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable.is_output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Variable.is_parameter">
+<code class="descname">is_parameter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable.is_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable.is_parameter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Variable.is_placeholder">
+<code class="descname">is_placeholder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable.is_placeholder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable.is_placeholder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Variable.is_sparse">
+<code class="descname">is_sparse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable.is_sparse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable.is_sparse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Variable.kind">
+<code class="descname">kind</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable.kind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable.kind" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Variable.name">
+<code class="descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Variable.needs_gradient">
+<code class="descname">needs_gradient</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable.needs_gradient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable.needs_gradient" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Variable.owner">
+<code class="descname">owner</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable.owner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable.owner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Variable.shape">
+<code class="descname">shape</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable.shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cntk.cntk_py.Variable.uid">
+<code class="descname">uid</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#Variable.uid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.Variable.uid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.cntk_py.get_output_and_keep_reference">
+<code class="descname">get_output_and_keep_reference</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#get_output_and_keep_reference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.get_output_and_keep_reference" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.klass">
+<code class="descname">klass</code><a class="headerlink" href="#cntk.cntk_py.klass" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#cntk.cntk_py.Variable" title="cntk.cntk_py.Variable"><code class="xref py py-class docutils literal"><span class="pre">Variable</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.learning_rates_per_sample">
+<code class="descname">learning_rates_per_sample</code><a class="headerlink" href="#cntk.cntk_py.learning_rates_per_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#cntk.cntk_py.training_param_schedule_double" title="cntk.cntk_py.training_param_schedule_double"><code class="xref py py-class docutils literal"><span class="pre">training_param_schedule_double</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cntk.cntk_py.momentums_per_sample">
+<code class="descname">momentums_per_sample</code><a class="headerlink" href="#cntk.cntk_py.momentums_per_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#cntk.cntk_py.training_param_schedule_double" title="cntk.cntk_py.training_param_schedule_double"><code class="xref py py-class docutils literal"><span class="pre">training_param_schedule_double</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.cntk_py.training_param_schedule_double">
+<em class="property">class </em><code class="descname">training_param_schedule_double</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/cntk_py.html#training_param_schedule_double"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.cntk_py.training_param_schedule_double" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cntk.conftest">
+<span id="cntk-conftest-module"></span><h2>cntk.conftest module<a class="headerlink" href="#module-cntk.conftest" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="cntk.conftest.add_namespace">
+<code class="descname">add_namespace</code><span class="sig-paren">(</span><em>doctest_namespace</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/conftest.html#add_namespace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.conftest.add_namespace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.conftest.pytest_addoption">
+<code class="descname">pytest_addoption</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/conftest.html#pytest_addoption"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.conftest.pytest_addoption" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cntk.conftest.pytest_generate_tests">
+<code class="descname">pytest_generate_tests</code><span class="sig-paren">(</span><em>metafunc</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/conftest.html#pytest_generate_tests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.conftest.pytest_generate_tests" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-cntk.initializer">
+<span id="cntk-initializer-module"></span><h2>cntk.initializer module<a class="headerlink" href="#module-cntk.initializer" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="cntk.initializer.bilinear">
+<code class="descname">bilinear</code><span class="sig-paren">(</span><em>kernel_width</em>, <em>kernel_height</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/initializer.html#bilinear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.initializer.bilinear" title="Permalink to this definition">¶</a></dt>
+<dd><p>initializer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>kernel_width</strong> (<cite>int</cite>) &#8211; kernel width</li>
+<li><strong>kernel_height</strong> (<cite>int</cite>) &#8211; kernel height</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">initializer for <cite>:class:cntk.variables.Parameter</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.initializer.gaussian">
+<code class="descname">gaussian</code><span class="sig-paren">(</span><em>output_rank=1</em>, <em>filter_rank=0</em>, <em>scale=1</em>, <em>seed=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/initializer.html#gaussian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.initializer.gaussian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gaussian initializer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>output_rank</strong> (<cite>int</cite>) &#8211; output rank</li>
+<li><strong>filter_rank</strong> (<cite>int</cite>) &#8211; filter rank</li>
+<li><strong>scale</strong> (<cite>float</cite>) &#8211; scale</li>
+<li><strong>seed</strong> (<cite>int</cite>) &#8211; random seed</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">initializer for <cite>:class:cntk.variables.Parameter</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.initializer.glorot_normal">
+<code class="descname">glorot_normal</code><span class="sig-paren">(</span><em>output_rank=1</em>, <em>filter_rank=0</em>, <em>scale=1</em>, <em>seed=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/initializer.html#glorot_normal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.initializer.glorot_normal" title="Permalink to this definition">¶</a></dt>
+<dd><p>initializer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>output_rank</strong> (<cite>int</cite>) &#8211; output rank</li>
+<li><strong>filter_rank</strong> (<cite>int</cite>) &#8211; filter rank</li>
+<li><strong>scale</strong> (<cite>float</cite>) &#8211; scale</li>
+<li><strong>seed</strong> (<cite>int</cite>) &#8211; random seed</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">initializer for <cite>:class:cntk.variables.Parameter</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.initializer.glorot_uniform">
+<code class="descname">glorot_uniform</code><span class="sig-paren">(</span><em>output_rank=1</em>, <em>filter_rank=0</em>, <em>scale=1</em>, <em>seed=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/initializer.html#glorot_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.initializer.glorot_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Glorot initializer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>output_rank</strong> (<cite>int</cite>) &#8211; output rank</li>
+<li><strong>filter_rank</strong> (<cite>int</cite>) &#8211; filter rank</li>
+<li><strong>scale</strong> (<cite>float</cite>) &#8211; scale</li>
+<li><strong>seed</strong> (<cite>int</cite>) &#8211; random seed</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">initializer for <cite>:class:cntk.variables.Parameter</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.initializer.he_normal">
+<code class="descname">he_normal</code><span class="sig-paren">(</span><em>output_rank=1</em>, <em>filter_rank=0</em>, <em>scale=1</em>, <em>seed=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/initializer.html#he_normal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.initializer.he_normal" title="Permalink to this definition">¶</a></dt>
+<dd><p>initializer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>output_rank</strong> (<cite>int</cite>) &#8211; output rank</li>
+<li><strong>filter_rank</strong> (<cite>int</cite>) &#8211; filter rank</li>
+<li><strong>scale</strong> (<cite>float</cite>) &#8211; scale</li>
+<li><strong>seed</strong> (<cite>int</cite>) &#8211; random seed</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">initializer for <cite>:class:cntk.variables.Parameter</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.initializer.he_uniform">
+<code class="descname">he_uniform</code><span class="sig-paren">(</span><em>output_rank=1</em>, <em>filter_rank=0</em>, <em>scale=1</em>, <em>seed=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/initializer.html#he_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.initializer.he_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>initializer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>output_rank</strong> (<cite>int</cite>) &#8211; output rank</li>
+<li><strong>filter_rank</strong> (<cite>int</cite>) &#8211; filter rank</li>
+<li><strong>scale</strong> (<cite>float</cite>) &#8211; scale</li>
+<li><strong>seed</strong> (<cite>int</cite>) &#8211; random seed</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">initializer for <cite>:class:cntk.variables.Parameter</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.initializer.uniform">
+<code class="descname">uniform</code><span class="sig-paren">(</span><em>scale=1</em>, <em>seed=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/initializer.html#uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.initializer.uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniform initializer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>scale</strong> (<cite>float</cite>) &#8211; scale</li>
+<li><strong>seed</strong> (<cite>int</cite>) &#8211; random seed</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">initializer for <cite>:class:cntk.variables.Parameter</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.initializer.xavier">
+<code class="descname">xavier</code><span class="sig-paren">(</span><em>output_rank=1</em>, <em>filter_rank=0</em>, <em>scale=1</em>, <em>seed=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/initializer.html#xavier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.initializer.xavier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Xavier initializer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>output_rank</strong> (<cite>int</cite>) &#8211; output rank</li>
+<li><strong>filter_rank</strong> (<cite>int</cite>) &#8211; filter rank</li>
+<li><strong>scale</strong> (<cite>float</cite>) &#8211; scale</li>
+<li><strong>seed</strong> (<cite>int</cite>) &#8211; random seed</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">initializer for <cite>:class:cntk.variables.Parameter</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cntk.learner">
+<span id="cntk-learner-module"></span><h2>cntk.learner module<a class="headerlink" href="#module-cntk.learner" title="Permalink to this headline">¶</a></h2>
+<p>Learner tune a set of parameters during the training process. One can use
+different learners for different sets of parameters. Currently, CNTK supports
+the following learner:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Learner</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>AdaGrad</td>
+</tr>
+<tr class="row-odd"><td>FSAdaGrad</td>
+</tr>
+<tr class="row-even"><td>MomentumSGD</td>
+</tr>
+<tr class="row-odd"><td>Nesterov</td>
+</tr>
+<tr class="row-even"><td>RMSProp</td>
+</tr>
+<tr class="row-odd"><td>SGD</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="cntk.learner.Learner">
+<em class="property">class </em><code class="descname">Learner</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/learner.html#Learner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.learner.Learner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cntk.cntk_py.Learner" title="cntk.cntk_py.Learner"><code class="xref py py-class docutils literal"><span class="pre">cntk.cntk_py.Learner</span></code></a></p>
+<p>Abstraction for learning a subset of parameters of a learnable function using first order gradient values
+For e.g momentum, AdaGrad, RMSProp etc. are different types of learners with their own algorithms for
+learning parameter values using first order gradients.
+To instantiate a concreate learner, use the factory methods in this module.</p>
+<dl class="method">
+<dt id="cntk.learner.Learner.learning_rate">
+<code class="descname">learning_rate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/learner.html#Learner.learning_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.learner.Learner.learning_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the learning rate.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.learner.Learner.parameters">
+<code class="descname">parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/learner.html#Learner.parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.learner.Learner.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the set of parameters associated with this learner.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.learner.Learner.reset_learning_rate">
+<code class="descname">reset_learning_rate</code><span class="sig-paren">(</span><em>learning_rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/learner.html#Learner.reset_learning_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.learner.Learner.reset_learning_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the learning rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>learning_rate</strong> (<cite>float</cite>) &#8211; learning rate to reset to</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.learner.Learner.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>gradient_values</em>, <em>training_sample_count</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/learner.html#Learner.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.learner.Learner.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the parameters associated with this learner.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>gradient_values</strong> (<cite>dict</cite>) &#8211; maps <cite>:class:cntk.variables.Parameter</cite> to a NumPy array</li>
+<li><strong>training_sample_count</strong> (<cite>int</cite>) &#8211; training sample count</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>False</cite> to indicate that learning has stopped for all of the parameters associated with this learner</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.learner.adagrad">
+<code class="descname">adagrad</code><span class="sig-paren">(</span><em>parameters</em>, <em>lr</em>, <em>need_ave_multiplier=True</em>, <em>l1_regularization_weight=0.0</em>, <em>l2_regularization_weight=0.0</em>, <em>gaussian_noise_injection_std_dev=0.0</em>, <em>clipping_threshold_per_sample=10000000000.0</em>, <em>gradient_clipping_with_truncation=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/learner.html#adagrad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.learner.adagrad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an AdaGrad learner instance to learn the parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameters</strong> (<em>list of parameters</em>) &#8211; list of network parameters to tune.
+These can be obtained by the &#8216;.parameters()&#8217; function of</li>
+<li><strong>lr</strong> (&#8216;float&#8217; or output of <cite>:func:learning_rates_per_sample</cite>) &#8211; learning
+rates per sample.
+allowed, but schedules will be added soon</li>
+<li><strong>need_ave_multiplier</strong> (<em>'bool', default</em>) &#8211; </li>
+<li><strong>l1_regularization_weight</strong> (<em>'float', optional</em>) &#8211; the L1 regularization weight per sample,
+defaults to 0.0</li>
+<li><strong>l2_regularization_weight</strong> (<em>'float', optional</em>) &#8211; the L2 regularization weight per sample,
+defaults to 0.0</li>
+<li><strong>gaussian_noise_injection_std_dev</strong> (<em>'float', optional</em>) &#8211; the standard deviation
+of the Gaussian noise added to parameters post update, defaults to 0.0</li>
+<li><strong>threshold per sample</strong> (<em>clipping</em>) &#8211; clipping threshold
+per sample, defaults to infinity</li>
+<li><strong>gradient_clipping_with_truncation</strong> (&#8216;bool&#8217;, default <cite>True</cite>) &#8211; gradient clipping</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Instance of a <cite>:class:cntk.learner.Learner</cite> that can be passed to the <cite>Trainer</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.learner.fsadagrad">
+<code class="descname">fsadagrad</code><span class="sig-paren">(</span><em>parameters</em>, <em>lr</em>, <em>momentums</em>, <em>targetAdagradAvDenom=0.0025</em>, <em>varianceTimeConstant=720000</em>, <em>l1_regularization_weight=0.0</em>, <em>l2_regularization_weight=0.0</em>, <em>gaussian_noise_injection_std_dev=0.0</em>, <em>clipping_threshold_per_sample=10000000000.0</em>, <em>gradient_clipping_with_truncation=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/learner.html#fsadagrad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.learner.fsadagrad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an FS AdaGrad learner instance to learn the parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameters</strong> (<em>list of parameters</em>) &#8211; list of network parameters to tune.
+These can be obtained by the &#8216;.parameters()&#8217; function of</li>
+<li><strong>lr</strong> (&#8216;float&#8217; or output of <cite>:func:learning_rates_per_sample</cite>) &#8211; learning
+rates per sample.</li>
+<li><strong>momentums</strong> (<cite>float</cite> or output of <cite>:func:momentums_per_sample</cite>) &#8211; momentum values per sample.
+Refer to <a class="reference external" href="https://github.com/Microsoft/CNTK/wiki/SGD-block#converting-learning-rate-and-momentum-parameters-from-other-toolkits">https://github.com/Microsoft/CNTK/wiki/SGD-block#converting-learning-rate-and-momentum-parameters-from-other-toolkits</a></li>
+<li><strong>targetAdagradAvDenom</strong> (<em>'float', optional</em>) &#8211; FSAdaGrad magic number,
+defaults to 0.0025 (1/400)</li>
+<li><strong>varianceTimeConstant</strong> (<em>'long', optional</em>) &#8211; FSAdaGrad magic number,
+defaults to 720000 ( 2 * 3600 * 100)</li>
+<li><strong>l1_regularization_weight</strong> (<em>'float', optional</em>) &#8211; the L1 regularization weight per sample,
+defaults to 0.0</li>
+<li><strong>l2_regularization_weight</strong> (<em>'float', optional</em>) &#8211; the L2 regularization weight per sample,
+defaults to 0.0</li>
+<li><strong>gaussian_noise_injection_std_dev</strong> (<em>'float', optional</em>) &#8211; the standard deviation
+of the Gaussian noise added to parameters post update, defaults to 0.0</li>
+<li><strong>threshold per sample</strong> (<em>clipping</em>) &#8211; clipping threshold
+per sample, defaults to infinity</li>
+<li><strong>gradient_clipping_with_truncation</strong> (&#8216;bool&#8217;, default <cite>True</cite>) &#8211; gradient clipping</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Instance of a <cite>:class:cntk.learner.Learner</cite> that can be passed to the <cite>Trainer</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.learner.learning_rates_per_sample">
+<code class="descname">learning_rates_per_sample</code><span class="sig-paren">(</span><em>lr</em>, <em>units=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/learner.html#learning_rates_per_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.learner.learning_rates_per_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a learning rate schedule.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Use the learning rate 0.7 for all samples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rates_per_sample</span><span class="p">(</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">lr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+<span class="go">[0.7, 0.7, 0.7, 0.7]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Use the learning rate 0.7 for the first 3 samples, then 0.3 for the remaining ones</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rates_per_sample</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.3</span><span class="p">],</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">lr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="go">[0.7, 0.7, 0.7, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lr</strong> (<cite>float</cite> or <cite>list</cite>) &#8211; if <cite>float</cite>, it is the learning rate to be used
+for all samples. In case of list, the elements are used as the
+learning rates for <cite>units</cite> samples.</li>
+<li><strong>units</strong> (<cite>int</cite>) &#8211; unit for the learning rates to have effect</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">schedule for learning rates per sample</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.learner.momentum_sgd">
+<code class="descname">momentum_sgd</code><span class="sig-paren">(</span><em>parameters</em>, <em>lr</em>, <em>momentums</em>, <em>l1_regularization_weight=0.0</em>, <em>l2_regularization_weight=0.0</em>, <em>gaussian_noise_injection_std_dev=0.0</em>, <em>clipping_threshold_per_sample=10000000000.0</em>, <em>gradient_clipping_with_truncation=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/learner.html#momentum_sgd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.learner.momentum_sgd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a Momemtum SGD learner instance to learn the parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameters</strong> (<em>list of parameters</em>) &#8211; list of network parameters to tune.
+These can be obtained by the &#8216;.parameters()&#8217; function of</li>
+<li><strong>lr</strong> (&#8216;float&#8217; or output of <cite>:func:learning_rates_per_sample</cite>) &#8211; learning
+rates per sample.</li>
+<li><strong>momentums</strong> (<cite>float</cite> or output of <cite>:func:momentums_per_sample</cite>) &#8211; momentum values per sample.
+Refer to <a class="reference external" href="https://github.com/Microsoft/CNTK/wiki/SGD-block#converting-learning-rate-and-momentum-parameters-from-other-toolkits">https://github.com/Microsoft/CNTK/wiki/SGD-block#converting-learning-rate-and-momentum-parameters-from-other-toolkits</a></li>
+<li><strong>l1_regularization_weight</strong> (<em>'float', optional</em>) &#8211; the L1 regularization weight per sample,
+defaults to 0.0</li>
+<li><strong>l2_regularization_weight</strong> (<em>'float', optional</em>) &#8211; the L2 regularization weight per sample,
+defaults to 0.0</li>
+<li><strong>gaussian_noise_injection_std_dev</strong> (<em>'float', optional</em>) &#8211; the standard deviation
+of the Gaussian noise added to parameters post update, defaults to 0.0</li>
+<li><strong>threshold per sample</strong> (<em>clipping</em>) &#8211; clipping threshold
+per sample, defaults to infinity</li>
+<li><strong>gradient_clipping_with_truncation</strong> (&#8216;bool&#8217;, default <cite>True</cite>) &#8211; gradient clipping</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Instance of a <cite>:class:cntk.learner.Learner</cite> that can be passed to the <cite>Trainer</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.learner.momentums_per_sample">
+<code class="descname">momentums_per_sample</code><span class="sig-paren">(</span><em>momentums</em>, <em>units=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/learner.html#momentums_per_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.learner.momentums_per_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a momentums schedule.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Use the learning rate 0.7 for all samples</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lr</span> <span class="o">=</span> <span class="n">momentums_per_sample</span><span class="p">(</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">lr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+<span class="go">[0.7, 0.7, 0.7, 0.7]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Use the learning rate 0.7 for the first 3 samples, then 0.3 for the remaining ones</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lr</span> <span class="o">=</span> <span class="n">momentums_per_sample</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.3</span><span class="p">],</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">lr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="go">[0.7, 0.7, 0.7, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>momentums</strong> (<cite>float</cite> or <cite>list</cite>) &#8211; if <cite>float</cite>, it is the momentum to be used
+for all samples. In case of list, the elements are used as the
+momentums for <cite>units</cite> samples.</li>
+<li><strong>units</strong> (<cite>int</cite>) &#8211; unit for the momentums to have effect</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">schedule for momentums per sample</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.learner.nesterov">
+<code class="descname">nesterov</code><span class="sig-paren">(</span><em>parameters</em>, <em>lr</em>, <em>momentums</em>, <em>l1_regularization_weight=0.0</em>, <em>l2_regularization_weight=0.0</em>, <em>gaussian_noise_injection_std_dev=0.0</em>, <em>clipping_threshold_per_sample=10000000000.0</em>, <em>gradient_clipping_with_truncation=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/learner.html#nesterov"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.learner.nesterov" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a Nesterov SGD learner instance to learn the parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameters</strong> (<em>list of parameters</em>) &#8211; list of network parameters to tune.
+These can be obtained by the &#8216;.parameters()&#8217; function of</li>
+<li><strong>lr</strong> (&#8216;float&#8217; or output of <cite>:func:learning_rates_per_sample</cite>) &#8211; learning
+rates per sample.</li>
+<li><strong>momentums</strong> (<cite>float</cite> or output of <cite>:func:momentums_per_sample</cite>) &#8211; momentum values per sample.
+Refer to <a class="reference external" href="https://github.com/Microsoft/CNTK/wiki/SGD-block#converting-learning-rate-and-momentum-parameters-from-other-toolkits">https://github.com/Microsoft/CNTK/wiki/SGD-block#converting-learning-rate-and-momentum-parameters-from-other-toolkits</a></li>
+<li><strong>l1_regularization_weight</strong> (<em>'float', optional</em>) &#8211; the L1 regularization weight per sample,
+defaults to 0.0</li>
+<li><strong>l2_regularization_weight</strong> (<em>'float', optional</em>) &#8211; the L2 regularization weight per sample,
+defaults to 0.0</li>
+<li><strong>gaussian_noise_injection_std_dev</strong> (<em>'float', optional</em>) &#8211; the standard deviation
+of the Gaussian noise added to parameters post update, defaults to 0.0</li>
+<li><strong>threshold per sample</strong> (<em>clipping</em>) &#8211; clipping threshold
+per sample, defaults to infinity</li>
+<li><strong>gradient_clipping_with_truncation</strong> (&#8216;bool&#8217;, default <cite>True</cite>) &#8211; gradient clipping</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Instance of a <cite>:class:cntk.learner.Learner</cite> that can be passed to the <cite>Trainer</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.learner.rmsprop">
+<code class="descname">rmsprop</code><span class="sig-paren">(</span><em>parameters</em>, <em>lr</em>, <em>gamma</em>, <em>inc</em>, <em>dec</em>, <em>max</em>, <em>min</em>, <em>need_ave_multiplier=True</em>, <em>l1_regularization_weight=0.0</em>, <em>l2_regularization_weight=0.0</em>, <em>gaussian_noise_injection_std_dev=0.0</em>, <em>clipping_threshold_per_sample=10000000000.0</em>, <em>gradient_clipping_with_truncation=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/learner.html#rmsprop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.learner.rmsprop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an RMSProp learner instance to learn the parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameters</strong> (<em>list of parameters</em>) &#8211; list of network parameters to tune.
+These can be obtained by the &#8216;.parameters()&#8217; function of</li>
+<li><strong>lr</strong> (<em>'float'</em>) &#8211; learning rate per sample. Currently, only float is
+allowed, but schedules will be added soon</li>
+<li><strong>gamma</strong> (<em>'float'</em>) &#8211; </li>
+<li><strong>inc</strong> (<em>'float'</em>) &#8211; </li>
+<li><strong>dec</strong> (<em>'float'</em>) &#8211; </li>
+<li><strong>max</strong> (<em>'float'</em>) &#8211; </li>
+<li><strong>min</strong> (<em>'float'</em>) &#8211; </li>
+<li><strong>need_ave_multiplier</strong> (<em>'bool', default</em>) &#8211; </li>
+<li><strong>l1_regularization_weight</strong> (<em>'float', optional</em>) &#8211; the L1 regularization weight per sample,
+defaults to 0.0</li>
+<li><strong>l2_regularization_weight</strong> (<em>'float', optional</em>) &#8211; the L2 regularization weight per sample,
+defaults to 0.0</li>
+<li><strong>gaussian_noise_injection_std_dev</strong> (<em>'float', optional</em>) &#8211; the standard deviation
+of the Gaussian noise added to parameters post update, defaults to 0.0</li>
+<li><strong>threshold per sample</strong> (<em>clipping</em>) &#8211; clipping threshold
+per sample, defaults to infinity</li>
+<li><strong>gradient_clipping_with_truncation</strong> (&#8216;bool&#8217;, default <cite>True</cite>) &#8211; gradient clipping</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Instance of a <cite>:class:cntk.learner.Learner</cite> that can be passed to the <cite>Trainer</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.learner.sgd">
+<code class="descname">sgd</code><span class="sig-paren">(</span><em>parameters</em>, <em>lr</em>, <em>l1_regularization_weight=0.0</em>, <em>l2_regularization_weight=0.0</em>, <em>gaussian_noise_injection_std_dev=0.0</em>, <em>clipping_threshold_per_sample=10000000000.0</em>, <em>gradient_clipping_with_truncation=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/learner.html#sgd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.learner.sgd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an SGD learner instance to learn the parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameters</strong> (<cite>list</cite> of parameters) &#8211; list of network parameters to tune.
+These can be obtained by the &#8216;.parameters()&#8217; method of the root
+operator.</li>
+<li><strong>lr</strong> (&#8216;float&#8217; or output of <cite>:func:learning_rates_per_sample</cite>) &#8211; learning
+rates per sample.</li>
+<li><strong>l1_regularization_weight</strong> (<em>'float', optional</em>) &#8211; the L1 regularization weight per sample,
+defaults to 0.0</li>
+<li><strong>l2_regularization_weight</strong> (<em>'float', optional</em>) &#8211; the L2 regularization weight per sample,
+defaults to 0.0</li>
+<li><strong>gaussian_noise_injection_std_dev</strong> (<em>'float', optional</em>) &#8211; the standard deviation
+of the Gaussian noise added to parameters post update, defaults to 0.0</li>
+<li><strong>threshold per sample</strong> (<em>clipping</em>) &#8211; clipping threshold
+per sample, defaults to infinity</li>
+<li><strong>gradient_clipping_with_truncation</strong> (&#8216;bool&#8217;, default <cite>True</cite>) &#8211; gradient clipping</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Instance of a <cite>:class:cntk.learner.Learner</cite> that can be passed to the <cite>Trainer</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cntk.tensor">
+<span id="cntk-tensor-module"></span><h2>cntk.tensor module<a class="headerlink" href="#module-cntk.tensor" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cntk.tensor.EvalMixin">
+<em class="property">class </em><code class="descname">EvalMixin</code><a class="reference internal" href="_modules/cntk/tensor.html#EvalMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.tensor.EvalMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cntk.tensor.EvalMixin.eval">
+<code class="descname">eval</code><span class="sig-paren">(</span><em>arguments=None</em>, <em>seq_starts=None</em>, <em>precision='float'</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/tensor.html#EvalMixin.eval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.tensor.EvalMixin.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the node using the specified <cite>arguments</cite> as input.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>arguments</strong> (<cite>dict</cite> or <cite>list</cite>) &#8211; <ul>
+<li>map from input variables to the data</li>
+<li>list of inputs in the order that the function expects or</li>
+</ul>
+<p>Data should be either NumPy arrays or a <cite>:class:cntk.io.MinibatchData</cite> instance</p>
+</li>
+<li><strong>seq_starts</strong> (<cite>list</cite> of <cite>bool`s or `None</cite>) &#8211; if <cite>None</cite>, every sequence is
+treated as a new sequence. Otherwise, it is interpreted as a list of
+Booleans that tell whether a sequence is a new sequence (<cite>True</cite>) or a
+continuation of the previous one (<cite>False</cite>)</li>
+<li><strong>precision</strong> (<cite>str</cite> or <cite>np.float32</cite> or <cite>np.float64</cite>) &#8211; precision, if string
+it can be one of &#8216;float&#8217;, &#8216;float32&#8217;, &#8216;double&#8217;, &#8216;float64&#8217;, or <cite>None</cite></li>
+<li><strong>device</strong> (<code class="xref py py-class docutils literal"><span class="pre">cntk.DeviceDescriptor</span></code>) &#8211; the device descriptor that
+contains the type and id of the device on which the computation is
+to be performed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><cite>True</cite> if updates have been performed</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><cite>bool</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.tensor.TensorOpsMixin">
+<em class="property">class </em><code class="descname">TensorOpsMixin</code><a class="reference internal" href="_modules/cntk/tensor.html#TensorOpsMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.tensor.TensorOpsMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cntk.trainer">
+<span id="cntk-trainer-module"></span><h2>cntk.trainer module<a class="headerlink" href="#module-cntk.trainer" title="Permalink to this headline">¶</a></h2>
+<p>A trainer supervises the overall training process and commands one or more
+<a class="reference internal" href="cntk.learner.html"><span class="doc">learner</span></a> that learn the parameters.</p>
+<dl class="class">
+<dt id="cntk.trainer.Trainer">
+<em class="property">class </em><code class="descname">Trainer</code><span class="sig-paren">(</span><em>model</em>, <em>loss_function</em>, <em>eval_function</em>, <em>parameter_learners</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cntk.cntk_py.Trainer" title="cntk.cntk_py.Trainer"><code class="xref py py-class docutils literal"><span class="pre">cntk.cntk_py.Trainer</span></code></a></p>
+<p>Trainer to train the specified <cite>model</cite> with the specified <cite>training_loss</cite>
+as the training criterion, the specified <cite>evaluation_function</cite> as the
+criterion for evaluating the trained model&#8217;s quality, and using the
+specified set of <cite>parameter_learners</cite> for updating the model&#8217;s parameters
+using computed gradients.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<code class="xref py py-class docutils literal"><span class="pre">cntk.ops.function.Function</span></code>) &#8211; root node of the function to train</li>
+<li><strong>loss_function</strong> (<a class="reference internal" href="graph.html#cntk.ops.functions.Function" title="cntk.ops.functions.Function"><code class="xref py py-class docutils literal"><span class="pre">cntk.ops.functions.Function</span></code></a>) &#8211; loss function</li>
+<li><strong>eval_function</strong> (<a class="reference internal" href="graph.html#cntk.ops.functions.Function" title="cntk.ops.functions.Function"><code class="xref py py-class docutils literal"><span class="pre">cntk.ops.functions.Function</span></code></a>) &#8211; evaluation function</li>
+<li><strong>parameter_learners</strong> (<cite>list</cite>) &#8211; list of learners from <a href="#id1"><span class="problematic" id="id2">:cntk:`cntk.learner`</span></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cntk.trainer.Trainer.evaluation_function">
+<code class="descname">evaluation_function</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.evaluation_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.evaluation_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the evaluation function that the trainer is using.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference internal" href="graph.html#cntk.ops.functions.Function" title="cntk.ops.functions.Function"><code class="xref py py-class docutils literal"><span class="pre">cntk.ops.functions.Function</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.loss_function">
+<code class="descname">loss_function</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.loss_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.loss_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the loss function that the trainer is using.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference internal" href="graph.html#cntk.ops.functions.Function" title="cntk.ops.functions.Function"><code class="xref py py-class docutils literal"><span class="pre">cntk.ops.functions.Function</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.model">
+<code class="descname">model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the model that the trainer is training.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference internal" href="graph.html#cntk.ops.functions.Function" title="cntk.ops.functions.Function"><code class="xref py py-class docutils literal"><span class="pre">cntk.ops.functions.Function</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.parameter_learners">
+<code class="descname">parameter_learners</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.parameter_learners"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.parameter_learners" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the parameter learners that the trainer is using.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>list</cite> of <a class="reference internal" href="cntk.learner.html#cntk.learner.Learner" title="cntk.learner.Learner"><code class="xref py py-class docutils literal"><span class="pre">cntk.learner.Learner</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.previous_minibatch_evaluation_average">
+<code class="descname">previous_minibatch_evaluation_average</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.previous_minibatch_evaluation_average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.previous_minibatch_evaluation_average" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the average evaluation criterion value per sample for the last minibatch trained</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>double</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.previous_minibatch_loss_average">
+<code class="descname">previous_minibatch_loss_average</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.previous_minibatch_loss_average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.previous_minibatch_loss_average" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the average training loss per sample for the last minibatch trained</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>double</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.previous_minibatch_sample_count">
+<code class="descname">previous_minibatch_sample_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.previous_minibatch_sample_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.previous_minibatch_sample_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of samples in the last minibatch trained with</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>int</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.restore_from_checkpoint">
+<code class="descname">restore_from_checkpoint</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.restore_from_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.restore_from_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a checkpoint of the model and other Trainer state at the
+specified file location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<cite>str</cite>) &#8211; filename to restore the checkpoint from</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.save_checkpoint">
+<code class="descname">save_checkpoint</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.save_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a checkpoint of the model and other Trainer state at the
+specified file location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<cite>str</cite>) &#8211; filename to store the checkpoint</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.test_minibatch">
+<code class="descname">test_minibatch</code><span class="sig-paren">(</span><em>arguments</em>, <em>seq_starts=None</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.test_minibatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.test_minibatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the model on the specified batch of samples using the evaluation
+Function specified during construction of the Trainer.
+of samples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>arguments</strong> (<cite>dict</cite> or <cite>list</cite> or <cite>tuple</cite>) &#8211; <p>maps variables to their
+input data. The interpretation depends on the input type:</p>
+<blockquote>
+<div><ul>
+<li><cite>dict</cite>: keys are input variable or names and values are the input data.</li>
+<li><cite>list</cite>: elements are input data in the order their respective variables have been defined in the network.</li>
+</ul>
+</div></blockquote>
+<p>In both cases, every every sample in the data will be interpreted
+as a new sequence. To mark samples as continuations of the
+previous sequence, specify <cite>arguments</cite> as <cite>tuple</cite>: the
+first element will be used as <cite>arguments</cite>, and the second one will
+be used as a list of bools, denoting whether a sequence is a new
+one (<cite>True</cite>) or a continuation of the previous one (<cite>False</cite>).
+Data should be either NumPy arrays or a
+<a class="reference internal" href="cntk.io.html#cntk.io.MinibatchData" title="cntk.io.MinibatchData"><code class="xref py py-class docutils literal"><span class="pre">cntk.io.MinibatchData</span></code></a> instance.</p>
+</li>
+<li><strong>seq_starts</strong> (<cite>list</cite> of <cite>bool`s or `None</cite>) &#8211; if <cite>None</cite>, every sequence is
+treated as a new sequence. Otherwise, it is interpreted as a list of
+Booleans that tell whether a sequence is a new sequence (<cite>True</cite>) or a
+continuation of the previous one (<cite>False</cite>)</li>
+<li><strong>device</strong> (<code class="xref py py-class docutils literal"><span class="pre">cntk.DeviceDescriptor</span></code>) &#8211; the device descriptor that
+contains the type and id of the device on which the computation is
+to be performed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>the average evaluation criterion value per sample for the</dt>
+<dd><p class="first last">tested minibatch.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><cite>float</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.trainer.Trainer.train_minibatch">
+<code class="descname">train_minibatch</code><span class="sig-paren">(</span><em>arguments</em>, <em>outputs=None</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/trainer.html#Trainer.train_minibatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.trainer.Trainer.train_minibatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimize model parameters using the specified &#8216;arguments&#8217; minibatch of training samples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>arguments</strong> (<cite>dict</cite> or <cite>list</cite> or <cite>tuple</cite>) &#8211; <p>maps variables to their
+input data. The interpretation depends on the input type:</p>
+<blockquote>
+<div><ul>
+<li><cite>dict</cite>: keys are input variable or names and values are the input data.</li>
+<li><cite>list</cite>: elements are input data in the order their respective variables have been defined in the network.</li>
+</ul>
+</div></blockquote>
+<p>In both cases, every every sample in the data will be interpreted
+as a new sequence. To mark samples as continuations of the
+previous sequence, specify <cite>arguments</cite> as <cite>tuple</cite>: the
+first element will be used as <cite>arguments</cite>, and the second one will
+be used as a list of bools, denoting whether a sequence is a new
+one (<cite>True</cite>) or a continuation of the previous one (<cite>False</cite>).
+Data should be either NumPy arrays or a
+<a class="reference internal" href="cntk.io.html#cntk.io.MinibatchData" title="cntk.io.MinibatchData"><code class="xref py py-class docutils literal"><span class="pre">cntk.io.MinibatchData</span></code></a> instance.</p>
+</li>
+<li><strong>outputs</strong> (<em>iterable</em>) &#8211; outputs to fetch values for.</li>
+<li><strong>device</strong> (<code class="xref py py-class docutils literal"><span class="pre">cntk.DeviceDescriptor</span></code>) &#8211; the device descriptor that
+contains the type and id of the device on which the computation is
+to be performed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">If <cite>outputs</cite> have not been provided, the returned value is <cite>True</cite>
+if updates have been performed, <cite>False</cite> if all parameter learners
+indicate end of learning (through their <cite>update</cite>. Otherwise, the
+return value is a tuple of the that <cite>bool</cite> and a dictionary that
+maps the variables in <cite>outputs</cite> to their respective NumPy arrays.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><cite>bool</cite> or <cite>tuple</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cntk">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cntk" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="modules.html" class="btn btn-neutral" title="cntk" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0a4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,567 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cntk.io package &mdash; Python API for CNTK 2.0a4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Python API for CNTK 2.0a4 documentation" href="index.html"/>
+        <link rel="next" title="cntk.trainer package" href="cntk.trainer.html"/>
+        <link rel="prev" title="Graph components" href="graph.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Python API for CNTK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0a4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Graph components</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">IO</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-cntk.io">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.trainer.html">Trainer &amp; learners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.ops.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Python API for CNTK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>cntk.io package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/cntk.io.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cntk-io-package">
+<h1>cntk.io package<a class="headerlink" href="#cntk-io-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-cntk.io">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cntk.io" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cntk.io.Deserializer">
+<em class="property">class </em><code class="descname">Deserializer</code><span class="sig-paren">(</span><em>type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#Deserializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.Deserializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">dict</span></code></p>
+<p>Base deserializer class that can be used in the <cite>:class:ReaderConfig</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>type</strong> (<cite>str</cite>) &#8211; type of the deserializer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.io.ImageDeserializer">
+<em class="property">class </em><code class="descname">ImageDeserializer</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#ImageDeserializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.ImageDeserializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cntk.io.Deserializer" title="cntk.io.Deserializer"><code class="xref py py-class docutils literal"><span class="pre">cntk.io.Deserializer</span></code></a></p>
+<p>This class configures the image reader that reads images and corresponding
+labels from a file of the form</p>
+<dl class="docutils">
+<dt><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a></dt>
+<dd>&lt;full path to image&gt;&lt;tab&gt;&lt;numerical label (0-based class id)&gt;</dd>
+</dl>
+<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<cite>str</cite>) &#8211; file name of the map file that associates images to
+classes</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://github.com/microsoft/cntk/wiki/Understanding-and-Extending-Readers">https://github.com/microsoft/cntk/wiki/Understanding-and-Extending-Readers</a></p>
+</div>
+<dl class="staticmethod">
+<dt id="cntk.io.ImageDeserializer.crop">
+<em class="property">static </em><code class="descname">crop</code><span class="sig-paren">(</span><em>crop_type='center'</em>, <em>ratio=1.0</em>, <em>jitter_type='uniRatio'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#ImageDeserializer.crop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.ImageDeserializer.crop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crop transform that can be used to pass to <cite>map_features</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>crop_type</strong> (<cite>str</cite>, default &#8216;center&#8217;) &#8211; &#8216;center&#8217; or &#8216;random&#8217;</li>
+<li><strong>ratio</strong> (<cite>float</cite>, default 1.0) &#8211; crop ratio</li>
+<li><strong>jitter_type</strong> (<cite>str</cite>, default &#8216;uniRatio&#8217;) &#8211; possible values are
+&#8216;None&#8217;, &#8216;UniRatio&#8217;, &#8216;UniLength&#8217;, and &#8216;UniArea&#8217;</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>dict</cite> describing the crop transform</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.io.ImageDeserializer.map_features">
+<code class="descname">map_features</code><span class="sig-paren">(</span><em>node</em>, <em>transforms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#ImageDeserializer.map_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.ImageDeserializer.map_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maps feature node (either node instance or node name) to the transforms
+that will be applied to the images.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>node</strong> (<cite>str</cite> or input node) &#8211; node or its name</li>
+<li><strong>transforms</strong> (<cite>list</cite> of transforms) &#8211; the transforms can be created by
+the static methods <cite>crop</cite>, <cite>scale</cite>, or <cite>mean</cite>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.io.ImageDeserializer.map_labels">
+<code class="descname">map_labels</code><span class="sig-paren">(</span><em>node</em>, <em>num_classes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#ImageDeserializer.map_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.ImageDeserializer.map_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maps label node (either node instance or node name)
+that will be applied to the images.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>node</strong> (<cite>str</cite> or input node) &#8211; node or its name</li>
+<li><strong>num_classes</strong> (<cite>int</cite>) &#8211; number of classes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="cntk.io.ImageDeserializer.mean">
+<em class="property">static </em><code class="descname">mean</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#ImageDeserializer.mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.ImageDeserializer.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mean transform that can be used to pass to <cite>map_features</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<cite>str</cite>) &#8211; file that stores the mean values for each pixel
+in OpenCV matrix XML format</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>dict</cite> describing the mean transform</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="cntk.io.ImageDeserializer.scale">
+<em class="property">static </em><code class="descname">scale</code><span class="sig-paren">(</span><em>width</em>, <em>height</em>, <em>channels</em>, <em>interpolations='linear'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#ImageDeserializer.scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.ImageDeserializer.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale transform that can be used to pass to <cite>map_features</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>width</strong> (<cite>int</cite>) &#8211; width of the image in pixels</li>
+<li><strong>height</strong> (<cite>int</cite>) &#8211; height of the image in pixels</li>
+<li><strong>channels</strong> (<cite>int</cite>) &#8211; channels of the image</li>
+<li><strong>interpolations</strong> (<cite>str</cite>, default &#8216;linear&#8217;) &#8211; possible values are
+&#8216;nearest&#8217;, &#8216;linear&#8217;, &#8216;cubic&#8217;, and &#8216;lanczos&#8217;</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>dict</cite> describing the scale transform</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.io.MinibatchData">
+<em class="property">class </em><code class="descname">MinibatchData</code><a class="reference internal" href="_modules/cntk/io.html#MinibatchData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.MinibatchData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="cntk.html#cntk.cntk_py.MinibatchData" title="cntk.cntk_py.MinibatchData"><code class="xref py py-class docutils literal"><span class="pre">cntk.cntk_py.MinibatchData</span></code></a></p>
+<p>Holds the minibatch data of an input.</p>
+<p>This is never directly created, but only returned by
+<cite>:class:MinibatchSource</cite> instances.</p>
+<dl class="method">
+<dt id="cntk.io.MinibatchData.data">
+<code class="descname">data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#MinibatchData.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.MinibatchData.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Value object of the minibatch.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.io.MinibatchData.num_samples">
+<code class="descname">num_samples</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#MinibatchData.num_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.MinibatchData.num_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of samples in this minibatch</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.io.MinibatchData.num_sequences">
+<code class="descname">num_sequences</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#MinibatchData.num_sequences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.MinibatchData.num_sequences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of sequences in this minibatch</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.io.MinibatchSource">
+<em class="property">class </em><code class="descname">MinibatchSource</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#MinibatchSource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.MinibatchSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="cntk.html#cntk.cntk_py.MinibatchSource" title="cntk.cntk_py.MinibatchSource"><code class="xref py py-class docutils literal"><span class="pre">cntk.cntk_py.MinibatchSource</span></code></a></p>
+<p>Parent class of all minibatch sources. For most cases you will need the
+helper functions <cite>:func:cntk.io.text_format_minibatch_source</cite> or
+<cite>:func:cntk.io.create_minibatch_source</cite>.
+A <cite>MinibatchSource</cite> can be indexed by a <cite>StreamInfo</cite>, which will return a
+<cite>MinibatchData</cite> object that can be passed e.g. to the
+<cite>:func:Trainer.train_minibatch()</cite> function.</p>
+<dl class="method">
+<dt id="cntk.io.MinibatchSource.get_next_minibatch">
+<code class="descname">get_next_minibatch</code><span class="sig-paren">(</span><em>minibatch_size_in_samples</em>, <em>minibatch_size_in_sequences=None</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#MinibatchSource.get_next_minibatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.MinibatchSource.get_next_minibatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a minibatch that contains data for all input streams.
+The minibatch size is specified terms of #samples and/or #sequences for the primary input stream; value of 0 for #samples/#sequences means unspecified.
+In case the size is specified in terms of both #sequences and #samples, the smaller of the 2 is taken.
+An empty map is returned when the MinibatchSource has no more data to return.&#8217;&#8216;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>minibatch_size_in_samples</strong> (<cite>int</cite>) &#8211; number of samples to retrieve for
+the next minibatch. Must be &gt; 0.</li>
+<li><strong>minibatch_size_in_sequences</strong> (<cite>int</cite>, defaults to <cite>None</cite>) &#8211; number of
+samples to retrieve for the next minibatch. Must be &gt; 0.</li>
+<li><strong>device</strong> (<cite>DeviceDescriptor</cite>, defaults to <cite>None</cite>) &#8211; CNTK DeviceDescriptor</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>:class:MinibatchData</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.io.MinibatchSource.stream_info">
+<code class="descname">stream_info</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#MinibatchSource.stream_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.MinibatchSource.stream_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the description of the stream with given name.
+Throws an exception of there are none or multiple streams with this
+same name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cntk.io.MinibatchSource.stream_infos">
+<code class="descname">stream_infos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#MinibatchSource.stream_infos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.MinibatchSource.stream_infos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Describes the stream that this source produces.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>dict</cite> mapping input names to the stream information</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.io.ReaderConfig">
+<em class="property">class </em><code class="descname">ReaderConfig</code><span class="sig-paren">(</span><em>deserializers=None</em>, <em>randomize=True</em>, <em>epoch_size=18446744073709551615</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#ReaderConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.ReaderConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">dict</span></code></p>
+<p>Reader configuration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>deserializers</strong> (<em>'list', default is empty</em>) &#8211; list of deserializers
+(<cite>:class:cntk.io.ImageDeserializer</cite> for now).</li>
+<li><strong>randomize</strong> (<cite>bool</cite>, default True) &#8211; randomize images before every epoch</li>
+<li><strong>epoch_size</strong> (<cite>int</cite>) &#8211; epoch size</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cntk.io.ReaderConfig.minibatch_source">
+<code class="descname">minibatch_source</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#ReaderConfig.minibatch_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.ReaderConfig.minibatch_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of <cite>:class:cntk.io.MinibatchSource</cite> from this
+instance, which can be used to feed data into the <cite>eval()</cite> methods of
+the graph nodes or the <cite>train_minibatch()</cite> of <cite>:class:cntk.Trainer</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">instance of <cite>:class:cntk.io.MinibatchSource</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cntk.io.StreamConfiguration">
+<em class="property">class </em><code class="descname">StreamConfiguration</code><span class="sig-paren">(</span><em>name</em>, <em>dim</em>, <em>is_sparse=False</em>, <em>stream_alias=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#StreamConfiguration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.StreamConfiguration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="cntk.html#cntk.cntk_py.StreamConfiguration" title="cntk.cntk_py.StreamConfiguration"><code class="xref py py-class docutils literal"><span class="pre">cntk.cntk_py.StreamConfiguration</span></code></a></p>
+<p>Configuration of a stream in a text format reader. This can be used
+<cite>:func:cntk.io.text_format_minibatch_source</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<cite>str</cite>) &#8211; name of this stream</li>
+<li><strong>dim</strong> (<cite>int</cite>) &#8211; dimensions of this stream. A text format reader reads data</li>
+<li><strong>flat arrays. If you need different shapes you can</strong> (<em>as</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>:param <cite>:func:cntk.ops.reshape</cite> it later.:
+:param is_sparse: whether the provided data is sparse</p>
+<blockquote>
+<div>(<cite>False</cite> by default)</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stream_alias</strong> (<cite>str</cite>, default &#8216;&#8217;) &#8211; name of the stream in the file that is fed to the
+<cite>:func:cntk.io.text_format_minibatch_source</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.io.minibatch_source">
+<code class="descname">minibatch_source</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#minibatch_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.minibatch_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate the CNTK built-in composite minibatch source which is used to stream data into the network.
+:param config: a dictionary containing all the key-value configuration entries.
+:type config: <cite>dict</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference internal" href="#cntk.io.MinibatchSource" title="cntk.io.MinibatchSource"><code class="xref py py-class docutils literal"><span class="pre">cntk.io.MinibatchSource</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cntk.io.text_format_minibatch_source">
+<code class="descname">text_format_minibatch_source</code><span class="sig-paren">(</span><em>path</em>, <em>stream_configs</em>, <em>epoch_size=18446744073709551615</em>, <em>randomize=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cntk/io.html#text_format_minibatch_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cntk.io.text_format_minibatch_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a minibatch source from a CNTKTextFormatReader file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<em>'file'</em>) &#8211; filename of the data file</li>
+<li><strong>stream_configs</strong> (<cite>list</cite> of <cite>:class:StreamConfiguration</cite> instances) &#8211; list
+of stream configurations, each of which describes one stream in the
+file</li>
+<li><strong>epoch_size</strong> (<cite>int</cite>, optional) &#8211; size of an epoch. In case of 0 the size
+of the training set will be taken. Default is max of 64bit.</li>
+<li><strong>randomize</strong> (<cite>bool</cite>, optional) &#8211; whether to randomize the contents of data file.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">class:cntk.io.MinibatchSource&#8217;</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><p><a href="#id9"><span class="problematic" id="id10">`</span></a></p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cntk.trainer.html" class="btn btn-neutral float-right" title="cntk.trainer package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="graph.html" class="btn btn-neutral" title="Graph components" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0a4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

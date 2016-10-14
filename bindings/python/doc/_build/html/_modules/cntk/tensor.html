@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cntk.tensor &mdash; Python API for CNTK 2.0a4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Python API for CNTK 2.0a4 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Python API for CNTK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0a4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graph.html">Graph components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.io.html">IO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.trainer.html">Trainer &amp; learners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.ops.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cntk.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">Python API for CNTK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>cntk.tensor</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cntk.tensor</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Microsoft. All rights reserved.</span>
+
+<span class="c1"># Licensed under the MIT license. See LICENSE.md file in the project root</span>
+<span class="c1"># for full license information.</span>
+<span class="c1"># ==============================================================================</span>
+
+
+<div class="viewcode-block" id="TensorOpsMixin"><a class="viewcode-back" href="../../cntk.html#cntk.cntk_py.TensorOpsMixin">[docs]</a><span class="k">class</span> <span class="nc">TensorOpsMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="c1"># operator overload for (+) where self is the left operand</span>
+    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ops</span>
+        <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">plus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="c1"># operator overload for (+) where self is the right operand</span>
+    <span class="k">def</span> <span class="nf">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ops</span>
+        <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">plus</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+    <span class="c1"># operator overload for (-) where self is the left operand</span>
+    <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ops</span>
+        <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">minus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="c1"># operator overload for (-) where self is the right operand</span>
+    <span class="k">def</span> <span class="nf">__rsub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ops</span>
+        <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">minus</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+    <span class="c1"># operator overload for (*) where self is the left operand</span>
+    <span class="k">def</span> <span class="nf">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ops</span>
+        <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">element_times</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="c1"># operator overload for (*) where self is the right operand</span>
+    <span class="k">def</span> <span class="nf">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ops</span>
+        <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">element_times</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+    <span class="c1"># operator overload for (@) where self is the left operand</span>
+    <span class="k">def</span> <span class="nf">__matmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="c1"># NOTE supported in Python 3.5</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ops</span>
+        <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">times</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="c1"># operator overload for (@) where self is the right operand</span>
+    <span class="k">def</span> <span class="nf">__rmatmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="c1"># NOTE supported in Python 3.5</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ops</span>
+        <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">times</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+    <span class="c1"># operator overload for (/) where self is the left operand</span>
+    <span class="k">def</span> <span class="nf">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ops</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__div__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__truediv__</span>
+        <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">element_divide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="c1"># operator overload for (/) where self is the right operand</span>
+    <span class="k">def</span> <span class="nf">__rtruediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ops</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__rdiv__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__rtruediv__</span>
+        <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">element_divide</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+    <span class="c1"># Python2 compatibility</span>
+    <span class="n">__div__</span> <span class="o">=</span> <span class="n">__truediv__</span>
+    <span class="n">__rdiv__</span> <span class="o">=</span> <span class="n">__rtruediv__</span>
+
+    <span class="k">def</span> <span class="nf">__abs__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ops</span>
+        <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__neg__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ops</span>
+        <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">negate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="c1"># TODO __xor__, __rxor__, __pow__, __rpow__,  __invert__</span>
+
+    <span class="c1"># Comparison operators are not exposed yet, because of __eq__ being</span>
+    <span class="c1"># required to allow comparison of Variables on C++ so that we can say </span>
+    <span class="c1"># &#39;for var in variables&#39;.</span>
+    <span class="c1"># __lt__, __le__, __gt__, __ge__, __and__, __rand__, __or__, __ror__,</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ops</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="c1"># Case 1: e.g. data[3] -&gt; key=3</span>
+            <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">key</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+            <span class="c1"># Case 2: e.g. data[2:4] -&gt; key will be a slice object</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;step argument is not supported&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="s1">&#39;end index has to be of type int, not &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">stop</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">stop</span> <span class="o">&lt;=</span> <span class="n">key</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;end index has to be greater than start index&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">start</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">stop</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="c1"># Case 3: e.g. data[2:4,1:,1:7] -&gt; key will be an iterable of ints</span>
+            <span class="c1"># (case 1) or slices (case 2)</span>
+            <span class="c1"># objects.</span>
+            <span class="c1"># FIXME: we need to check that len(key) equals the node&#39;s rank</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="k">for</span> <span class="n">ax_counter</span><span class="p">,</span> <span class="n">so</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">so</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                    <span class="c1"># Proceed as case 1</span>
+                    <span class="n">node</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ax_counter</span><span class="p">,</span> <span class="n">so</span><span class="p">,</span> <span class="n">so</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">so</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+                    <span class="c1"># Proceed as case 2</span>
+                    <span class="k">if</span> <span class="n">so</span><span class="o">.</span><span class="n">step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;step argument is not supported&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">so</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">so</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">so</span><span class="o">.</span><span class="n">stop</span> <span class="o">&lt;=</span> <span class="n">so</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                                <span class="s1">&#39;end index has to be greater than start index&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">so</span><span class="o">.</span><span class="n">start</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">so</span><span class="o">.</span><span class="n">stop</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">node</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ax_counter</span><span class="p">,</span> <span class="n">so</span><span class="o">.</span><span class="n">start</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span> <span class="n">so</span><span class="o">.</span><span class="n">stop</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">so</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="c1"># Case 3b: e.g. data[[0],[2,3]] aka &quot;advanced indexing&quot; -&gt;</span>
+                    <span class="c1"># so = ([0], [2,3])</span>
+                    <span class="c1"># In NumPy we would have another dimension, but since</span>
+                    <span class="c1"># data[0].shape != data[[0]].shape == data[[[0]]].shape ==</span>
+                    <span class="c1"># we decided to have all shapes like data[0] in this case</span>
+                    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">so</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                                <span class="s1">&#39;indices have to be of type int and not &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+                        <span class="n">node</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ax_counter</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                        <span class="s1">&#39;type &quot;</span><span class="si">%s</span><span class="s1">&quot; is not supported as index&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">so</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="n">node</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;index must be int or slice, not </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span></div>
+
+<span class="n">AVAILABLE_TENSOR_OPS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;abs&#39;</span><span class="p">,</span> <span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="s1">&#39;getitem&#39;</span><span class="p">,</span> <span class="s1">&#39;matmul&#39;</span><span class="p">,</span> <span class="s1">&#39;mul&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;radd&#39;</span><span class="p">,</span> <span class="s1">&#39;rdiv&#39;</span><span class="p">,</span> <span class="s1">&#39;rmatmul&#39;</span><span class="p">,</span> <span class="s1">&#39;rmul&#39;</span><span class="p">,</span> <span class="s1">&#39;rsub&#39;</span><span class="p">,</span> <span class="s1">&#39;rtruediv&#39;</span><span class="p">,</span> <span class="s1">&#39;sub&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;truediv&#39;</span><span class="p">,</span> <span class="s1">&#39;neg&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_add_tensor_ops</span><span class="p">(</span><span class="n">klass</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">op_name</span> <span class="ow">in</span> <span class="n">AVAILABLE_TENSOR_OPS</span><span class="p">:</span>
+        <span class="n">overload_name</span> <span class="o">=</span> <span class="s1">&#39;__</span><span class="si">%s</span><span class="s1">__&#39;</span> <span class="o">%</span> <span class="n">op_name</span>
+
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">overload_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;class &quot;</span><span class="si">%s</span><span class="s1">&quot; already has operator overload &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span>
+                             <span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">overload_name</span><span class="p">))</span>
+
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">overload_name</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">TensorOpsMixin</span><span class="p">,</span> <span class="n">overload_name</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="EvalMixin"><a class="viewcode-back" href="../../cntk.html#cntk.cntk_py.EvalMixin">[docs]</a><span class="k">class</span> <span class="nc">EvalMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="EvalMixin.eval"><a class="viewcode-back" href="../../cntk.html#cntk.cntk_py.EvalMixin.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seq_starts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Evaluate the node using the specified `arguments` as input.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            arguments (`dict` or `list`): </span>
+<span class="sd">              * map from input variables to the data</span>
+<span class="sd">              * list of inputs in the order that the function expects or </span>
+<span class="sd">              Data should be either NumPy arrays or a `:class:cntk.io.MinibatchData` instance</span>
+<span class="sd">            seq_starts (`list` of `bool`s or `None`): if `None`, every sequence is</span>
+<span class="sd">             treated as a new sequence. Otherwise, it is interpreted as a list of</span>
+<span class="sd">             Booleans that tell whether a sequence is a new sequence (`True`) or a</span>
+<span class="sd">             continuation of the previous one (`False`)</span>
+<span class="sd">            precision (`str` or `np.float32` or `np.float64`): precision, if string</span>
+<span class="sd">             it can be one of &#39;float&#39;, &#39;float32&#39;, &#39;double&#39;, &#39;float64&#39;, or `None`</span>
+<span class="sd">            device (:class:`cntk.DeviceDescriptor`): the device descriptor that</span>
+<span class="sd">             contains the type and id of the device on which the computation is</span>
+<span class="sd">             to be performed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `bool`: `True` if updates have been performed</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="nb">eval</span> <span class="k">as</span> <span class="n">utils_eval</span>
+        <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">DeviceDescriptor</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="n">DeviceDescriptor</span><span class="o">.</span><span class="n">use_default_device</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">())</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;only operators with exactly one output can be evaluated&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">arguments</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">arguments</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">utils_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">seq_starts</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">popitem</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_add_eval</span><span class="p">(</span><span class="n">klass</span><span class="p">):</span>
+    <span class="n">overload_name</span> <span class="o">=</span> <span class="s1">&#39;eval&#39;</span>
+
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">overload_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;class &quot;</span><span class="si">%s</span><span class="s1">&quot; already has operator overload &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span>
+                         <span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">overload_name</span><span class="p">))</span>
+
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">overload_name</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">EvalMixin</span><span class="p">,</span> <span class="n">overload_name</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'2.0a4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

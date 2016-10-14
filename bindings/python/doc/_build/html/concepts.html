@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Concepts &mdash; Python API for CNTK 2.0a4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Python API for CNTK 2.0a4 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Python API for CNTK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0a4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Graph components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.io.html">IO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.trainer.html">Trainer &amp; learners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.ops.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cntk.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Python API for CNTK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Concepts</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/concepts.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="concepts">
+<h1>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline">¶</a></h1>
+<p>There is a common property in key machine learning models, such as deep neural
+networks (DNNs), convolutional neural networks (CNNs), and recurrent neural
+networks (RNNs). All of these models can be described as <em>computational networks</em>.</p>
+<p>The directed edges of these <em>computational networks</em> are vectors, matrices, or in
+general n-dimensional arrays (tensors) which represent input data and model
+parameters. The vertices are <em>functions</em> (also called operations) that are
+performing a computation on these input tensors.</p>
+<div class="section" id="tensors">
+<h2>Tensors<a class="headerlink" href="#tensors" title="Permalink to this headline">¶</a></h2>
+<p>The underlying data structure in CNTK is that of a <em>tensor</em>. It is a
+multidimensional array on which computations can be performed. Every dimension in
+these arrays is referred to as an <em>axis</em> to distinguish it from the scalar size
+of every axis. So, a matrix has two <em>axes</em> which both have a certain
+<em>dimension</em> corresponding to the number of rows and columns of the <em>axes</em>.</p>
+<p>Using tensors makes the framework generic in that it can be used e.g. for
+classification problems where the inputs are vectors, black-and-white
+images (input is a matrix of points), color images (includes a separate dimension
+for r, g, and b) or videos (has an extra time dimension).</p>
+<ul class="simple">
+<li>Tensors have a <em>shape</em> which describes the dimensions of its axes. E.g. a shape <code class="docutils literal"><span class="pre">[2,3,4]</span></code>
+would refer to a tensor with three axes that have, respectively, 2, 3, and 4
+dimensions.</li>
+<li>CNTK allows for the last axis to be a <em>dynamic axis</em>, i.e. an axis whose size
+might vary between input samples. This allows for easily
+modelling sequences (for recurrent networks) without needing to introduce masks
+or padding. See below for a detailed explanation.</li>
+<li>All data inside of a tensor is of a certain data type. Right now, CNTK
+implements <em>float</em> (32 bit) and <em>double</em> (64 bit) precision floating point types,
+and all tensors in a network have the same type.</li>
+<li>Tensors come either in <em>dense</em> or <em>sparse</em> form. Sparse tensors should be used
+whenever the bulk of its values are 0. The Python API supports sparse
+tensors, however, the data ingestion of sparse tensors is only supported via
+the reader framework and not yet through NumPy.</li>
+</ul>
+<p>Tensors are introduced in CNTK in one of three places:</p>
+<ul class="simple">
+<li><strong>Inputs</strong>: These represent data inputs to the computation which are usually
+bound to a data reader. Data inputs are organized as (mini) batches and
+therefore receive an extra minibatch dimension. In addition, inputs can have a
+&#8220;ragged&#8221; axis called &#8220;dynamic axis&#8221; which is used to model sequential data. See
+below for details.</li>
+<li><strong>Parameters</strong>: Parameters are weight tensors that make up the bulk of the
+actual model. Parameters are initialized using a constant (e.g. all 0&#8217;s,
+randomly  generated data, or initialized from a file) and are updated during
+<em>backpropagation</em> in a training run.</li>
+<li><strong>Constants</strong>: Constants are very similar to parameters, but they are not
+taking part in backpropagation.</li>
+</ul>
+<p>All of these represent the <em>leaf nodes</em> in the network, or, in other words, the
+input parameters of the function that the network represents.</p>
+<p>To introduce a tensor, simply use one of the methods in the cntk namespace. Once
+introduced, overloaded operators can be applied to them to form an operator graph:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cntk</span> <span class="k">as</span> <span class="nn">C</span>
+
+<span class="c1"># Create an input with the shape (2,3,*)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">input_variable</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;features&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create a constant scalar with value 2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Create a parameter of shape (2,3), randomly initialized</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">w</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">parameter</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+
+<span class="c1"># Set up some test input data to check the operators.</span>
+<span class="c1"># We specify a full batch having a sequence with one element, which is a</span>
+<span class="c1"># (2,3) matrix.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">test_input</span> <span class="o">=</span> <span class="p">[[</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">],[</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">60</span><span class="p">]])</span> <span class="p">]]</span>
+
+<span class="c1"># Elementwise multiplication operation</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">op</span>  <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">c</span>
+
+<span class="c1"># Evaluate the op using test_input</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">eval</span><span class="p">({</span> <span class="n">x</span><span class="p">:</span> <span class="n">test_input</span> <span class="p">}))</span>
+<span class="p">[[[[</span>  <span class="mf">20.</span>   <span class="mf">40.</span>   <span class="mf">60.</span><span class="p">]</span>
+   <span class="p">[</span>  <span class="mf">80.</span>  <span class="mf">100.</span>  <span class="mf">120.</span><span class="p">]]]]</span>
+
+<span class="c1"># Same as above (2 will be converted to constant)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">op2</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">op2</span><span class="o">.</span><span class="n">eval</span><span class="p">({</span> <span class="n">x</span><span class="p">:</span> <span class="n">test_input</span> <span class="p">}))</span>
+<span class="p">[[[[</span>  <span class="mf">20.</span>   <span class="mf">40.</span>   <span class="mf">60.</span><span class="p">]</span>
+   <span class="p">[</span>  <span class="mf">80.</span>  <span class="mf">100.</span>  <span class="mf">120.</span><span class="p">]]]]</span>
+
+<span class="c1">#  Elementwise multiplication of two 2x3 matrices</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">op3</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">op3</span><span class="o">.</span><span class="n">eval</span><span class="p">({</span> <span class="n">x</span><span class="p">:</span> <span class="n">test_input</span><span class="p">}))</span>
+<span class="p">[[[[</span>  <span class="mf">10.</span>   <span class="mf">40.</span>   <span class="mf">90.</span><span class="p">]</span>
+   <span class="p">[</span> <span class="mf">160.</span>  <span class="mf">250.</span>  <span class="mf">360.</span><span class="p">]]]]</span>
+</pre></div>
+</div>
+<div class="section" id="broadcasting">
+<h3>Broadcasting<a class="headerlink" href="#broadcasting" title="Permalink to this headline">¶</a></h3>
+<p>For operations that require the tensor dimensions of their arguments to match,
+<em>broadcasting</em>  is applied automatically whenever a tensor dimension is 1.
+Examples are elementwise product or plus operations.
+E.g. the following are equivalent:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">.</span><span class="n">element_times</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="go">array([ 4.,  6.], dtype=float32)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">.</span><span class="n">element_times</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="go">array([ 4.,  6.], dtype=float32)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0a4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
