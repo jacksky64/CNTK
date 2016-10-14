@@ -65,12 +65,13 @@ namespace CNTK
 
         static Buffer AllocateIntermediateBuffer(int deviceID, size_t totalSize);
 
-        Microsoft::MSR::CNTK::MPIWrapperPtr m_mpi;
         DistributedWorkerDescriptor m_currentWorker;
         std::unordered_set<DistributedWorkerDescriptor> m_workers;
 
         // these two are always parallel, merge them together?
         std::vector<std::unique_ptr<Microsoft::MSR::CNTK::GPUDataTransferer>> m_gpuDataTransferers;
         std::vector<Buffer> m_intermediateCPUBuffers;
+
+        Microsoft::MSR::CNTK::MPIWrapperPtr m_mpi;
     };
 }
