@@ -10,8 +10,8 @@
 
 namespace CNTK
 {
-    Trainer::Trainer(const FunctionPtr& model, const FunctionPtr& lossFunction, const FunctionPtr& evaluationFunction, const std::unordered_set<LearnerPtr>& parameterLearners)
-        : m_model(model), m_lossFunction(lossFunction), m_evaluationFunction(evaluationFunction), m_parameterLearners(parameterLearners), m_prevMinibatchNumSamples(1)
+    Trainer::Trainer(const FunctionPtr& model, const FunctionPtr& lossFunction, const FunctionPtr& evaluationFunction, const std::unordered_set<LearnerPtr>& parameterLearners, const DistributedTrainerPtr& distributedTrainer)
+        : m_model(model), m_lossFunction(lossFunction), m_evaluationFunction(evaluationFunction), m_parameterLearners(parameterLearners), m_prevMinibatchNumSamples(1), m_distributedTrainer(distributedTrainer)
     {
         if (m_lossFunction->Output().DynamicAxes().empty())
             InvalidArgument("The loss function specified in the Trainer constructor must correspond to minibatch data and have dynamic axes");
@@ -49,6 +49,10 @@ namespace CNTK
         if (modelParametersSet != learnerParameters)
             InvalidArgument("Trainer ctor: Union of the parameters covered by the specified parameterLearners should match the specified model's parameters");
     }
+
+    Trainer::Trainer(const FunctionPtr& model, const FunctionPtr& lossFunction, const FunctionPtr& evaluationFunction, const std::unordered_set<LearnerPtr>& parameterLearners)
+        : Trainer(model, lossFunction, nullptr, parameterLearners, nullptr)
+    {}
 
     Trainer::Trainer(const FunctionPtr& model, const FunctionPtr& lossFunction, const std::unordered_set<LearnerPtr>& parameterLearners)
         : Trainer(model, lossFunction, nullptr, parameterLearners)
@@ -121,6 +125,9 @@ namespace CNTK
 
         outputs.insert(outputsToFetch.begin(), outputsToFetch.end());
 
+        if (m_distributedTrainer)
+            m_distributedTrainer->PreMinibatchCallback(*this);
+
         auto backPropSate = m_combinedTrainingFunction->Forward(arguments, outputs, computeDevice, { m_aggregatedLossFunction });
         m_prevMinibatchAggregateTrainingLossValue = outputs[m_aggregatedLossFunction];
         if (m_aggregatedEvaluationFunction)
@@ -146,6 +153,9 @@ namespace CNTK
         m_combinedTrainingFunction->Backward(backPropSate, { { m_aggregatedLossFunction, rootGradientValue } }, parameterGradients);
 
         m_prevMinibatchNumSamples = GetSampleCount(m_lossFunction, outputs[m_lossFunction]);
+
+        if (m_distributedTrainer)
+            m_distributedTrainer->PreParameterUpdateCallback(*this, parameterGradients);
 
         bool anyUpdatesPerformed = false;
         for (auto learner : m_parameterLearners)

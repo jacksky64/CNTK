@@ -2906,6 +2906,7 @@ namespace CNTK
         ///
         // TODO: Add overload for multiple evaluation criterion
         CNTK_API Trainer(const FunctionPtr& model, const FunctionPtr& lossFunction, const FunctionPtr& evaluationFunction, const std::unordered_set<LearnerPtr>& parameterLearners);
+        CNTK_API Trainer(const FunctionPtr& model, const FunctionPtr& lossFunction, const FunctionPtr& evaluationFunction, const std::unordered_set<LearnerPtr>& parameterLearners, const DistributedTrainerPtr& distributedTrainer);
 
         ///
         /// Optimize model parameters using the specified 'arguments' minibatch of training samples.
@@ -2980,6 +2981,7 @@ namespace CNTK
         FunctionPtr m_aggregatedLossFunction;
         FunctionPtr m_evaluationFunction;
         FunctionPtr m_aggregatedEvaluationFunction;
+        DistributedTrainerPtr m_distributedTrainer;
 
         std::unordered_set<LearnerPtr> m_parameterLearners;
 
@@ -3222,7 +3224,7 @@ namespace CNTK
     {
     public:
         // Optional override that gets called per minibatch after finishing gradient computation but before updating model parameters
-        virtual void PreParameterUpdateCallback(const Trainer& trainer, const std::unordered_map<Variable, Value>& gradientValues) = 0;
+        virtual void PreParameterUpdateCallback(const Trainer& trainer, const std::unordered_map<Variable, ValuePtr>& gradientValues) = 0;
 
         // Optional override that gets called before each minbatch during training
         virtual void PreMinibatchCallback(const Trainer& trainer) = 0;
@@ -3235,6 +3237,8 @@ namespace CNTK
 
         virtual ~DistributedTrainer() {}
     };
+
+    CNTK_API DistributedTrainerPtr CreateDataParallelDistributedTrainer(DistributedCommunicatorPtr communicator, bool useAsyncBufferedParameterUpdate);
 }
 
 namespace std {

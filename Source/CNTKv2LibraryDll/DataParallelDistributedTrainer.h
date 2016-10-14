@@ -15,6 +15,8 @@ namespace CNTK
     class DataParallelDistributedTrainer : public DistributedTrainer
     {
     public:
+        DataParallelDistributedTrainer(DistributedCommunicatorPtr communicator, bool useAsyncBufferedParameterUpdate);
+
         // Optional override that gets called per minibatch after finishing gradient computation but before updating model parameters
         void PreParameterUpdateCallback(const Trainer& trainer, const std::unordered_map<Variable, Value>& gradientValues) override;
 
@@ -26,5 +28,9 @@ namespace CNTK
 
         // Optionally overridable method to restore state pertaining this distributed training method from a previous checkpoint
         void RestoreFromCheckpoint(const Dictionary& checkpoint) override;
+
+    private:
+        DistributedCommunicatorPtr m_communicator;
+        bool m_useAsyncBufferedParameterUpdate;
     };
 }
