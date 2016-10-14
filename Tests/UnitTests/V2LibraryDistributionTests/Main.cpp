@@ -45,13 +45,15 @@ void TrainSimpleDistributedFeedForwardClassifer(const DeviceDescriptor& device)
     auto trainingLoss = CNTK::CrossEntropyWithSoftmax(classifierOutput, labels, L"lossFunction");;
     auto prediction = CNTK::ClassificationError(classifierOutput, labels, L"classificationError");
 
+    auto communicator = MPICommunicator();
+
     // Test save and reload of model
     {
         Variable classifierOutputVar = classifierOutput;
         Variable trainingLossVar = trainingLoss;
         Variable predictionVar = prediction;
         auto combinedNet = Combine({ trainingLoss, prediction, classifierOutput }, L"feedForwardClassifier");
-        SaveAndReloadModel<float>(combinedNet, { &input, &labels, &trainingLossVar, &predictionVar, &classifierOutputVar }, device);
+        SaveAndReloadModel<float>(combinedNet, { &input, &labels, &trainingLossVar, &predictionVar, &classifierOutputVar }, device, communicator->CurrentWorker().m_globalRank);
 
         classifierOutput = classifierOutputVar;
         trainingLoss = trainingLossVar;
@@ -60,7 +62,7 @@ void TrainSimpleDistributedFeedForwardClassifer(const DeviceDescriptor& device)
 
     double learningRatePerSample = 0.02;
     minibatchSource = TextFormatMinibatchSource(L"SimpleDataTrain_cntk_text.txt", { { L"features", inputDim }, { L"labels", numOutputClasses } });
-    auto distributedTrainer = CreateDataParallelDistributedTrainer(MPICommunicator(), false);
+    auto distributedTrainer = CreateDataParallelDistributedTrainer(communicator, false);
     Trainer trainer(classifierOutput, trainingLoss, prediction, { SGDLearner(classifierOutput->Parameters(), learningRatePerSample) }, distributedTrainer);
     size_t outputFrequencyInMinibatches = 20;
     for (size_t i = 0; i < numMinibatchesToTrain; ++i)
