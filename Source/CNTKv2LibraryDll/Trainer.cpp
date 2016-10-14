@@ -155,7 +155,7 @@ namespace CNTK
         m_prevMinibatchNumSamples = GetSampleCount(m_lossFunction, outputs[m_lossFunction]);
 
         if (m_distributedTrainer)
-            m_distributedTrainer->PreParameterUpdateCallback(*this, parameterGradients);
+            m_distributedTrainer->PreParameterUpdateCallback(*this, parameterGradients, MinibatchInfo{ m_prevMinibatchNumSamples, m_prevMinibatchAggregateTrainingLossValue, m_prevMinibatchAggregateEvalCriterionValue });
 
         bool anyUpdatesPerformed = false;
         for (auto learner : m_parameterLearners)

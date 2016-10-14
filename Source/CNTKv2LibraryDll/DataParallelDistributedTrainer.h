@@ -18,7 +18,7 @@ namespace CNTK
         DataParallelDistributedTrainer(DistributedCommunicatorPtr communicator, bool useAsyncBufferedParameterUpdate);
 
         // Optional override that gets called per minibatch after finishing gradient computation but before updating model parameters
-        void PreParameterUpdateCallback(const Trainer& trainer, const std::unordered_map<Variable, Value>& gradientValues) override;
+        void PreParameterUpdateCallback(const Trainer& trainer, const std::unordered_map<Variable, ValuePtr>& gradientValues, const MinibatchInfo& info) override;
 
         // Optional override that gets called before each minbatch during training
         void PreMinibatchCallback(const Trainer& trainer) override;

@@ -61,8 +61,8 @@ void TrainSimpleDistributedFeedForwardClassifer(const DeviceDescriptor& device)
 
     double learningRatePerSample = 0.02;
     minibatchSource = TextFormatMinibatchSource(L"SimpleDataTrain_cntk_text.txt", { { L"features", inputDim }, { L"labels", numOutputClasses } });
-    auto distributedTrainer = 
-    Trainer trainer(classifierOutput, trainingLoss, prediction, { SGDLearner(classifierOutput->Parameters(), learningRatePerSample) }, );
+    auto distributedTrainer = CreateDataParallelDistributedTrainer(MPICommunicator(), false);
+    Trainer trainer(classifierOutput, trainingLoss, prediction, { SGDLearner(classifierOutput->Parameters(), learningRatePerSample) }, distributedTrainer);
     size_t outputFrequencyInMinibatches = 20;
     for (size_t i = 0; i < numMinibatchesToTrain; ++i)
     {

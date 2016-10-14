@@ -14,14 +14,15 @@ namespace CNTK
     }
 
     DataParallelDistributedTrainer::DataParallelDistributedTrainer(DistributedCommunicatorPtr communicator, bool useAsyncBufferedParameterUpdate)
+        : m_communicator(communicator),
+        m_useAsyncBufferedParameterUpdate(useAsyncBufferedParameterUpdate)
     {
         if (!useAsyncBufferedParameterUpdate)
             LogicError("Asynchronous parameter update is not yet supported.");
-
     }
 
     // Optional override that gets called per minibatch after finishing gradient computation but before updating model parameters
-    void DataParallelDistributedTrainer::PreParameterUpdateCallback(const Trainer& /*trainer*/, const std::unordered_map<Variable, Value>& /*gradientValues*/)
+    void DataParallelDistributedTrainer::PreParameterUpdateCallback(const Trainer& /*trainer*/, const std::unordered_map<Variable, ValuePtr>& /*gradientValues*/, const MinibatchInfo& /*info*/)
     {
         NOT_IMPLEMENTED;
     }
@@ -29,7 +30,6 @@ namespace CNTK
     // Optional override that gets called before each minbatch during training
     void DataParallelDistributedTrainer::PreMinibatchCallback(const Trainer& /*trainer*/)
     {
-        NOT_IMPLEMENTED;
     }
 
     // Optionally overridable method to get checkpoint state associated with this Distributed train method
