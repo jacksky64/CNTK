@@ -179,6 +179,9 @@ private:
         std::vector<::CNTK::ValuePtr> valuesToAggregate;
         for (size_t i = 0; i < gradients.size(); ++i)
         {
+            if (gradients[i]->Data() == nullptr)
+                continue;
+
             ::CNTK::NDShape shape{ gradients[i]->GetNumElements() };
             auto data = ::CNTK::MakeSharedObject<::CNTK::NDArrayView>(::CNTK::AsDataType<ElemType>(), shape, gradients[i]->Data(), gradients[i]->GetNumElements() * sizeof(ElemType), ::CNTK::AsDeviceDescriptor(gradients[i]->GetDeviceId()));
             auto value = ::CNTK::MakeSharedObject<::CNTK::Value>(data);
