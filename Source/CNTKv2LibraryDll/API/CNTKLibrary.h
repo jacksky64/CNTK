@@ -3232,16 +3232,16 @@ namespace CNTK
     {
     public:
         // Optional override that gets called before each minbatch during training
-        virtual void PreMinibatchCallback(const Trainer& trainer) = 0;
+        CNTK_API virtual void PreMinibatchCallback(const Trainer& trainer) = 0;
 
         // Optional override that gets called per minibatch after finishing gradient computation but before updating model parameters
-        virtual void PreParameterUpdateCallback(const Trainer& trainer, std::vector<std::pair<Variable, ValuePtr>>& gradientValues, MinibatchInfo& info) = 0;
+        CNTK_API virtual void PreParameterUpdateCallback(const Trainer& trainer, std::vector<std::pair<Variable, ValuePtr>>& gradientValues, MinibatchInfo& info) = 0;
 
         // Optionally overridable method to get checkpoint state associated with this Distributed train method
-        virtual Dictionary GetCheckpointState() const = 0;
+        CNTK_API virtual Dictionary GetCheckpointState() const = 0;
 
         // Optionally overridable method to restore state pertaining this distributed training method from a previous checkpoint
-        virtual void RestoreFromCheckpoint(const Dictionary& checkpoint) = 0;
+        CNTK_API virtual void RestoreFromCheckpoint(const Dictionary& checkpoint) = 0;
 
         virtual ~DistributedTrainer() {}
     };
