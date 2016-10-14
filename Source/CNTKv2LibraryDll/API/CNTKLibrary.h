@@ -3235,7 +3235,7 @@ namespace CNTK
         virtual void PreMinibatchCallback(const Trainer& trainer) = 0;
 
         // Optional override that gets called per minibatch after finishing gradient computation but before updating model parameters
-        virtual void PreParameterUpdateCallback(const Trainer& trainer, const std::unordered_map<Variable, ValuePtr>& gradientValues, const MinibatchInfo& info) = 0;
+        virtual void PreParameterUpdateCallback(const Trainer& trainer, std::vector<std::pair<Variable, ValuePtr>>& gradientValues, MinibatchInfo& info) = 0;
 
         // Optionally overridable method to get checkpoint state associated with this Distributed train method
         virtual Dictionary GetCheckpointState() const = 0;

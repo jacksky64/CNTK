@@ -22,9 +22,20 @@ namespace CNTK
     }
 
     // Optional override that gets called per minibatch after finishing gradient computation but before updating model parameters
-    void DataParallelDistributedTrainer::PreParameterUpdateCallback(const Trainer& /*trainer*/, const std::unordered_map<Variable, ValuePtr>& /*gradientValues*/, const MinibatchInfo& /*info*/)
+    void DataParallelDistributedTrainer::PreParameterUpdateCallback(const Trainer& /*trainer*/, std::vector<std::pair<Variable, ValuePtr>>& gradientValues, MinibatchInfo& info)
     {
-        NOT_IMPLEMENTED;
+        std::vector<ValuePtr> valuesToAggregate;
+        for (const auto& i : gradientValues)
+            valuesToAggregate.push_back(i.second);
+        valuesToAggregate.push_back(info.evalCriterionValue);
+        valuesToAggregate.push_back(info.trainingLossValue);
+
+        auto value = MakeSharedObject<NDArrayView>(static_cast<double>(info.numberOfSamples));
+        valuesToAggregate.push_back(MakeSharedObject<Value>(value));
+
+        m_communicator->AggregateInPlace(valuesToAggregate, std::unordered_set<DistributedWorkerDescriptor>());
+
+        info.numberOfSamples = static_cast<size_t>(*valuesToAggregate.back()->Data()->DataBuffer<double>());
     }
 
     // Optional override that gets called before each minbatch during training
