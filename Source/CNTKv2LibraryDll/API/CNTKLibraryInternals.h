@@ -188,6 +188,9 @@ namespace CNTK
     class DistributedCommunicator;
     typedef std::shared_ptr<DistributedCommunicator> DistributedCommunicatorPtr;
 
+    class DistributedTrainer;
+    typedef std::shared_ptr<DistributedTrainer> DistributedTrainerPtr;
+
     namespace Internal
     {
         CNTK_API FunctionPtr IsWithin(const Variable& operand, int offset, const std::wstring& name = L"");
