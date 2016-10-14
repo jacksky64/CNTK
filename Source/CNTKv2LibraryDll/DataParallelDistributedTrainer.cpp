@@ -17,7 +17,7 @@ namespace CNTK
         : m_communicator(communicator),
         m_useAsyncBufferedParameterUpdate(useAsyncBufferedParameterUpdate)
     {
-        if (!useAsyncBufferedParameterUpdate)
+        if (useAsyncBufferedParameterUpdate)
             LogicError("Asynchronous parameter update is not yet supported.");
     }
 
@@ -30,7 +30,7 @@ namespace CNTK
         valuesToAggregate.push_back(info.evalCriterionValue);
         valuesToAggregate.push_back(info.trainingLossValue);
 
-        auto value = MakeSharedObject<NDArrayView>(static_cast<double>(info.numberOfSamples));
+        auto value = MakeSharedObject<NDArrayView>(static_cast<double>(info.numberOfSamples), NDShape{1}, DeviceDescriptor::CPUDevice());
         valuesToAggregate.push_back(MakeSharedObject<Value>(value));
 
         m_communicator->AggregateInPlace(valuesToAggregate, std::unordered_set<DistributedWorkerDescriptor>());

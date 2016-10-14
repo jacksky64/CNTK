@@ -5,7 +5,6 @@
 
 #include "CNTKLibrary.h"
 #include "Common.h"
-#include <iostream>
 
 using namespace CNTK;
 using namespace std::placeholders;
@@ -77,5 +76,10 @@ int main(int /*argc*/, char* /*argv*/[])
     // Lets disable automatic unpacking of PackedValue object to detect any accidental unpacking 
     // which will have a silent performance degradation otherwise
     Internal::SetAutomaticUnpackingOfPackedValues(/*disable =*/ true);
+
+    TrainSimpleDistributedFeedForwardClassifer(DeviceDescriptor::CPUDevice());
+
+    if (IsGPUAvailable())
+        TrainSimpleDistributedFeedForwardClassifer(DeviceDescriptor::GPUDevice(0));
     return 0;
 }
