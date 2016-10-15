@@ -4225,20 +4225,21 @@ void CPUMatrix<ElemType>::MaxPoolingForward(const CPUMatrix<int>& mpRowCol, cons
     {
         for (size_t row = 0; row < output.GetNumRows(); row++)
         {
-            int colBase = mpRowCol(row, 0);
+            size_t flattenRow = (size_t)(sample) * output.GetNumRows() + row;
+            int colBase = mpRowCol(flattenRow, 0);
             assert(0 <= colBase && colBase < GetNumRows());
 
             assert(std::numeric_limits<ElemType>::has_infinity);
             ElemType res = -std::numeric_limits<ElemType>::infinity();
 
-            int i0 = mpRowIndices(row, 0);
+            int i0 = mpRowIndices(flattenRow, 0);
             int size = indices(i0++, 0);
             assert(size > 0);
             for (int i = 0; i < size; i++)
             {
                 int dcol = indices(i0 + i, 0);
                 assert(0 <= colBase + dcol && colBase + dcol < GetNumRows());
-                res = std::max(res, (*this)(colBase + dcol, sample));
+                res = std::max(res, (*this)(colBase + dcol, 0));
             }
             output(row, sample) = res;
         }
@@ -4255,10 +4256,11 @@ void CPUMatrix<ElemType>::MaxPoolingBackward(const CPUMatrix<ElemType>& out, con
     {
         for (size_t row = 0; row < GetNumRows(); row++)
         {
-            int colBase = mpRowCol(row, 0);
+            size_t flattenRow = (size_t)(sample) * GetNumRows() + row;
+            int colBase = mpRowCol(flattenRow, 0);
             assert(0 <= colBase && colBase < grad.GetNumRows());
 
-            int i0 = mpRowIndices(row, 0);
+            int i0 = mpRowIndices(flattenRow, 0);
             int size = indices(i0++, 0);
             assert(size > 0);
             ElemType g = (*this)(row, sample);
@@ -4267,10 +4269,10 @@ void CPUMatrix<ElemType>::MaxPoolingBackward(const CPUMatrix<ElemType>& out, con
             {
                 int dcol = indices(i0 + i, 0);
                 assert(0 <= colBase + dcol && colBase + dcol < grad.GetNumRows());
-                if (in(colBase + dcol, sample) >= m)
+                if (in(colBase + dcol, 0) >= m)
                 {
 #pragma omp atomic 
-                    grad(colBase + dcol, sample) += g;
+                    grad(colBase + dcol, 0) += g;
                     break; 
                 }
             }
@@ -4514,19 +4516,20 @@ void CPUMatrix<ElemType>::AveragePoolingForward(const CPUMatrix<int>& mpRowCol, 
     {
         for (size_t row = 0; row < output.GetNumRows(); row++)
         {
-            int colBase = mpRowCol(row, 0);
+            size_t flattenRow = (size_t)(sample) * output.GetNumRows() + row;
+            int colBase = mpRowCol(flattenRow, 0);
             assert(0 <= colBase && colBase < GetNumRows());
 
             ElemType sum = 0;
 
-            int i0 = mpRowIndices(row, 0);
+            int i0 = mpRowIndices(flattenRow, 0);
             int size = indices(i0++, 0);
             assert(size > 0);
             for (int i = 0; i < size; i++)
             {
                 int dcol = indices(i0 + i, 0);
                 assert(0 <= colBase + dcol && colBase + dcol < GetNumRows());
-                sum += (*this)(colBase + dcol, sample);
+                sum += (*this)(colBase + dcol, 0);
             }
             // Note that we divide by size which is the number of actual elements (does not include padding).
             output(row, sample) = sum / size;
@@ -4542,10 +4545,11 @@ void CPUMatrix<ElemType>::AveragePoolingBackward(const CPUMatrix<int>& mpRowCol,
     {
         for (size_t row = 0; row < GetNumRows(); row++)
         {
-            int colBase = mpRowCol(row, 0);
+            size_t flattenRow = (size_t)(sample) * GetNumRows() + row;
+            int colBase = mpRowCol(flattenRow, 0);
             assert(0 <= colBase && colBase < grad.GetNumRows());
 
-            int i0 = mpRowIndices(row, 0);
+            int i0 = mpRowIndices(flattenRow, 0);
             int size = indices(i0++, 0);
             assert(size > 0);
             ElemType g = (*this)(row, sample) / size;
@@ -4554,7 +4558,7 @@ void CPUMatrix<ElemType>::AveragePoolingBackward(const CPUMatrix<int>& mpRowCol,
                 int dcol = indices(i0 + i, 0);
                 assert(0 <= colBase + dcol && colBase + dcol < grad.GetNumRows());
 #pragma omp atomic 
-                grad(colBase + dcol, sample) += g;
+                grad(colBase + dcol, 0) += g;
             }
         }
     }

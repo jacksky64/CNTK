@@ -149,15 +149,15 @@ __global__ void kMaxPoolingForward(int batchSize, const int* mpRowCol, const int
     if (row >= dstVecSize)
         return;
 
-    src += blockIdx.y * srcVecSize;
     dst += blockIdx.y * dstVecSize;
 
     for (int sample = blockIdx.y; sample < batchSize; sample += gridDim.y)
     {
-        int colBase = mpRowCol[row];
+        int flattenRow = sample * dstVecSize + row;
+        int colBase = mpRowCol[flattenRow];
         assert(0 <= colBase && colBase < srcVecSize);
 
-        int i0 = mpRowIndices[row];
+        int i0 = mpRowIndices[flattenRow];
         int size = indices[i0++];
         ElemType res = src[colBase + indices[i0]];
         for (int i = 1; i < size; i++)
@@ -168,7 +168,6 @@ __global__ void kMaxPoolingForward(int batchSize, const int* mpRowCol, const int
         }
         dst[row] = res;
 
-        src += blockDim.y * srcVecSize;
         dst += blockDim.y * dstVecSize;
     }
 }
@@ -183,17 +182,16 @@ __global__ void kMaxPoolingBackward(int batchSize, const ElemType* out, const El
     if (row >= srcVecSize)
         return;
 
-    in += blockIdx.y * dstVecSize;
     out += blockIdx.y * srcVecSize;
     srcGrad += blockIdx.y * srcVecSize;
-    grad += blockIdx.y * dstVecSize;
 
     for (int sample = blockIdx.y; sample < batchSize; sample += gridDim.y)
     {
-        int colBase = mpRowCol[row];
+        int flattenRow = sample * dstVecSize + row;
+        int colBase = mpRowCol[flattenRow];
         assert(0 <= colBase && colBase < dstVecSize);
 
-        int i0 = mpRowIndices[row];
+        int i0 = mpRowIndices[flattenRow];
         int size = indices[i0++];
         assert(size > 0);
         ElemType g = srcGrad[row];
@@ -209,10 +207,8 @@ __global__ void kMaxPoolingBackward(int batchSize, const ElemType* out, const El
             }
         }
 
-        in += blockDim.y * dstVecSize;
         out += blockDim.y * srcVecSize;
         srcGrad += blockDim.y * srcVecSize;
-        grad += blockDim.y * dstVecSize;
     }
 }
 
@@ -438,15 +434,15 @@ __global__ void kAveragePoolingForward(int batchSize, const int* mpRowCol, const
     if (row >= dstVecSize)
         return;
 
-    src += blockIdx.y * srcVecSize;
     dst += blockIdx.y * dstVecSize;
 
     for (int sample = blockIdx.y; sample < batchSize; sample += gridDim.y)
     {
-        int colBase = mpRowCol[row];
+        int flattenRow = sample * dstVecSize + row;
+        int colBase = mpRowCol[flattenRow];
         assert(0 <= colBase && colBase < srcVecSize);
 
-        int i0 = mpRowIndices[row];
+        int i0 = mpRowIndices[flattenRow];
         int size = indices[i0++];
         ElemType sum = 0;
         for (int i = 0; i < size; i++)
@@ -457,7 +453,6 @@ __global__ void kAveragePoolingForward(int batchSize, const int* mpRowCol, const
         }
         dst[row] = sum / size;
 
-        src += blockDim.y * srcVecSize;
         dst += blockDim.y * dstVecSize;
     }
 }
@@ -472,14 +467,14 @@ __global__ void kAveragePoolingBackward(int batchSize, const int* mpRowCol, cons
         return;
 
     srcGrad += blockIdx.y * srcVecSize;
-    grad += blockIdx.y * dstVecSize;
 
     for (int sample = blockIdx.y; sample < batchSize; sample += gridDim.y)
     {
-        int colBase = mpRowCol[row];
+        int flattenRow = sample * dstVecSize + row;
+        int colBase = mpRowCol[flattenRow];
         assert(0 <= colBase && colBase < dstVecSize);
 
-        int i0 = mpRowIndices[row];
+        int i0 = mpRowIndices[flattenRow];
         int size = indices[i0++];
         assert(size > 0);
         ElemType g = srcGrad[row] / size;
@@ -491,7 +486,6 @@ __global__ void kAveragePoolingBackward(int batchSize, const int* mpRowCol, cons
         }
 
         srcGrad += blockDim.y * srcVecSize;
-        grad += blockDim.y * dstVecSize;
     }
 }
 
